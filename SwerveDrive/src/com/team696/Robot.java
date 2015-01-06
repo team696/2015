@@ -2,6 +2,7 @@
 package com.team696;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import com.team696.SwerveDrive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -15,8 +16,12 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
+	SwerveDrive drive = new SwerveDrive(1,2,3,4,5,6,7,8);
+	
     public void robotInit() {
-
+    	drive.setSteerPID(0, 0, 0);
+    	drive.setDrivePID(0, 0, 0);
+    	drive.
     }
 
     /**

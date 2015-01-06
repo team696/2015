@@ -7,23 +7,23 @@ public class SwerveDrive {
 	boolean fieldCentric = false;
 	
 	
-	double setRotation;
-	double setRotationSpeed;
-	double setRobotHeading;
-	double setSpeed;
+	private double setRotation;
+	private double setRotationSpeed;
+	private double setRobotHeading;
+	private double setSpeed;
 	
-	double[] robotMotionVector = {0.0,0.0,0.0};   //x, y, and rotation speed
+	private double[] robotMotionVector = {0.0,0.0,0.0};   //x, y, and rotation speed
 	
-	double[][] wheelVectors = new double[4][2];      // wheel vectors
-	double[][] setWheelVectors = new double[4][2];
+	private double[][] wheelVectors = new double[4][2];      // wheel vectors
+	private double[][] setWheelVectors = new double[4][2];
 	
-	double[][] wheelValues = new double[4][2];      // wheel values radians
-	double[][] setWheelValues = new double[4][2];
+	private double[][] wheelValues = new double[4][2];      // wheel values radians
+	private double[][] setWheelValues = new double[4][2];
 	
-	SwerveModule frontLeft;
-	SwerveModule frontRight;
-	SwerveModule backRight;
-	SwerveModule backLeft;
+	private SwerveModule frontLeft;
+	private SwerveModule frontRight;
+	private SwerveModule backRight;
+	private SwerveModule backLeft;
 	
 	public SwerveDrive(int frontLeftWheel, int frontLeftSteer, int frontRightWheel, int frontRightSteer,
 			int backRightWheel, int backRightSteer, int backLeftWheel, int backLeftSteer){
@@ -36,9 +36,17 @@ public class SwerveDrive {
 	}
 	
 	public void setSteerPID(int P, int I, int D){
-		
+		frontLeft.setSteerPID(P, I, D);
+		frontRight.setSteerPID(P, I, D);
+		backRight.setSteerPID(P, I, D);
+		backLeft.setSteerPID(P, I, D);
 	}
-	
+	public void setDrivePID(int P, int I, int D){
+		frontLeft.setDrivePID(P, I, D);
+		frontRight.setDrivePID(P, I, D);
+		backRight.setDrivePID(P, I, D);
+		backLeft.setDrivePID(P, I, D);
+	}
 	
 	void setWheels(){
 		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
@@ -66,22 +74,30 @@ public class SwerveDrive {
 		
 			for(int fish = 0; fish<4; fish++){
 				values[fish][0] = Math.sqrt(vectors[fish][0] *vectors[fish][0]) +((vectors[fish][1] *vectors[fish][1])); //pythagorean thrm for speed
-				values[fish][1] = Math.asin(vectors[fish][1]/vectors[fish][0]);                                          //asin to find angle
+				values[fish][1] = Math.atan2(vectors[fish][1],vectors[fish][0]);                                          //asin to find angle
 			}
 		
 		return values;
 	}
 	
-	boolean setDrive(double speed, double headingDegrees, double rotation){
+	boolean setDriveHeading(double speed, double headingDegrees, double rotation){
 		setSpeed = speed;
 		setRobotHeading = headingDegrees;
 		setRotation = rotation;
 		
 		setWheelVectors = calculateVectors(setSpeed, setRobotHeading, setRotation);
-		setWheelValues = calculateWheelValues(setWheelValues);
+		setWheelValues = calculateWheelValues(setWheelVectors);
+		
+		frontLeft.setValues(wheelValues[0][0], wheelValues[0][0]);
+		frontRight.setValues(wheelValues[0][0], wheelValues[0][0]);
+		backRight.setValues(wheelValues[0][0], wheelValues[0][0]);
+		frontLeft.setValues(wheelValues[0][0], wheelValues[0][0]);
+		
 		
 		return true;
 	}
+	
+	
 	boolean setWheelAngles(double[] angles){
 		if(angles.length == 4){
 			setWheelValues[0] = angles;

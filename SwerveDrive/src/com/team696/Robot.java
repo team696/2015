@@ -3,7 +3,7 @@ package com.team696;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import com.team696.SwerveDrive;
-
+import edu.wpi.first.wpilibj.I2C.Port;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -16,12 +16,13 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-	SwerveDrive drive = new SwerveDrive(1,2,3,4,5,6,7,8);
+	
+	int[][] swerveChannels = new int[4][5];
+	SwerveDrive drive;
 	
     public void robotInit() {
-    	drive.setSteerPID(0, 0, 0);
-    	drive.setDrivePID(0, 0, 0);
-    	drive.
+    	drive = new SwerveDrive(swerveChannels);
+    	drive.setDrivePID(0, 0, 0, 0);
     }
 
     /**
@@ -35,7 +36,7 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        
+
     }
     
     /**

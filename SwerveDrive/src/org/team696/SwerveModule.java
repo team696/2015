@@ -1,4 +1,4 @@
-package com.team696;
+package org.team696;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;

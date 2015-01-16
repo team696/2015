@@ -1,8 +1,9 @@
 
-package com.team696;
+package org.team696;
+
+import org.team696.SwerveDrive;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import com.team696.SwerveDrive;
 import edu.wpi.first.wpilibj.I2C.Port;
 /**
  * The VM is configured to automatically run this class, and to call the

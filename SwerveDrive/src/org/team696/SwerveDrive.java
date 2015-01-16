@@ -1,10 +1,10 @@
-package com.team696;
+package org.team696;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import com.team696.SwerveModule;
+import org.team696.SwerveModule;
 
 import edu.wpi.first.wpilibj.networktables2.util.List;
 

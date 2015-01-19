@@ -14,8 +14,8 @@ public class SwerveTracking {
 	}
 	
 	private void tracker() {
-		boolean testClockWise = oldIn<0.1 && newIn>4.9;
-		boolean testCounterClockWise = oldIn>4.9 && newIn<.1;
+		boolean testClockWise = oldIn<1 && newIn>4;
+		boolean testCounterClockWise = oldIn>4 && newIn<1;
 		if(testClockWise) this.counter-=1;
 		if(testCounterClockWise) this.counter+=1;
 		if(counter == 7) this.counter = 0;

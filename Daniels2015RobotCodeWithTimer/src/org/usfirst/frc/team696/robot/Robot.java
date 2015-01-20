@@ -32,14 +32,15 @@ public class Robot extends IterativeRobot {
 	DigitalInput atBot = new DigitalInput(0);
 	VictorSP elevMotor = new VictorSP(0);
 	int[] count = new int[4];
-	SwerveTracking one = new SwerveTracking(0);
-	SwerveTracking two = new SwerveTracking(0);
-	SwerveTracking three = new SwerveTracking(0);
-	SwerveTracking four = new SwerveTracking(0);
+	SwerveTracking one = new SwerveTracking();
+	SwerveTracking two = new SwerveTracking();
+	SwerveTracking three = new SwerveTracking();
+	SwerveTracking four = new SwerveTracking();
 	double[] wheelEnc = new double[4];
 	double[] oldWheelEnc = new double[4];
 	int[] forceCounter = new int[4];
-
+	
+	
     public void robotInit() {
     	one.forceCount(forceCounter[0]);
     	two.forceCount(forceCounter[1]);

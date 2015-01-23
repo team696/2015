@@ -3,12 +3,12 @@ package org.team696;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.interfaces.Potentiometer;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
 public class SwerveModule {
 
 	Encoder driveEncoder;
-	Encoder steerEncoder;
+	AnalogPotentiometer steeringPot;
 	
 	double setAngle;
 	double angle;
@@ -19,33 +19,28 @@ public class SwerveModule {
 	VictorSP steerMotor;
 	VictorSP driveMotor;
 	
-	PIDController steerController;
 	PIDController driveController;
-	
+	CustomPID steerController;
 	public SwerveModule(int[] configs){
 		steerMotor = new VictorSP(configs[0]);
 		driveMotor = new VictorSP(configs[1]);
-		steerEncoder = new Encoder(configs[2], configs[3]);
-		driveEncoder = new Encoder(configs[4], configs[5]);
-		steerController = new PIDController(0, 0, 0, steerEncoder, steerMotor);
+		steeringPot = new AnalogPotentiometer(configs[2]);
+		driveEncoder = new Encoder(configs[3], configs[4]);
 		driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);
 	}
 	
-	public void enablePID(boolean steer, boolean drive){
-		if(steer) steerController.enable();
-		else steerController.disable();
+	public void enablePID(boolean drive){
 		
 		if(drive) driveController.enable();
 		else driveController.disable();
 	}
 	
 	public void setValues(double speed, double angleDegrees){
-		steerController.setSetpoint(angleDegrees);
 		driveController.setSetpoint(speed);
 	}
 	
 	public void setSteerPID(double P, double I, double D){
-		steerController.setPID(P, I, D);
+		//steerController.setPID(P, I, D);
 	}
 	
 	public void setDrivePID(double P, double I, double D, double F){
@@ -57,7 +52,7 @@ public class SwerveModule {
 		return true;
 	}
 	
-	public double[] getOdometry(){
+	public double[] getPosition(){
 		double[] x = {0,0};
 		return x;
 	}

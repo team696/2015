@@ -1,11 +1,7 @@
 
-package org.team696;
-
-
-import org.team696.SwerveDrive;
+package org.team696.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.I2C.Port;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,12 +15,10 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-	int[][] swerveChannels = new int[4][5];
-	SwerveDrive drive;
+	boolean firstRun = true;
 	
+	SwerveDrive drive = new SwerveDrive();
     public void robotInit() {
-    	drive = new SwerveDrive(swerveChannels);
-    	drive.setDrivePID(0, 0, 0, 0);
     	
     }
 
@@ -39,7 +33,10 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-
+    	if(firstRun){
+    		drive.start();
+    		firstRun = false;
+    	}
     }
     
     /**
@@ -47,13 +44,6 @@ public class Robot extends IterativeRobot {
      */
     public void testPeriodic() {
     
-    }
-    class TimerTest extends TimerTask{
-    	
-    	@Override
-    	public void run(){
-    		
-    	}
     }
     
 }

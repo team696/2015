@@ -12,12 +12,13 @@ public class Runnable {
 		}
 	};
 	public void update(){
-		System.out.print("running super: ");
+		
 	}
-	public void start(){
-		updater.schedule(updateTask, 1, 1000);
+	public void start(int periodMS){
+		updater.schedule(updateTask, 1, periodMS);
 		//schedule the update function
 	}
+	
 	
 	
 }

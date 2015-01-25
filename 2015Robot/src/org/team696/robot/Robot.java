@@ -16,9 +16,13 @@ public class Robot extends IterativeRobot {
      * used for any initialization code.
      */
 	boolean firstRun = true;
-	
-	SwerveDrive drive = new SwerveDrive();
+	int[][] moduleValues;
+	int[] testValues = {1,2,1,1,2};
+	//SwerveDrive drive = new SwerveDrive(moduleValues);
+	SwerveModule testModule = new SwerveModule(testValues);
+	//SteeringEncoder encoderTest = new SteeringEncoder(1);
     public void robotInit() {
+    	//drive.start(100);
     	
     }
 
@@ -34,9 +38,9 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
     	if(firstRun){
-    		drive.start();
+    		testModule.start(10);
     		firstRun = false;
-    	}
+    	}	
     }
     
     /**

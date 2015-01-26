@@ -37,16 +37,13 @@ public class Intake extends Runnable{
 		run();
 	}
 	
-	public void setEject(boolean _eject) {
-		eject = _eject;
-	}
-	
-	public void setIntake(boolean _intake) {
-		intake = _intake;
-	}
-	
-	public void setGrabBin(boolean _grabBin) {
-		grabBin = _grabBin;
+	/*
+	 * @param set - eject, intake, grabBin
+	 */
+	public void setIntake(boolean[] set) {
+		eject = set[0];
+		intake = set[1];
+		grabBin = set[2];
 	}
 	
 	public void setSpeed(double _speed) {

@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class SteeringEncoder extends Runnable{
 
 	AnalogInput encoder;
-	double minVoltage = 0.1867675632238388;
-	double maxVoltage = 1.6003416776657104;
+	double minVoltage = 0;
+	double maxVoltage = 5;
 	double oldVoltage;
 	double voltage;
 	double angle;
@@ -18,19 +18,19 @@ public class SteeringEncoder extends Runnable{
 	int count = 0;
 	double degreesPerRotation = 102.85714285714285714285714285714;
 	public SteeringEncoder(int channel){
-		encoder = new AnalogInput(1);
+		encoder = new AnalogInput(channel);
 	}
 	
 	@Override
 	public void update(){
 		super.update();
 		voltage = encoder.getVoltage();
-		boolean testClockWise = voltage<0.4 && oldVoltage>1.3;
-		boolean testCounterClockWise = voltage>1.3 && oldVoltage<0.4;
+		boolean testClockWise = voltage<0.5 && oldVoltage>4.5;
+		boolean testCounterClockWise = voltage>4.5 && oldVoltage<0.5;
 		if(testClockWise) count++;
 		if(testCounterClockWise) count--;
 		oldVoltage = voltage;
-		
+		//System.out.println(count);
 	}
 	
 	@Override

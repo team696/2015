@@ -2,6 +2,7 @@ package org.team696.robot;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,7 +21,7 @@ public class SwerveModule extends Runnable{
 	double setSpeed;
 	double speed;
 	
-	VictorSP steerMotor;
+	Victor steerMotor;
 	VictorSP driveMotor;
 	
 	//PIDController driveController;
@@ -28,9 +29,10 @@ public class SwerveModule extends Runnable{
 	
 	
 	public SwerveModule(int[] configs){
-		steerMotor = new VictorSP(configs[0]);
+		steerMotor = new Victor(configs[0]);
 		//driveMotor = new VictorSP(configs[1]);
 		steerEncoder = new SteeringEncoder(configs[2]);
+		steerController = new CustomPID(0.05,0, 0.3);
 		//driveEncoder = new Encoder(configs[3], configs[4]);
 		//driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);
 	}
@@ -49,10 +51,12 @@ public class SwerveModule extends Runnable{
 	public void update(){
 		super.update();
 		angle = steerEncoder.getAngleDegrees();
-		double error = setAngle - angle;
+		if(angle<0) angle = 360+angle;
+		double error = 0.0;
+		error = setAngle - angle;
 		boolean reverseMotor =  false;
 		if(error>180) error = -(360-error);    //check if over the
-		else if(error<-180) error = -360-error;//zero line to flip error 
+		else if(error<-180) error = (360+error);//zero line to flip error 
 		
 		if(error > 90){
 			error = -(180-error);
@@ -61,12 +65,12 @@ public class SwerveModule extends Runnable{
 			error = -(180+error);
 			reverseMotor = true;
 		}
-		steerController.update(error);
+		steerController.update(-error);
 		steerMotor.set(steerController.getOutput());
 		
 		//if(reverseMotor) driveMotor.set(-setSpeed);
 		//else driveMotor.set(setSpeed);
-		
+		System.out.println("Angle:  " + angle + "   setAngle:   " + setAngle + "    Output:   " + error);
 		SmartDashboard.putNumber("angle", angle);
 		SmartDashboard.putNumber("setAngle", setAngle);
 		SmartDashboard.putNumber("output", steerController.getOutput());

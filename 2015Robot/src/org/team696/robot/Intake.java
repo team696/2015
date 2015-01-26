@@ -41,6 +41,10 @@ public class Intake extends Runnable{
 	 * @param set - eject, intake, grabBin
 	 */
 	public void setIntake(boolean[] set) {
+		if (set[0] == set[1]) {
+			set[0] = false;
+			set[1] = false;
+		}
 		eject = set[0];
 		intake = set[1];
 		grabBin = set[2];

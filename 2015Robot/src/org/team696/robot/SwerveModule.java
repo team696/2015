@@ -2,6 +2,7 @@ package org.team696.robot;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -21,20 +22,20 @@ public class SwerveModule extends Runnable{
 	double setSpeed;
 	double speed;
 	
-	Victor steerMotor;
-	VictorSP driveMotor;
+	Talon steerMotor;
+	Talon driveMotor;
 	
-	//PIDController driveController;
+	PIDController driveController;
 	CustomPID steerController;
 	
 	
 	public SwerveModule(int[] configs){
-		steerMotor = new Victor(configs[0]);
-		//driveMotor = new VictorSP(configs[1]);
+		steerMotor = new Talon(configs[0]);
+		driveMotor = new Talon(configs[1]);
 		steerEncoder = new SteeringEncoder(configs[2]);
 		steerController = new CustomPID(0.05,0, 0.3);
-		//driveEncoder = new Encoder(configs[3], configs[4]);
-		//driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);
+		driveEncoder = new Encoder(configs[3], configs[4]);
+		driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);
 	}
 	
 //	public void enablePID(boolean drive){
@@ -68,8 +69,8 @@ public class SwerveModule extends Runnable{
 		steerController.update(-error);
 		steerMotor.set(steerController.getOutput());
 		
-		//if(reverseMotor) driveMotor.set(-setSpeed);
-		//else driveMotor.set(setSpeed);
+		if(reverseMotor) driveMotor.set(-setSpeed);
+		else driveMotor.set(setSpeed);
 		System.out.println("Angle:  " + angle + "   setAngle:   " + setAngle + "    Output:   " + error);
 		SmartDashboard.putNumber("angle", angle);
 		SmartDashboard.putNumber("setAngle", setAngle);

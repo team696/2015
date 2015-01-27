@@ -62,6 +62,7 @@ public class Robot extends IterativeRobot {
     	speed = Math.sqrt(Math.pow(stick.getRawAxis(0),2) + Math.pow(stick.getRawAxis(1),2));
     	if(Math.abs(stick.getRawAxis(0))>0.05 && Math.abs(stick.getRawAxis(1))>0.05) angle = Math.toDegrees(Math.atan2(-stick.getRawAxis(0),-stick.getRawAxis(1)));
     	
+    	if(stick.getRawAxis(0) < 0) speed = -speed; 
     	if(angle<0) angle = 360;
     	if(angle>360) angle = 0;
     	testModule.setValues(speed,angle);

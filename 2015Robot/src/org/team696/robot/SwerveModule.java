@@ -67,14 +67,10 @@ public class SwerveModule extends Runnable{
 			reverseMotor = true;
 		}
 		steerController.update(-error);
-		steerMotor.set(steerController.getOutput());
-		
+		if(steerController.getOutput()>0.1) steerMotor.set(steerController.getOutput());
+		else steerMotor.set(0);
 		if(reverseMotor) driveMotor.set(-setSpeed);
 		else driveMotor.set(setSpeed);
-		System.out.println("Angle:  " + angle + "   setAngle:   " + setAngle + "    Output:   " + error);
-		SmartDashboard.putNumber("angle", angle);
-		SmartDashboard.putNumber("setAngle", setAngle);
-		SmartDashboard.putNumber("output", steerController.getOutput());
 	}
 	
 	public void setValues(double _setSpeed, double _setAngleDegrees){

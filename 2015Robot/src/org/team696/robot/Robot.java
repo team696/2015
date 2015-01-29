@@ -53,18 +53,15 @@ public class Robot extends IterativeRobot {
     		firstRun = false;
     	}
     	
-    	kP = SmartDashboard.getNumber("kP", 0.05);
+    	kP = SmartDashboard.getNumber("kP", 0.07);
     	kI = SmartDashboard.getNumber("kI", 0.0);
-    	kD = SmartDashboard.getNumber("kD", 0.3);
-    	//angle = SmartDashboard.getNumber("angleSet", 50);
-    	angle = angle + (stick.getRawAxis(2)*5);
+    	kD = SmartDashboard.getNumber("kD", 0.5);
     	testModule.setSteerPID(kP, kI, kD);
     	speed = Math.sqrt(Math.pow(stick.getRawAxis(0),2) + Math.pow(stick.getRawAxis(1),2));
-    	if(Math.abs(stick.getRawAxis(0))>0.05 && Math.abs(stick.getRawAxis(1))>0.05) angle = Math.toDegrees(Math.atan2(-stick.getRawAxis(0),-stick.getRawAxis(1)));
+    	if(Math.abs(stick.getRawAxis(0))>0.05 || Math.abs(stick.getRawAxis(1))>0.05) angle = Math.toDegrees(Math.atan2(-stick.getRawAxis(0),-stick.getRawAxis(1)));
+    	if(angle<0) angle += 360;
     	
-    	if(stick.getRawAxis(0) < 0) speed = -speed; 
-    	if(angle<0) angle = 360;
-    	if(angle>360) angle = 0;
+    	testModule.setSteerPID(kP, kI, kD);
     	testModule.setValues(speed,angle);
     	
     	

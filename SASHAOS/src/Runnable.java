@@ -1,4 +1,4 @@
-package org.team696.baseClasses;
+
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,9 +18,9 @@ public class Runnable {
 		updater.schedule(updateTask, 1, periodMS);
 		//schedule the update function
 	}
+	
 	public void stop(){
 		updater.cancel();
 	}
-	
 	
 }

@@ -21,7 +21,7 @@ public class Robot extends IterativeRobot {
 	double y = 0;
 	boolean firstRun = true;
 	int[][] moduleValues;
-	int[] testValues = {0,1,0,0,1};
+	static int[] testValues = {0,1,0,0,1};
 	Joystick stick = new Joystick(0);
 	double kP=0;
 	double kI=0;
@@ -29,7 +29,7 @@ public class Robot extends IterativeRobot {
 	double angle=0;
 	double speed=0;
 	//SwerveDrive drive = new SwerveDrive(moduleValues);
-	SwerveModule testModule = new SwerveModule(testValues);
+	public static SwerveModule testModule = new SwerveModule(testValues);
 	//SteeringEncoder encoderTest = new SteeringEncoder(0);
     public void robotInit() {
     	//drive.start(100);

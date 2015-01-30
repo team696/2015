@@ -2,8 +2,11 @@
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		Scheduler scheduler = new Scheduler();
+		
+		scheduler.start(100);
+		scheduler.addCommand(new Command(50, false));
+		
 	}
 
 }

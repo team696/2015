@@ -14,8 +14,8 @@ public class Runnable {
 	public void update(){
 		
 	}
-	public void start(int periodMS){
-		updater.schedule(updateTask, 1, periodMS);
+	public void start(int frequency){
+		updater.schedule(updateTask, 1, 1000/frequency);
 		//schedule the update function
 	}
 	public void stop(){

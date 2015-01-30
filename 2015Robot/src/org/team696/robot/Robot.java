@@ -1,6 +1,9 @@
 
 package org.team696.robot;
 
+import org.team696.baseClasses.Logger;
+import org.team696.subsystems.SwerveModule;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,6 +20,8 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
+	static String[] configName = new String[] {"1","2","3","4","5"};
+	public static Logger logger = new Logger(configName);
 	double x = 0;
 	double y = 0;
 	boolean firstRun = true;

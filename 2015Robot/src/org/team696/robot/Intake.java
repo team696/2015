@@ -28,8 +28,8 @@ public class Intake extends Runnable{
 	}
 	
 	@Override 
-	public void start(int periodMS) {
-		super.start(periodMS);
+	public void start(int frequency) {
+		super.start(frequency);
 	}
 	
 	@Override

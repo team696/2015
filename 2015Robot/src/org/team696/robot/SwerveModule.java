@@ -44,8 +44,8 @@ public class SwerveModule extends Runnable{
 //		else driveController.disable();
 //	}
 	@Override
-	public void start(int periodMS){
-		super.start(periodMS);
+	public void start(int frequency){
+		super.start(frequency);
 		steerEncoder.start(1000/200);
 	}
 	@Override

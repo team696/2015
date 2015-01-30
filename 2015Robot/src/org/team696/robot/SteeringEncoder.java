@@ -34,10 +34,10 @@ public class SteeringEncoder extends Runnable{
 	}
 	
 	@Override
-	public void start(int periodMS){
-		super.start(periodMS);
-		voltage = encoder.getVoltage();
+	public void start(int frequency){
+		super.start(frequency);
 		oldVoltage = voltage;
+		voltage = encoder.getVoltage();
 	}
 	public double getAngleDegrees(){
 		angle = (count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))%360;

@@ -1,9 +1,10 @@
-package org.team696.robot;
+package org.team696.subsystems;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import org.team696.robot.SwerveModule;
+
+import org.team696.subsystems.SwerveModule;
 import org.team696.baseClasses.Runnable;
 
 public class SwerveDrive extends Runnable{

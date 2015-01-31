@@ -1,5 +1,6 @@
 package org.team696.subsystems;
 
+import org.team696.baseClasses.Logger;
 import org.team696.baseClasses.Runnable;
 
 import edu.wpi.first.wpilibj.Solenoid;
@@ -27,6 +28,7 @@ public class AutoCanner extends Runnable {
 	@Override
 	public void update() {
 		run();
+		//org.team696.robot.Robot.logger[0] = ;
 	}
 	
 	public void set(boolean[] extend) {

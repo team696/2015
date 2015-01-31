@@ -30,12 +30,11 @@ public class SteeringEncoder extends Runnable{
 		if(testClockWise) count++;
 		if(testCounterClockWise) count--;
 		oldVoltage = voltage;
-		//System.out.println(count);
 	}
 	
 	@Override
-	public void start(int frequency){
-		super.start(frequency);
+	public void start(int periodMS){
+		super.start(periodMS);
 		oldVoltage = voltage;
 		voltage = encoder.getVoltage();
 	}

@@ -19,9 +19,10 @@ public class Robot extends IterativeRobot {
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
-     */
-	static String[] configName = new String[] {"1","2","3","4","5"};
-	public static Logger logger = new Logger(configName);
+     */												//0   			1				2			3		4					5					6					7				8				9				10				11				13				14
+	//static String[] configName = new String[] {"AutoCannerLeft","AutoCannerRight","Elevator","Intake","SteeringEncoder1","SteeringEncoder2","SteeringEncoder3","SteeringEncoder4","SwerveModule1","SwerveModule2","SwerveModule2","SwerveModule3","SwerveModule4","SwerveDrive"};
+	//public static Logger logger = new Logger(configName);
+	public static Logger logger = new Logger(new String[] {"Angle","SSetangle","origError","ModError1","ModError2"});
 	double x = 0;
 	double y = 0;
 	boolean firstRun = true;
@@ -35,10 +36,9 @@ public class Robot extends IterativeRobot {
 	double speed=0;
 	//SwerveDrive drive = new SwerveDrive(moduleValues);
 	public static SwerveModule testModule = new SwerveModule(testValues);
-	//SteeringEncoder encoderTest = new SteeringEncoder(0);
-    public void robotInit() {
+	public void robotInit() {
     	//drive.start(100);
-    	
+    	logger.init();
     }
 
     /**
@@ -51,23 +51,25 @@ public class Robot extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
+    @Override
+    public void teleopInit() {
+    	logger.start(20);
+    	testModule.start(10);
+    }
+    
     public void teleopPeriodic() {
-    	if(firstRun){
-    		testModule.start(10);
-    		//encoderTest.start(5);
-    		firstRun = false;
-    	}
     	
-    	kP = SmartDashboard.getNumber("kP", 0.07);
+    	logger.update();
+    	kP = SmartDashboard.getNumber("kP", 0.04);
     	kI = SmartDashboard.getNumber("kI", 0.0);
-    	kD = SmartDashboard.getNumber("kD", 0.5);
+    	kD = SmartDashboard.getNumber("kD", 0.3);
     	testModule.setSteerPID(kP, kI, kD);
     	speed = Math.sqrt(Math.pow(stick.getRawAxis(0),2) + Math.pow(stick.getRawAxis(1),2));
-    	if(Math.abs(stick.getRawAxis(0))>0.05 || Math.abs(stick.getRawAxis(1))>0.05) angle = Math.toDegrees(Math.atan2(-stick.getRawAxis(0),-stick.getRawAxis(1)));
+    	if(Math.abs(stick.getRawAxis(0))>0.05 || Math.abs(stick.getRawAxis(1))>0.05) angle = -Math.toDegrees(Math.atan2(-stick.getRawAxis(0),-stick.getRawAxis(1)));
     	if(angle<0) angle += 360;
     	
     	testModule.setSteerPID(kP, kI, kD);
-    	testModule.setValues(speed,angle);
+    	testModule.setValues(speed/2,angle);
     	
     	
     	
@@ -80,4 +82,9 @@ public class Robot extends IterativeRobot {
     
     }
     
+    @Override
+    public void disabledInit() {
+    	logger.stop();
+    	testModule.stop();
+    }
 }

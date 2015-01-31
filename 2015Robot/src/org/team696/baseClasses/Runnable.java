@@ -14,8 +14,15 @@ public class Runnable {
 	public void update(){
 		
 	}
-	public void start(int frequency){
-		updater.schedule(updateTask, 1, 1000/frequency);
+	public void start(int periodMS){
+		updater = new Timer();
+		updateTask = new TimerTask() {
+			@Override
+			public void run() {
+				update();
+			}
+		};
+		updater.schedule(updateTask, 1, periodMS);
 		//schedule the update function
 	}
 	public void stop(){

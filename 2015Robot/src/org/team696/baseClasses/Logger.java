@@ -8,6 +8,7 @@ public class Logger extends Runnable {
 	String[] names; 
 	String[] values;
 	String toSend;
+	boolean write = false;
 	
 	public Logger(String[] configName){
 		names = new String[configName.length];
@@ -17,19 +18,39 @@ public class Logger extends Runnable {
 		}
 	}
 	
+	public void init() {
+		SmartDashboard.putBoolean("StartWriting", write);
+	}
+	
 	@Override
 	public void start(int frequency){
 		super.start(frequency);
 		toSend = "";
 		timer.start();
+		write = true;
 	}
 	
 	@Override
 	public void update(){
 		setString();
+		SmartDashboard.putBoolean("StartWriting", write);
 	}
 	
+	@Override
+	public void stop(){
+		write = false;
+	}
 	public void set(int val,int pos){
+		values[pos] = val+"";
+		if (values[pos].length() > 5)values[pos]=values[pos].substring(0, 5);
+		if(values[pos].length()<6){
+			for(int fish = 0; fish < 5-values[pos].length();fish++){
+				values[pos]+=" ";
+			}
+		}
+	}
+	
+	public void set(double val,int pos){
 		values[pos] = val+"";
 		if (values[pos].length() > 5)values[pos]=values[pos].substring(0, 5);
 		if(values[pos].length()<5){
@@ -39,23 +60,42 @@ public class Logger extends Runnable {
 		}
 	}
 	
-	public void set(double val,int pos){
-		values[pos] = val+"";
-	}
-	
 	public void set(boolean val,int pos){
 		values[pos] = val+"";
+		if (values[pos].length() > 5)values[pos]=values[pos].substring(0, 5);
+		if(values[pos].length()<5){
+			for(int fish = 0; fish < 5-values[pos].length();fish++){
+				values[pos]+=" ";
+			}
+		}
 	}
 	
 	public void set(float val,int pos){
 		values[pos] = val+"";
+		if (values[pos].length() > 5)values[pos]=values[pos].substring(0, 5);
+		if(values[pos].length()<5){
+			for(int fish = 0; fish < 5-values[pos].length();fish++){
+				values[pos]+=" ";
+			}
+		}
+	}
+	
+	public String setTime() {
+		String time = timer.get()+" | ";
+		if (time.length() > 5)time=time.substring(0, 5);
+		if(time.length()<5){
+			for(int fish = 0; fish < 5-time.length();fish++){
+				time+=" ";
+			}
+		}
+		return time;
 	}
 	
 	public void setString(){
+		toSend = "time: "+ setTime();
 		for(int fish = 0; fish < names.length;fish++){
 			toSend = toSend + names[fish] + ": " + values[fish] + " | ";
 		}
-		toSend = "time: "+ timer.get() + toSend;
 		toSend+="\n";
 		sendString();
 	}

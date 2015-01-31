@@ -13,7 +13,8 @@ public class Interpreter{
 	}
 	
 	public Command nextLine(){
-		Command newCommand = new Command(0, 0, 0, false);
+		//Command newCommand = new Command(0, 0, 0, false);
+		Command newCommand = new Command(0,0, 0,false);
 		String[] splitCommand = lines[curLine].split(":");
 		double[] args = {};
 		if(splitCommand.length>1){
@@ -22,23 +23,21 @@ public class Interpreter{
 			for(int jesus = 0; jesus <argsString.length; jesus++){
 				args[jesus] =  Double.parseDouble(argsString[jesus]);
 			}
-			
-			if(splitCommand[1].equalsIgnoreCase("navigate")){
+			if(splitCommand[0].equalsIgnoreCase("navigate")){
 				switch(args.length){
 				case 0:
-					return new Command(0,0,0, false);
+					return new ExtendedCommand(0,0,0, false);
 				case 1:
-					return new Command((int) args[0],0,0, false);
+					return new ExtendedCommand((int) args[0],0,0, false);
 				case 2:
-					return new Command((int) args[0],(int)args[1], 0, false);
+					return new ExtendedCommand((int) args[0],(int)args[1], 0, false);
 				case 3:
-					System.out.println("making command");
-					return new Command((int) args[0],(int) args[1],(int) args[2], false);
+					return new ExtendedCommand((int) args[0],(int) args[1],(int) args[2], false);
 				}
 			}
 		}
 		curLine ++;
-		return  newCommand;
+		return newCommand;
 	}
 	
 }

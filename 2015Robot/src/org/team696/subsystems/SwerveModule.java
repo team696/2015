@@ -55,11 +55,11 @@ public class SwerveModule extends Runnable{
 		if(angle<0) angle = 360+angle;
 		double error = 0.0;
 		error = setAngle - angle;
-		org.team696.robot.Robot.logger.set(error, 2);
+		//org.team696.robot.Robot.logger.set(error, 2);
 		boolean reverseMotor =  false;
 		if(error>180) error = -(360-error);  //check if over the
 		else if(error<-180) error = (360+error);//zero line to flip error 
-		org.team696.robot.Robot.logger.set(error, 3);
+		//org.team696.robot.Robot.logger.set(error, 3);
 		
 		if(error > 90){
 			error = -(180-error);
@@ -68,9 +68,9 @@ public class SwerveModule extends Runnable{
 			error = -(180+error);
 			reverseMotor = true;
 		}
-		org.team696.robot.Robot.logger.set(error, 4);
-		org.team696.robot.Robot.logger.set(angle, 0);
-		org.team696.robot.Robot.logger.set(setAngle, 1);
+		//org.team696.robot.Robot.logger.set(error, 4);
+		//org.team696.robot.Robot.logger.set(angle, 0);
+		//org.team696.robot.Robot.logger.set(setAngle, 1);
 		
 		steerController.update(-error);
 		if(Math.abs(steerController.getOutput())>0.1) steerMotor.set(steerController.getOutput());
@@ -80,11 +80,11 @@ public class SwerveModule extends Runnable{
 		SmartDashboard.putNumber("angle", angle);
 		SmartDashboard.putNumber("setAngle", setAngle);
 		SmartDashboard.putNumber("output", steerController.getOutput());
-		System.out.println(angle);
 	}
 	
 	public void setValues(double _setSpeed, double _setAngleDegrees){
 		setSpeed = _setSpeed;
+		if(_setAngleDegrees <0) _setAngleDegrees +=360;
 		setAngle = _setAngleDegrees;
 	}
 	

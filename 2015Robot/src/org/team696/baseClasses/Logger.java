@@ -9,11 +9,14 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Logger extends Runnable {
 	PrintWriter writer;
+	FileReader reader;
 	Timer timer = new Timer();
+	BufferedReader br;
 		
 	String[] names; 
 	String[] values;
 	String toSend;
+	String fn;
 	boolean write = false;
 	boolean dontPut = false;
 	
@@ -23,9 +26,25 @@ public class Logger extends Runnable {
 		return df.format(date);
 	}
 	
-	public Logger(String[] configName) throws FileNotFoundException, UnsupportedEncodingException{
-		String fn = "/usr/local/frc/logs/"+getDate()+".txt";
+	public void setPath(String path, boolean defaultPath){
+		if (!defaultPath)fn = "path";
+		else fn = "/usr/local/frc/logs/"+getDate()+".txt";
+	}
+	
+	public String[] read(int len) throws IOException{
+		String[] iRead = new String[len];
+		for(int fish=0;fish<len;fish++){
+			iRead[fish]=br.readLine();
+		}
+		return iRead;
+	}
+	
+	public Logger(String[] configName) throws FileNotFoundException, UnsupportedEncodingException,IOException{
+		
 		writer = new PrintWriter(fn);
+		reader = new FileReader(fn);
+		br = new BufferedReader(reader);
+		
 		names = new String[configName.length];
 		values = new String[names.length];
 		for(int fish = 0; fish < configName.length;fish++){

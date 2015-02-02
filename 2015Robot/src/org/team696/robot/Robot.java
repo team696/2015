@@ -2,6 +2,7 @@
 package org.team696.robot;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import org.team696.baseClasses.Logger;
@@ -27,7 +28,7 @@ public class Robot extends IterativeRobot {
 	//0   			1				2			3		4					5					6					7				8				9				10				11				13				14
 	//static String[] configName = new String[] {"AutoCannerLeft","AutoCannerRight","Elevator","Intake","SteeringEncoder1","SteeringEncoder2","SteeringEncoder3","SteeringEncoder4","SwerveModule1","SwerveModule2","SwerveModule2","SwerveModule3","SwerveModule4","SwerveDrive"};
 	//public static Logger logger = new Logger(configName);
-	public Robot() throws FileNotFoundException, UnsupportedEncodingException{	
+	public Robot() throws FileNotFoundException, UnsupportedEncodingException,IOException{	
 		logger = new Logger(new String[] {"Empty"});
 	}
 	

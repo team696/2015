@@ -4,7 +4,6 @@ package org.team696.robot;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 
-import org.team696.baseClasses.LocalLogger;
 import org.team696.baseClasses.Logger;
 import org.team696.subsystems.SwerveModule;
 

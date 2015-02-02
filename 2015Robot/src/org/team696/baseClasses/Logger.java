@@ -1,22 +1,31 @@
 package org.team696.baseClasses;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import edu.wpi.first.wpilibj.Timer;
 
 public class Logger extends Runnable {
+	PrintWriter writer;
 	Timer timer = new Timer();
-	LocalLogger usrLogger;
-	
+		
 	String[] names; 
 	String[] values;
 	String toSend;
 	boolean write = false;
 	boolean dontPut = false;
 	
+	public String getDate(){
+		Date date = new Date();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+		return df.format(date);
+	}
+	
 	public Logger(String[] configName) throws FileNotFoundException, UnsupportedEncodingException{
-		usrLogger = new LocalLogger();
+		String fn = "/usr/local/frc/logs/"+getDate()+".txt";
+		writer = new PrintWriter(fn);
 		names = new String[configName.length];
 		values = new String[names.length];
 		for(int fish = 0; fish < configName.length;fish++){
@@ -121,13 +130,17 @@ public class Logger extends Runnable {
 		for(int fish = 0; fish < names.length;fish++){
 			toSend = toSend + names[fish] + ": " + values[fish] + " | ";
 		}
-		if(dontPut)toSend="";
-		else toSend+="\n";
 		sendString();
 	}
 	
+	public void write(String str){
+		if(!dontPut){
+			writer.println(str);
+			writer.flush();
+		}
+	}
+	
 	public void sendString(){
-		usrLogger.write(toSend);
-		
+		write(toSend);
 	}
 }

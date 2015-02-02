@@ -1,17 +1,22 @@
 package org.team696.baseClasses;
 
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Logger extends Runnable {
 	Timer timer = new Timer();
+	LocalLogger usrLogger;
+	
 	String[] names; 
 	String[] values;
 	String toSend;
 	boolean write = false;
 	boolean dontPut = false;
 	
-	public Logger(String[] configName){
+	public Logger(String[] configName) throws FileNotFoundException, UnsupportedEncodingException{
+		usrLogger = new LocalLogger();
 		names = new String[configName.length];
 		values = new String[names.length];
 		for(int fish = 0; fish < configName.length;fish++){
@@ -21,8 +26,6 @@ public class Logger extends Runnable {
 	
 	public void init() {
 		write = false;
-		SmartDashboard.putBoolean("StartWriting", write);
-		SmartDashboard.putBoolean("Reset String", false);
 	}
 	
 	@Override
@@ -31,25 +34,21 @@ public class Logger extends Runnable {
 		toSend = "";
 		timer.start();
 		write = false;
-		SmartDashboard.putBoolean("Reset String", true);
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		SmartDashboard.putBoolean("Reset String", false);
 	}
 	
 	@Override
 	public void update(){
 		setString();
-		SmartDashboard.putBoolean("StartWriting", write);
 	}
 	
 	public void stop(){
 		write = true;
-		SmartDashboard.putBoolean("StartWriting", write);
 		timer.stop();
 		timer.reset();
 		try {
@@ -59,7 +58,6 @@ public class Logger extends Runnable {
 			e.printStackTrace();
 		}
 		write = false;
-		SmartDashboard.putBoolean("Reset String", false);
 	}
 	
 	public void set(int val,int pos){
@@ -129,7 +127,7 @@ public class Logger extends Runnable {
 	}
 	
 	public void sendString(){
-		SmartDashboard.putString("toAppend", toSend);
+		usrLogger.write(toSend);
 		
 	}
 }

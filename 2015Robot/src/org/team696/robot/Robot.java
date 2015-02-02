@@ -24,15 +24,14 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */			
-	LocalLogger usrLogger;
+	public static Logger logger;
 	//0   			1				2			3		4					5					6					7				8				9				10				11				13				14
 	//static String[] configName = new String[] {"AutoCannerLeft","AutoCannerRight","Elevator","Intake","SteeringEncoder1","SteeringEncoder2","SteeringEncoder3","SteeringEncoder4","SwerveModule1","SwerveModule2","SwerveModule2","SwerveModule3","SwerveModule4","SwerveDrive"};
 	//public static Logger logger = new Logger(configName);
 	public Robot() throws FileNotFoundException, UnsupportedEncodingException{	
-		usrLogger = new LocalLogger();
+		logger = new Logger(new String[] {"Empty"});
 	}
 	
-	public static Logger logger = new Logger(new String[] {"Empty"});
 	double x = 0;
 	double y = 0;
 	boolean firstRun = true;
@@ -49,7 +48,6 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
     	//drive.start(100);
     	logger.init();
-    	usrLogger.write("RobotInit");
     }
 
     /**
@@ -57,7 +55,6 @@ public class Robot extends IterativeRobot {
      */
 	@Override
 	public void autonomousInit(){
-		usrLogger.write("AutoInit");
 	}
 	
     public void autonomousPeriodic() {
@@ -71,7 +68,6 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
     	logger.start(20);
     	testModule.start(10);
-    	usrLogger.write("TeleopInit");
     }
     
     public void teleopPeriodic() {
@@ -87,9 +83,6 @@ public class Robot extends IterativeRobot {
     	
     	testModule.setSteerPID(kP, kI, kD);
     	testModule.setValues(speed/2,angle);
-    	
-    	
-    	
     }
     
     /**
@@ -103,7 +96,5 @@ public class Robot extends IterativeRobot {
     public void disabledInit() {
     	logger.stop();
     	testModule.stop();
-    	usrLogger.write("Disabled");
-    	
     }
 }

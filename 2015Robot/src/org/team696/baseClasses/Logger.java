@@ -9,6 +9,7 @@ public class Logger extends Runnable {
 	String[] values;
 	String toSend;
 	boolean write = false;
+	boolean dontPut = false;
 	
 	public Logger(String[] configName){
 		names = new String[configName.length];
@@ -19,7 +20,9 @@ public class Logger extends Runnable {
 	}
 	
 	public void init() {
+		write = false;
 		SmartDashboard.putBoolean("StartWriting", write);
+		SmartDashboard.putBoolean("Reset String", false);
 	}
 	
 	@Override
@@ -27,7 +30,15 @@ public class Logger extends Runnable {
 		super.start(frequency);
 		toSend = "";
 		timer.start();
-		write = true;
+		write = false;
+		SmartDashboard.putBoolean("Reset String", true);
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		SmartDashboard.putBoolean("Reset String", false);
 	}
 	
 	@Override
@@ -36,15 +47,27 @@ public class Logger extends Runnable {
 		SmartDashboard.putBoolean("StartWriting", write);
 	}
 	
-	@Override
 	public void stop(){
+		write = true;
+		SmartDashboard.putBoolean("StartWriting", write);
+		timer.stop();
+		timer.reset();
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		write = false;
+		SmartDashboard.putBoolean("Reset String", false);
 	}
+	
 	public void set(int val,int pos){
 		values[pos] = val+"";
-		if (values[pos].length() > 5)values[pos]=values[pos].substring(0, 5);
-		if(values[pos].length()<6){
-			for(int fish = 0; fish < 5-values[pos].length();fish++){
+		if (values[pos].length() >= 5)values[pos]=values[pos].substring(0, 5);
+		if(values[pos].length()<5){
+			int lenDif =5-values[pos].length();
+			for(int fish = 0; fish < lenDif;fish++){
 				values[pos]+=" ";
 			}
 		}
@@ -52,10 +75,12 @@ public class Logger extends Runnable {
 	
 	public void set(double val,int pos){
 		values[pos] = val+"";
-		if (values[pos].length() > 5)values[pos]=values[pos].substring(0, 5);
+		if (values[pos].length() >= 5)values[pos]=values[pos].substring(0, 5);
 		if(values[pos].length()<5){
-			for(int fish = 0; fish < 5-values[pos].length();fish++){
+			int lenDif = 5-values[pos].length();
+			for(int fish = 0; fish < lenDif;fish++){
 				values[pos]+=" ";
+				System.out.println(values[pos].length());
 			}
 		}
 	}
@@ -81,6 +106,8 @@ public class Logger extends Runnable {
 	}
 	
 	public String setTime() {
+		dontPut = false;
+		if (timer.get() < 0.1)dontPut = true;
 		String time = timer.get()+" | ";
 		if (time.length() > 5)time=time.substring(0, 5);
 		if(time.length()<5){
@@ -92,15 +119,17 @@ public class Logger extends Runnable {
 	}
 	
 	public void setString(){
-		toSend = "time: "+ setTime();
+		toSend = "time: "+ setTime() + " | ";
 		for(int fish = 0; fish < names.length;fish++){
 			toSend = toSend + names[fish] + ": " + values[fish] + " | ";
 		}
-		toSend+="\n";
+		if(dontPut)toSend="";
+		else toSend+="\n";
 		sendString();
 	}
 	
 	public void sendString(){
 		SmartDashboard.putString("toAppend", toSend);
+		
 	}
 }

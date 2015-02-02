@@ -29,45 +29,41 @@ public class SwerveDrive extends Runnable{
 	private double[][] wheelValues = new double[4][2];      // wheel values radians
 	private double[][] setWheelValues = new double[4][2];
 	
-	//private SwerveModule frontLeft;
+	private SwerveModule frontLeft;
 	private SwerveModule frontRight;
-	//private SwerveModule backRight;
-	//private SwerveModule backLeft;
+	private SwerveModule backRight;
+	private SwerveModule backLeft;
 	
 	public SwerveDrive(int[][] _moduleChannels){
 		moduleChannels = _moduleChannels;
-	    //frontLeft = new SwerveModule(moduleChannels[0]);
+	    frontLeft = new SwerveModule(moduleChannels[0]);
 		frontRight = new SwerveModule(moduleChannels[1]);
-		//backRight = new SwerveModule(moduleChannels[2]);
-		//backLeft = new SwerveModule(moduleChannels[3]);
+		backRight = new SwerveModule(moduleChannels[2]);
+		backLeft = new SwerveModule(moduleChannels[3]);
 		
 	}
 	@Override
-	public void start(int periodMS){
-		super.start(periodMS);
-		//frontLeft.start(periodMS);
-		frontRight.start(periodMS);
-		//backRight.start(periodMS);
-		//backRight.start(periodMS);
+	public void start(int frequency){
+		super.start(frequency);
+		
 		
 	}
 	@Override
 	public void update(){
+		super.update();
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
-		//System.out.println(setWheelValues[1][0]+ "    "+ setWheelValues[1][1]);
-		//frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
-		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
-		//backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
-		//backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
+		frontLeft.setValues(wheelValues[0][0], wheelValues[0][1]);
+		frontRight.setValues(wheelValues[1][0], wheelValues[1][1]);
+		backRight.setValues(wheelValues[2][0], wheelValues[2][1]);
+		frontLeft.setValues(wheelValues[3][0], wheelValues[3][1]);
 				
 	}
-	
 	public void setSteerPID(double P, double I, double D){
-		//frontLeft.setSteerPID(P, I, D);
+		frontLeft.setSteerPID(P, I, D);
 		frontRight.setSteerPID(P, I, D);
-		//backRight.setSteerPID(P, I, D);
-		//backLeft.setSteerPID(P, I, D);
+		backRight.setSteerPID(P, I, D);
+		backLeft.setSteerPID(P, I, D);
 	}
 //	public void setDrivePID(double P, double I, double D, double F){
 //		frontLeft.setDrivePID(P, I, D, F);
@@ -77,19 +73,19 @@ public class SwerveDrive extends Runnable{
 //	}
 	
 	void setWheels(){
-		//frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
+		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
 		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
-		//backLeft.setValues(setWheelValues[2][0], setWheelValues[2][1]);
-		//backRight.setValues(setWheelValues[3][0], setWheelValues[3][1]);
+		backLeft.setValues(setWheelValues[2][0], setWheelValues[2][1]);
+		backRight.setValues(setWheelValues[3][0], setWheelValues[3][1]);
 	}
 	
-	double[][] calculateVectors(double speed, double headingDegrees, double rotationRadians){
+	double[][] calculateVectors(double speed, double headingDegrees, double rotationDegrees){
 		double[][] vectors = new double[4][2];
 		double headingRadians = Math.toRadians(headingDegrees);
+		double rotationRadians = Math.toRadians(rotationDegrees);
 		for(int fish = 0; fish<4; fish++){
-			vectors[fish][0] = speed*Math.sin(headingRadians);
-			vectors[fish][1] = speed*Math.cos(headingRadians);
-			
+			vectors[fish][0] = speed*Math.cos(headingRadians);
+			vectors[fish][1] = speed*Math.sin(headingRadians);
 			//vectors[fish][0] += rotationRadians*Math.cos((Math.PI/4) + (fish*Math.PI/2));
 			//vectors[fish][1] += rotationRadians*Math.sin((Math.PI/4) + (fish*Math.PI/2));
 		}
@@ -110,8 +106,9 @@ public class SwerveDrive extends Runnable{
 		
 		for(int fish = 0; fish<4; fish++){
 			values[fish][0] = Math.sqrt(vectors[fish][0] *vectors[fish][0]) +((vectors[fish][1] *vectors[fish][1])); //pythagorean thrm for speed
-			values[fish][1] = -Math.toDegrees(Math.atan2(-vectors[fish][0],vectors[fish][1]));
+			values[fish][1] = Math.atan2(vectors[fish][1],vectors[fish][0]);         
 			//atan2 to find angle between -pi and pi
+			
 			}
 		double maxValue=0;
 		
@@ -126,10 +123,11 @@ public class SwerveDrive extends Runnable{
 		return values;
 	}
 	
-	public boolean setDriveValues(double speed, double headingDegrees, double rotation){
+	boolean setDriveValues(double speed, double headingDegrees, double rotation){
 		setRobotVector[0] = speed;
 		setRobotVector[1] = headingDegrees;
 		setRobotVector[2] = rotation;
+		
 		//setWheelVectors = calculateVectors(setSpeed, setRobotHeading, setRotation);
 		//setWheelValues = calculateWheelValues(setWheelVectors);
 		

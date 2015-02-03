@@ -1,9 +1,5 @@
 package org.team696.subsystems;
 
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 import com.kauailabs.nav6.frc.IMU;
 import com.kauailabs.nav6.frc.IMUAdvanced;
 
@@ -88,10 +84,22 @@ public class SwerveDrive extends Runnable{
 			cumVectors[0] += wheelVectors[fish][0];
 			cumVectors[1] += wheelVectors[fish][1];
 		}
+		double[] cumVectorsPolar = {0.0,0.0};
+		cumVectorsPolar[0] = Math.sqrt(Math.pow(cumVectors[0], 2)+ Math.pow(cumVectors[1],2));
+		cumVectorsPolar[1] = -Math.toDegrees(Math.atan2(-cumVectors[0],cumVectors[1]));
+		//System.out.println(cumVectorsPolar[0]+ "     " +cumVectorsPolar[1]);
 		
-		robotPosition[0] += cumVectors[0]/1000;
-		robotPosition[1] += cumVectors[1]/1000;
-		System.out.println(robotPosition[0]+ "    " + robotPosition[1]);
+		cumVectorsPolar[1]+= navX.getYaw();
+		if(cumVectorsPolar[1]<0) cumVectorsPolar[1]+=360;
+		else if(cumVectorsPolar[1]>360) cumVectorsPolar[1]-=360;
+		//System.out.println(cumVectorsPolar[1]);
+		double[] cumVectorsAdjusted = new double[2];
+		cumVectorsAdjusted[0] = cumVectorsPolar[0]*Math.sin(Math.toRadians(cumVectorsPolar[1]));
+		cumVectorsAdjusted[1] = cumVectorsPolar[0]*Math.cos(Math.toRadians(cumVectorsPolar[1]));
+		robotPosition[0] += cumVectorsAdjusted[0]/1000;
+		robotPosition[1] += cumVectorsAdjusted[1]/1000;
+		robotPosition[2] = navX.getYaw();
+		System.out.println(robotPosition[0]+ "   "+ robotPosition[1]+ "   " + robotPosition[2]);
 	}
 	
 	public void setSteerPID(double P, double I, double D){

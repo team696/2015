@@ -16,9 +16,6 @@ public class SwerveModule extends Runnable{
 	Encoder driveEncoder;
 	SteeringEncoder steerEncoder;
 	
-	int lastEncoderCount = 0;
-	int encoderCount = 0;
-	
 	double setAngle;
 	double angle;
 	

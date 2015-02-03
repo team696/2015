@@ -16,6 +16,9 @@ public class SwerveModule extends Runnable{
 	Encoder driveEncoder;
 	SteeringEncoder steerEncoder;
 	
+	int lastEncoderCount = 0;
+	int encoderCount = 0;
+	
 	double setAngle;
 	double angle;
 	
@@ -25,7 +28,7 @@ public class SwerveModule extends Runnable{
 	Talon steerMotor;
 	Talon driveMotor;
 	
-	PIDController driveController;
+	//PIDController driveController;
 	CustomPID steerController;
 	
 	
@@ -35,7 +38,7 @@ public class SwerveModule extends Runnable{
 		steerEncoder = new SteeringEncoder(configs[2]);
 		steerController = new CustomPID(0.05,0, 0.3);
 		driveEncoder = new Encoder(configs[3], configs[4]);
-		driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);
+		//driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);
 	}
 	
 //	public void enablePID(boolean drive){
@@ -47,10 +50,12 @@ public class SwerveModule extends Runnable{
 	public void start(int periodMS){
 		super.start(periodMS);
 		steerEncoder.start(5);
+		driveEncoder.reset();
 	}
 	@Override
 	public void update(){
 		super.update();
+		
 		angle = steerEncoder.getAngleDegrees();
 		if(angle<0) angle = 360+angle;
 		double error = 0.0;
@@ -99,11 +104,8 @@ public class SwerveModule extends Runnable{
 	public double[] getVelocity(){
 		
 		double[] vector = {0.0,0.0};
+		vector[0] = driveEncoder.getRate()*Math.sin(Math.toRadians(angle));
+		vector[1] = driveEncoder.getRate()*Math.cos(Math.toRadians(angle));
 		return vector;
-	}
-	
-	public double[] getPosition(){
-		double[] x = {0,0};
-		return x;
 	}
 }

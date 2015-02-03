@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import com.kauailabs.nav6.frc.IMU;
+import com.kauailabs.nav6.frc.IMUAdvanced;
+
+import edu.wpi.first.wpilibj.SerialPort;
+
 import org.team696.subsystems.SwerveModule;
 import org.team696.baseClasses.Runnable;
 
@@ -17,55 +22,81 @@ public class SwerveDrive extends Runnable{
 	//second dimension is each 
 	private int[][] moduleChannels = new int[4][5];
 	
-	private double[] setRobotVector = new double[3];       //x, y, and rotation Speed (robotCentric)
-	private double[] setFieldCentricVector = new double[3]; ///x, y, and rotation Speed (fieldCentric)
+	private double[] setRobotVector = new double[3];       //speed, heading, and rotation Speed (robotCentric)
 	
-	private double[] motionVector = {0.0,0.0,0.0};   //x, y, and rotation speed
-	private double[] fieldCentricMotionVector = {0.0,0.0,0.0}; //x, y, and rotation speed.
-	
-	private double[][] wheelVectors = new double[4][2];      // wheel vectors
 	private double[][] setWheelVectors = new double[4][2];
 	
-	private double[][] wheelValues = new double[4][2];      // wheel values radians
 	private double[][] setWheelValues = new double[4][2];
 	
-	//private SwerveModule frontLeft;
-	private SwerveModule frontRight;
+	private double[] robotPosition = {0.0,0.0,0.0}; //x, y, and rotation
+	
+	private SwerveModule frontLeft;
+	//private SwerveModule frontRight;
 	//private SwerveModule backRight;
 	//private SwerveModule backLeft;
 	
+	IMUAdvanced navX;
+	SerialPort port;
+	
 	public SwerveDrive(int[][] _moduleChannels){
 		moduleChannels = _moduleChannels;
-	    //frontLeft = new SwerveModule(moduleChannels[0]);
-		frontRight = new SwerveModule(moduleChannels[1]);
+	    frontLeft = new SwerveModule(moduleChannels[0]);
+		//frontRight = new SwerveModule(moduleChannels[1]);
 		//backRight = new SwerveModule(moduleChannels[2]);
 		//backLeft = new SwerveModule(moduleChannels[3]);
 		
+	    try{
+	    	byte updateRateHZ = 50;
+	    	port = new SerialPort(57600, SerialPort.Port.kMXP);
+	    	navX = new IMUAdvanced(port, updateRateHZ);
+	    }catch(Exception ex){System.out.println("NAVX FAILURE!");}
+	    
 	}
 	@Override
 	public void start(int periodMS){
+		
 		super.start(periodMS);
-		//frontLeft.start(periodMS);
-		frontRight.start(periodMS);
+		frontLeft.start(periodMS);
+		//frontRight.start(periodMS);
 		//backRight.start(periodMS);
-		//backRight.start(periodMS);
+		//backLeft.start(periodMS);
+		
+		
 		
 	}
 	@Override
 	public void update(){
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
-		//System.out.println(setWheelValues[1][0]+ "    "+ setWheelValues[1][1]);
-		//frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
-		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
+		updateOdometry();
+		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
+		//frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
 		//backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
 		//backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
 				
 	}
 	
+	private void updateOdometry(){
+		double [][] wheelVectors = new double[4][2];
+		
+		wheelVectors[0] = frontLeft.getVelocity();
+		//wheelVectors[1] = frontRight.getVelocity();
+		//wheelVectors[2] = backRight.getVelocity();
+		//wheelVectors[3] = backLeft.getVelocity();
+		double[] cumVectors = {0.0,0.0};
+		for(int fish = 0; fish<1; fish++){
+			cumVectors[0] += wheelVectors[fish][0];
+			cumVectors[1] += wheelVectors[fish][1];
+		}
+		
+		robotPosition[0] += cumVectors[0]/1000;
+		robotPosition[1] += cumVectors[1]/1000;
+		System.out.println(robotPosition[0]+ "    " + robotPosition[1]);
+	}
+	
 	public void setSteerPID(double P, double I, double D){
-		//frontLeft.setSteerPID(P, I, D);
-		frontRight.setSteerPID(P, I, D);
+		frontLeft.setSteerPID(P, I, D);
+		//frontRight.setSteerPID(P, I, D);
 		//backRight.setSteerPID(P, I, D);
 		//backLeft.setSteerPID(P, I, D);
 	}
@@ -77,10 +108,10 @@ public class SwerveDrive extends Runnable{
 //	}
 	
 	void setWheels(){
-		//frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
-		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
-		//backLeft.setValues(setWheelValues[2][0], setWheelValues[2][1]);
-		//backRight.setValues(setWheelValues[3][0], setWheelValues[3][1]);
+		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
+		//frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
+		//backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
+		//backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
 	}
 	
 	double[][] calculateVectors(double speed, double headingDegrees, double rotationRadians){
@@ -98,8 +129,8 @@ public class SwerveDrive extends Runnable{
 		vectors[1][0] += rotationRadians*L2WRatio;
 		vectors[1][1] -= rotationRadians;
 		vectors[2][0] -= rotationRadians*L2WRatio;
-		vectors[2][1] -= rotationRadians;
-		vectors[3][0] -= rotationRadians*L2WRatio;
+		vectors[2][1] += rotationRadians;
+		vectors[3][0] += rotationRadians*L2WRatio;
 		vectors[3][1] += rotationRadians;
 		
 		return vectors;
@@ -130,14 +161,6 @@ public class SwerveDrive extends Runnable{
 		setRobotVector[0] = speed;
 		setRobotVector[1] = headingDegrees;
 		setRobotVector[2] = rotation;
-		//setWheelVectors = calculateVectors(setSpeed, setRobotHeading, setRotation);
-		//setWheelValues = calculateWheelValues(setWheelVectors);
-		
-		//frontLeft.setValues(wheelValues[0][0], wheelValues[0][1]);
-		//frontRight.setValues(wheelValues[1][0], wheelValues[1][1]);
-		//backRight.setValues(wheelValues[2][0], wheelValues[2][1]);
-		//frontLeft.setValues(wheelValues[3][0], wheelValues[3][1]);
-		
 		return true;
 	}
 	

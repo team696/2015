@@ -1,16 +1,50 @@
 package org.team696.baseClasses;
 
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Logger extends Runnable {
+	PrintWriter writer;
+	FileReader reader;
 	Timer timer = new Timer();
+	BufferedReader br;
+		
 	String[] names; 
 	String[] values;
 	String toSend;
+	String fn;
 	boolean write = false;
+	boolean dontPut = false;
 	
-	public Logger(String[] configName){
+	public String getDate(){
+		Date date = new Date();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+		return df.format(date);
+	}
+	
+	public void setPath(String path, boolean defaultPath){
+		if (!defaultPath)fn = "path";
+		else fn = "/usr/local/frc/logs/"+getDate()+".txt";
+	}
+	
+	public String[] read(int len) throws IOException{
+		String[] iRead = new String[len];
+		for(int fish=0;fish<len;fish++){
+			iRead[fish]=br.readLine();
+		}
+		return iRead;
+	}
+	
+	public Logger(String[] configName) throws FileNotFoundException, UnsupportedEncodingException,IOException{
+		
+		writer = new PrintWriter(fn);
+		reader = new FileReader(fn);
+		br = new BufferedReader(reader);
+		
 		names = new String[configName.length];
 		values = new String[names.length];
 		for(int fish = 0; fish < configName.length;fish++){
@@ -19,7 +53,7 @@ public class Logger extends Runnable {
 	}
 	
 	public void init() {
-		SmartDashboard.putBoolean("StartWriting", write);
+		write = false;
 	}
 	
 	@Override
@@ -27,24 +61,39 @@ public class Logger extends Runnable {
 		super.start(frequency);
 		toSend = "";
 		timer.start();
-		write = true;
+		write = false;
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void update(){
 		setString();
-		SmartDashboard.putBoolean("StartWriting", write);
 	}
 	
-	@Override
 	public void stop(){
+		write = true;
+		timer.stop();
+		timer.reset();
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		write = false;
 	}
+	
 	public void set(int val,int pos){
 		values[pos] = val+"";
-		if (values[pos].length() > 5)values[pos]=values[pos].substring(0, 5);
-		if(values[pos].length()<6){
-			for(int fish = 0; fish < 5-values[pos].length();fish++){
+		if (values[pos].length() >= 5)values[pos]=values[pos].substring(0, 5);
+		if(values[pos].length()<5){
+			int lenDif =5-values[pos].length();
+			for(int fish = 0; fish < lenDif;fish++){
 				values[pos]+=" ";
 			}
 		}
@@ -52,10 +101,12 @@ public class Logger extends Runnable {
 	
 	public void set(double val,int pos){
 		values[pos] = val+"";
-		if (values[pos].length() > 5)values[pos]=values[pos].substring(0, 5);
+		if (values[pos].length() >= 5)values[pos]=values[pos].substring(0, 5);
 		if(values[pos].length()<5){
-			for(int fish = 0; fish < 5-values[pos].length();fish++){
+			int lenDif = 5-values[pos].length();
+			for(int fish = 0; fish < lenDif;fish++){
 				values[pos]+=" ";
+				System.out.println(values[pos].length());
 			}
 		}
 	}
@@ -81,6 +132,8 @@ public class Logger extends Runnable {
 	}
 	
 	public String setTime() {
+		dontPut = false;
+		if (timer.get() < 0.1)dontPut = true;
 		String time = timer.get()+" | ";
 		if (time.length() > 5)time=time.substring(0, 5);
 		if(time.length()<5){
@@ -92,15 +145,21 @@ public class Logger extends Runnable {
 	}
 	
 	public void setString(){
-		toSend = "time: "+ setTime();
+		toSend = "time: "+ setTime() + " | ";
 		for(int fish = 0; fish < names.length;fish++){
 			toSend = toSend + names[fish] + ": " + values[fish] + " | ";
 		}
-		toSend+="\n";
 		sendString();
 	}
 	
+	public void write(String str){
+		if(!dontPut){
+			writer.println(str);
+			writer.flush();
+		}
+	}
+	
 	public void sendString(){
-		SmartDashboard.putString("toAppend", toSend);
+		write(toSend);
 	}
 }

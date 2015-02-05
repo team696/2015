@@ -1,6 +1,10 @@
 
 package org.team696.robot;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 import org.team696.baseClasses.Logger;
 import org.team696.subsystems.SwerveModule;
 
@@ -19,10 +23,15 @@ public class Robot extends IterativeRobot {
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
-     */												//0   			1				2			3		4					5					6					7				8				9				10				11				13				14
+     */			
+	public static Logger logger;
+	//0   			1				2			3		4					5					6					7				8				9				10				11				13				14
 	//static String[] configName = new String[] {"AutoCannerLeft","AutoCannerRight","Elevator","Intake","SteeringEncoder1","SteeringEncoder2","SteeringEncoder3","SteeringEncoder4","SwerveModule1","SwerveModule2","SwerveModule2","SwerveModule3","SwerveModule4","SwerveDrive"};
 	//public static Logger logger = new Logger(configName);
-	public static Logger logger = new Logger(new String[] {"Angle","SSetangle","origError","ModError1","ModError2"});
+	public Robot() throws FileNotFoundException, UnsupportedEncodingException,IOException{	
+		logger = new Logger(new String[] {"Empty"});
+	}
+	
 	double x = 0;
 	double y = 0;
 	boolean firstRun = true;
@@ -44,6 +53,10 @@ public class Robot extends IterativeRobot {
     /**
      * This function is called periodically during autonomous
      */
+	@Override
+	public void autonomousInit(){
+	}
+	
     public void autonomousPeriodic() {
 
     }
@@ -70,9 +83,6 @@ public class Robot extends IterativeRobot {
     	
     	testModule.setSteerPID(kP, kI, kD);
     	testModule.setValues(speed/2,angle);
-    	
-    	
-    	
     }
     
     /**

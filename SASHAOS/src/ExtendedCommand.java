@@ -7,12 +7,11 @@ public class ExtendedCommand extends Command{
 		counter += arg3;
 		parallel = _parallel;
 	}
-	
-	@Override
-	
+
 	@Override
 	public void update(){
 		super.update();
-		System.out.println("updating");
+		System.out.println("running:   " + counter);
+		//System.out.println("updating");
 	}
 }

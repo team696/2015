@@ -22,7 +22,7 @@ public class Command extends Runnable{
 	@Override
 	public void update(){
 		counter--;
-		System.out.println(counter);
+		//System.out.println(counter);
 		if(counter <0) isFinished = true;
 	}
 	public boolean finished(){

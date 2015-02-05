@@ -33,15 +33,19 @@ public class Scheduler extends Runnable{
 				curCommands.get(fish).stop();
 				curCommands.remove(fish);
 			}else{
-				
 				if(!curCommands.get(fish).isParallel()) threadFree = false;
 				fish++;
-			}	
+			}
 		}
 		
-		if(threadFree){
+		if(threadFree && interpreter.hasNextLine()){
 			curCommands.add(interpreter.nextLine());
 			curCommands.lastElement().start(100);
+		}
+		
+		if(curCommands.size()<1 && !interpreter.hasNextLine()){
+			System.out.println("stopping");
+			stop();
 		}
 	}
 }

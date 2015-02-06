@@ -1,5 +1,9 @@
 package org.team696.subsystems;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 import com.kauailabs.nav6.frc.IMU;
 import com.kauailabs.nav6.frc.IMUAdvanced;
 
@@ -34,9 +38,9 @@ public class SwerveDrive extends Runnable{
 	IMUAdvanced navX;
 	SerialPort port;
 	
-	public SwerveDrive(int[][] _moduleChannels){
+	public SwerveDrive(int[][] _moduleChannels, int wheel)throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		moduleChannels = _moduleChannels;
-	    frontLeft = new SwerveModule(moduleChannels[0]);
+	    frontLeft = new SwerveModule(moduleChannels[0], wheel);
 		//frontRight = new SwerveModule(moduleChannels[1]);
 		//backRight = new SwerveModule(moduleChannels[2]);
 		//backLeft = new SwerveModule(moduleChannels[3]);

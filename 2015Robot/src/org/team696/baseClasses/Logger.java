@@ -26,14 +26,17 @@ public class Logger extends Runnable {
 		return df.format(date);
 	}
 	
-	public void setPath(String path, boolean defaultPath){
-		if (!defaultPath)fn = "path";
-		else fn = "/usr/local/frc/logs/"+getDate()+".txt";
+	public void setPath(String path){
+		fn = "path";
 	}
 	
-	public String[] read(int len) throws IOException{
-		String[] iRead = new String[len];
-		for(int fish=0;fish<len;fish++){
+	public void setPath(){
+		fn = "/usr/local/frc/logs/"+getDate()+".txt";
+	}
+	
+	public String[] read(int lines) throws IOException{
+		String[] iRead = new String[lines];
+		for(int fish=0;fish<lines;fish++){
 			iRead[fish]=br.readLine();
 		}
 		return iRead;
@@ -144,7 +147,18 @@ public class Logger extends Runnable {
 		return time;
 	}
 	
-	public void setString(){
+	public void setString(boolean noTime){
+		toSend = "";
+		if (!noTime)setString();
+		else {
+			for(int fish = 0; fish < names.length;fish++){
+				toSend = toSend + names[fish] + ": " + values[fish] + " | ";
+			}
+		}
+		sendString();
+	}
+	
+	private void setString(){
 		toSend = "time: "+ setTime() + " | ";
 		for(int fish = 0; fish < names.length;fish++){
 			toSend = toSend + names[fish] + ": " + values[fish] + " | ";

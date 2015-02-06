@@ -1,7 +1,7 @@
 
 
 public class Interpreter{
-	String rawString = "navigate: 3 , 4, 30 \nnavigate: 2 , 20, 0";
+	String rawString = "navigate: 3 , 4, 30 \n navigate: 2 , 20, 0";
 	String parsedCode;
 	String[] lines;
 	int curLine = 0;
@@ -21,8 +21,8 @@ public class Interpreter{
 	}
 	
 	public Command nextLine(){
-		//Command newCommand = new Command(0, 0, 0, false);
-		Command newCommand = new Command(0,0, 0,false);
+		
+		Command newCommand = new Command();
 		String[] splitCommand = lines[curLine].split(":");
 		double[] args = {};
 		if(splitCommand.length>1){

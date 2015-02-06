@@ -1,6 +1,8 @@
 
 public class ExtendedCommand extends Command{
 	
+	int counter = 0;
+	
 	public ExtendedCommand(int arg1, int arg2, int arg3, boolean _parallel) {
 		counter = arg1;
 		counter += arg2;
@@ -10,8 +12,8 @@ public class ExtendedCommand extends Command{
 
 	@Override
 	public void update(){
-		super.update();
+		counter--;
+		if(counter< 0) isFinished = true;
 		System.out.println("running:   " + counter);
-		//System.out.println("updating");
 	}
 }

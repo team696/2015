@@ -30,6 +30,7 @@ public class Robot extends IterativeRobot {
 	//public static Logger logger = new Logger(configName);
 	public Robot() throws FileNotFoundException, UnsupportedEncodingException,IOException{	
 		logger = new Logger(new String[] {"Empty"});
+		testModule = new SwerveModule(testValues, 1);
 	}
 	
 	double x = 0;
@@ -44,7 +45,7 @@ public class Robot extends IterativeRobot {
 	double angle=0;
 	double speed=0;
 	//SwerveDrive drive = new SwerveDrive(moduleValues);
-	public static SwerveModule testModule = new SwerveModule(testValues);
+	public static SwerveModule testModule;
 	public void robotInit() {
     	//drive.start(100);
     	logger.init();

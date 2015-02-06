@@ -1,5 +1,9 @@
 package org.team696.subsystems;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
@@ -21,6 +25,7 @@ public class SwerveModule extends Runnable{
 	
 	double setSpeed;
 	double speed;
+	int wheel;
 	
 	Talon steerMotor;
 	Talon driveMotor;
@@ -29,10 +34,11 @@ public class SwerveModule extends Runnable{
 	CustomPID steerController;
 	
 	
-	public SwerveModule(int[] configs){
+	public SwerveModule(int[] configs, int _wheel)throws FileNotFoundException, UnsupportedEncodingException,IOException{
+		wheel = _wheel;
 		steerMotor = new Talon(configs[0]);
 		driveMotor = new Talon(configs[1]);
-		steerEncoder = new SteeringEncoder(configs[2]);
+		steerEncoder = new SteeringEncoder(configs[2],wheel);
 		steerController = new CustomPID(0.05,0, 0.3);
 		driveEncoder = new Encoder(configs[3], configs[4]);
 		//driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);

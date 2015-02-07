@@ -1,12 +1,13 @@
 
-public class ExtendedCommand extends Command{
+public class navigate extends Command{
 	
 	int counter = 0;
 	
-	public ExtendedCommand(int arg1, int arg2, int arg3, boolean _parallel) {
-		counter = arg1;
-		counter += arg2;
-		counter += arg3;
+	public navigate(Double arg1,Double arg2,Double arg3, Boolean _parallel) {
+
+		counter+= arg1;
+		counter+= arg2;
+		counter+= arg3;
 		parallel = _parallel;
 	}
 

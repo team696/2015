@@ -60,8 +60,8 @@ public class Logger extends Runnable {
 	}
 	
 	@Override
-	public void start(int frequency){
-		super.start(frequency);
+	public void start(int periodMS){
+		super.start(periodMS);
 		toSend = "";
 		timer.start();
 		write = false;

@@ -53,6 +53,10 @@ public class SteeringEncoder extends Runnable {
 		counter.setString(false);
 	}
 	
+	public void trimCenter(int trim){
+		center+=trim;
+	}
+	
 	@Override
 	public void start(int periodMS){
 		super.start(periodMS);

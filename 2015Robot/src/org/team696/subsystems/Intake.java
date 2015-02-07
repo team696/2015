@@ -19,17 +19,17 @@ public class Intake extends Runnable{
 	/*
 	 * @param config - ejectorChan, grabBinChan, rightInChan, leftInChan
 	 */
-	public Intake(int ejectorSolenoid, int grabberSolenoid, int rightIntake, int leftIntake) {
+	public Intake(int ejectorSolenoid, int grabberSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
 		ejector = new Solenoid(ejectorSolenoid);
 		grabberOfBin = new Solenoid(grabberSolenoid);
 		
-		rightIn = new VictorSP(rightIntake);
-		leftIn = new VictorSP(leftIntake);
+		rightIn = new VictorSP(rightIntakeVictor);
+		leftIn = new VictorSP(leftIntakeVictor);
 	}
 	
 	@Override 
-	public void start(int frequency) {
-		super.start(frequency);
+	public void start(int periodMS) {
+		super.start(periodMS);
 	}
 	
 	@Override
@@ -37,18 +37,12 @@ public class Intake extends Runnable{
 		run();
 	}
 	
-	/*
-	 * @param set - eject, intake, grabBin
-	 */
-	public void setIntake(boolean eject, boolean intake, boolean _grabBin) {
+	public void setIntake(boolean eject, boolean intake, boolean _grabBin, double _speed) {
 		if (eject == intake) {
 			intake = false;
 			eject = false;
 		}
 		grabBin = _grabBin;
-	}
-	
-	public void setSpeed(double _speed) {
 		speed = _speed;
 	}
 	

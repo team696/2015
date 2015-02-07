@@ -39,16 +39,8 @@ public class Elevator extends Runnable {
 		encoder.setDistancePerPulse((1/256)*distPerTote);
 	}
 	
-	public void setGoalPos(double _pos){
-		goalPos = _pos;
-	}
-	
 	public void setGoalPos(int _totesPos){	
 		goalPos = _totesPos;
-	}
-	
-	public void setBreaking(boolean _startBraking) {
-		startBraking = _startBraking;
 	}
 	
 	public void setMotion(boolean _moveUp,boolean _moveDown){

@@ -5,8 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import org.team696.baseClasses.Logger;
-import org.team696.subsystems.SwerveModule;
+import org.team696.baseClasses.*;
+
+import org.team696.subsystems.*;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -46,9 +47,59 @@ public class Robot extends IterativeRobot {
 //	double speed=0;
 //	//SwerveDrive drive = new SwerveDrive(moduleValues);
 //	public static SwerveModule testModule;
-	public void robotInit() {
+	
+	Joystick controlBoard;
+	SwerveDrive drive;
+	Intake intake;
+	AutoCanner canner;
+	Elevator elevator;	
+	
+	Logger logger;
+	
+	double speed;
+	int goalTotes = 0;
+	int temp = 0;
+	boolean intakeWheelsIn  = controlBoard.getRawButton(0);
+	boolean intakeWheelsOut = controlBoard.getRawButton(1);
+	boolean ejectMech       = controlBoard.getRawButton(2);
+	boolean intakeMech      = controlBoard.getRawButton(3);
+	boolean grabBin         = controlBoard.getRawButton(4);
+	boolean leftOut         = controlBoard.getRawButton(5);
+	boolean rightOut        = controlBoard.getRawButton(6);
+	boolean override        = controlBoard.getRawButton(7);
+	boolean moveUp          = controlBoard.getRawButton(8);
+	boolean moveDown        = controlBoard.getRawButton(9);
+	boolean moveUpOld;
+	boolean moveDownOld;
+	
+	public void initiate(){
+		controlBoard = new Joystick(0);
+		intake = new Intake(0, 1, 2, 3);
+		canner = new AutoCanner(4, 5);
+		elevator = new Elevator(new int[] {6,7,8,9,10});
+		try {
+			drive = new SwerveDrive(new int[][] {
+					{0,1,2,3,4,5},
+					{0,1,2,3,4,5},
+					{0,1,2,3,4,5},
+					{0,1,2,3,4,5}
+			});
+			logger = new Logger(new String[] {
+					"null"
+			});
+		} 
+		catch(FileNotFoundException fnfE){}
+		catch(IOException ioE){}
+	}
+	
+	public void robotInit(){
 //    	//drive.start(100);
 //    	logger.init();
+		intake.start(20);
+		canner.start(20);
+		elevator.start(20);
+		drive.start(20);
+		logger.init();
     }
 
     /**
@@ -56,7 +107,11 @@ public class Robot extends IterativeRobot {
      */
 	@Override
 	public void autonomousInit(){
+		logger.stop();
+		logger.start(20);
 	}
+	
+	
 	
     public void autonomousPeriodic() {
 
@@ -66,13 +121,14 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     @Override
-    public void teleopInit() {
-//    	logger.start(20);
+    public void teleopInit() {   	
 //    	testModule.start(10);
+    	
+    	logger.stop();
+    	logger.start(20);
     }
     
     public void teleopPeriodic() {
-    	
 //    	logger.update();
 //    	kP = SmartDashboard.getNumber("kP", 0.04);
 //    	kI = SmartDashboard.getNumber("kI", 0.0);
@@ -84,6 +140,38 @@ public class Robot extends IterativeRobot {
 //    	
 //    	testModule.setSteerPID(kP, kI, kD);
 //    	testModule.setValues(speed/2,angle);
+    	
+    	intakeWheelsIn  = controlBoard.getRawButton(0);
+    	intakeWheelsOut = controlBoard.getRawButton(1);
+    	ejectMech       = controlBoard.getRawButton(2);
+    	intakeMech      = controlBoard.getRawButton(3);
+    	grabBin         = controlBoard.getRawButton(4);
+    	leftOut         = controlBoard.getRawButton(5);
+    	rightOut        = controlBoard.getRawButton(6);
+    	override        = controlBoard.getRawButton(7);
+    	moveUpOld 		= moveUp;
+    	moveDownOld     = moveDown;
+    	moveUp          = controlBoard.getRawButton(8);
+    	moveDown        = controlBoard.getRawButton(9);
+    	
+    	
+    	if(intakeWheelsIn)speed=0.75;
+    	if(intakeWheelsOut)speed= -0.75;
+    	intake.setIntake(ejectMech, intakeMech,grabBin, speed);
+    	canner.set(leftOut, rightOut);
+    	elevator.override(override);
+    	elevator.setMotion(moveUp,moveDown);
+    	if (!override){
+    		if(moveUp && !moveDown && !moveUpOld)goalTotes++;
+    		if(!moveUp && moveDown && !moveDownOld)goalTotes--;
+    		elevator.setGoalPos(goalTotes);
+    	}
+    	
+    	intake.update();
+    	canner.update();
+    	elevator.update();
+    	drive.update();
+    	logger.update();
     }
     
     /**
@@ -95,7 +183,7 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void disabledInit() {
-//    	logger.stop();
+    	logger.stop();
 //    	testModule.stop();
     }
 }

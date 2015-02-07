@@ -41,6 +41,7 @@ public class Scheduler extends Runnable{
 		if(threadFree && interpreter.hasNextLine()){
 			curCommands.add(interpreter.nextLine());
 			curCommands.lastElement().start(100);
+			
 		}
 		
 		if(curCommands.size()<1 && !interpreter.hasNextLine()){

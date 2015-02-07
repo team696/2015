@@ -1,3 +1,7 @@
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
+
 
 
 public class Interpreter{
@@ -22,6 +26,8 @@ public class Interpreter{
 	
 	public Command nextLine(){
 		
+		Class command = Command.class;
+		
 		Command newCommand = new Command();
 		String[] splitCommand = lines[curLine].split(":");
 		double[] args = {};
@@ -31,22 +37,31 @@ public class Interpreter{
 			for(int jesus = 0; jesus <argsString.length; jesus++){
 				args[jesus] =  Double.parseDouble(argsString[jesus]);
 			}
-			if(splitCommand[0].equalsIgnoreCase("navigate")){
-				switch(args.length){
-				case 0:
-					System.out.println(args[0]+args[1]+args[2]);
-					newCommand = new ExtendedCommand(0,0,0, false);
-				case 1:
-					System.out.println(args[0]+args[1]+args[2]);
-					newCommand = new ExtendedCommand((int) args[0],0,0, false);
-				case 2:
-					System.out.println(args[0]+args[1]+args[2]);
-					newCommand = new ExtendedCommand((int) args[0],(int)args[1], 0, false);
-				case 3:
-					System.out.println(args[0]+args[1]+args[2]);
-					newCommand = new ExtendedCommand((int) args[0],(int) args[1],(int) args[2], false);
+			
+			try{
+				command = Class.forName(splitCommand[0].toLowerCase());
+				Class[] classArg = new Class[args.length+1];
+				Object[] arguments = new Object[args.length+1];
+				for(int fish = 0; fish < args.length; fish++){
+					classArg[fish] = Double.class;
 				}
-			}
+				classArg[classArg.length-1] = Boolean.class;
+				
+				for(int fish = 0; fish < args.length; fish++){
+					arguments[fish] = args[fish];
+				}
+				arguments[arguments.length-1] = false;
+				
+				Constructor constructor = command.getDeclaredConstructor(classArg);
+				System.out.println(constructor.getParameterCount());
+				newCommand = (Command) constructor.newInstance(arguments);
+				
+			}catch(ClassNotFoundException ex){ex.printStackTrace();}
+			catch(NoSuchMethodException ex){ex.printStackTrace();}
+			catch(InstantiationException ex){ex.printStackTrace();}
+			catch(IllegalAccessException ex){ex.printStackTrace();}
+			catch(InvocationTargetException ex){ex.printStackTrace();}
+			
 		}
 		curLine ++;
 		return newCommand;

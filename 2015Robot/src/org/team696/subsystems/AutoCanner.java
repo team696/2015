@@ -12,23 +12,19 @@ public class AutoCanner extends Runnable {
 	boolean leftOut = false;
 	boolean rightOut = false;
 	
-	/*
-	 * @param config - leftGrab, rightGrab
-	 */
-	public AutoCanner(int[] config) {
-		leftGrab = new Solenoid(config[0]);
-		rightGrab = new Solenoid(config[1]);
+	public AutoCanner(int leftSolenoid, int rightSolenoid) {
+		leftGrab = new Solenoid(leftSolenoid);
+		rightGrab = new Solenoid(rightSolenoid);
 	}
 	
 	@Override
 	public void update() {
 		run();
-		//org.team696.robot.Robot.logger[0] = ;
 	}
 	
-	public void set(boolean[] extend) {
-		leftOut = extend[0];
-		rightOut = extend[1];
+	public void set(boolean _leftOut,boolean _rightOut) {
+		leftOut = _leftOut;
+		rightOut = _rightOut;
 	}
 	
 	public void run() {

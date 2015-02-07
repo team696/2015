@@ -80,10 +80,10 @@ public class SwerveDrive extends Runnable{
 	private void updateOdometry(){
 		double [][] wheelVectors = new double[4][2];
 		
-		wheelVectors[0] = frontLeft.getVelocity();
-		wheelVectors[1] = frontRight.getVelocity();
-		wheelVectors[2] = backRight.getVelocity();
-		wheelVectors[3] = backLeft.getVelocity();
+		wheelVectors[0] = frontLeft.getCumVector();
+		wheelVectors[1] = frontRight.getCumVector();
+		wheelVectors[2] = backRight.getCumVector();
+		wheelVectors[3] = backLeft.getCumVector();
 		double[] cumVectors = {0.0,0.0};
 		for(int fish = 0; fish<1; fish++){
 			cumVectors[0] += wheelVectors[fish][0];

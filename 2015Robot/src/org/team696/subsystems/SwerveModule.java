@@ -21,6 +21,9 @@ public class SwerveModule extends Runnable{
 	Encoder driveEncoder;
 	SteeringEncoder steerEncoder;
 	ModuleConfigs configs;
+	double[] odometryVector = {0.0,0.0};
+	
+	double lastEncoderCount = 0;
 	
 	double setAngle;
 	double angle;
@@ -53,7 +56,10 @@ public class SwerveModule extends Runnable{
 	@Override
 	public void update(){
 		super.update();
-		
+
+		odometryVector[0] += (driveEncoder.getDistance()-lastEncoderCount)*Math.sin(Math.toRadians(angle));
+		odometryVector[1] += (driveEncoder.getDistance()-lastEncoderCount)*Math.cos(Math.toRadians(angle));
+		lastEncoderCount = driveEncoder.getDistance();
 		angle = steerEncoder.getAngleDegrees();
 		if(angle<0) angle = 360+angle;
 		double error = 0.0;
@@ -95,11 +101,10 @@ public class SwerveModule extends Runnable{
 		steerController.setConstants(P, I, D);
 	}
 	
-	public double[] getVelocity(){
-		
-		double[] vector = {0.0,0.0};
-		vector[0] = driveEncoder.getRate()*Math.sin(Math.toRadians(angle));
-		vector[1] = driveEncoder.getRate()*Math.cos(Math.toRadians(angle));
+	public double[] getCumVector(){
+		double[] vector = odometryVector;
+		odometryVector[0] = 0;
+		odometryVector[1] = 0;
 		return vector;
 	}
 }

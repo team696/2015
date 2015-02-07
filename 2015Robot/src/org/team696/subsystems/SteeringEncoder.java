@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class SteeringEncoder extends Runnable {
 	Logger centerLogger;
 	Logger counter;
-	double center;
+	double offset;
 	int wheel;
 	
 	AnalogInput encoder;
@@ -34,7 +34,7 @@ public class SteeringEncoder extends Runnable {
 		counter = new Logger(new String[] {""});
 		centerLogger.setPath("/usr/local/frc/logs/zcenter"+ wheel +".txt");
 		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");		
-		center = Double.parseDouble(centerLogger.read(1)[0]);
+		offset = Double.parseDouble(centerLogger.read(1)[0]);
 		count = Integer.parseInt(counter.read(1)[0].substring(0, 1));
 	}
 	
@@ -47,14 +47,15 @@ public class SteeringEncoder extends Runnable {
 		if(testClockWise) count++;
 		if(testCounterClockWise) count--;
 		oldVoltage = voltage;
-		centerLogger.set(center,1);
+		centerLogger.set(offset,1);
 		counter.set(count,1);
 		centerLogger.setString(false);
 		counter.setString(false);
 	}
 	
 	public void trimCenter(double trim){
-		center+=trim;
+		offset+=trim;
+		if(offset>degreesPerRotation)
 	}
 	
 	@Override
@@ -71,7 +72,7 @@ public class SteeringEncoder extends Runnable {
 	}
 	
 	public double getAngleDegrees(){
-		angle = (count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))%360;
+		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))+offset)%360;
 		return angle;
 	}
 }

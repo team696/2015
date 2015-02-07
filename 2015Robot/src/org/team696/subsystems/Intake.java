@@ -19,12 +19,12 @@ public class Intake extends Runnable{
 	/*
 	 * @param config - ejectorChan, grabBinChan, rightInChan, leftInChan
 	 */
-	public Intake(int[] config) {
-		ejector = new Solenoid(config[0]);
-		grabberOfBin = new Solenoid(config[1]);
+	public Intake(int ejectorSolenoid, int grabberSolenoid, int rightIntake, int leftIntake) {
+		ejector = new Solenoid(ejectorSolenoid);
+		grabberOfBin = new Solenoid(grabberSolenoid);
 		
-		rightIn = new VictorSP(config[2]);
-		leftIn = new VictorSP(config[3]);
+		rightIn = new VictorSP(rightIntake);
+		leftIn = new VictorSP(leftIntake);
 	}
 	
 	@Override 
@@ -40,14 +40,12 @@ public class Intake extends Runnable{
 	/*
 	 * @param set - eject, intake, grabBin
 	 */
-	public void setIntake(boolean[] set) {
-		if (set[0] == set[1]) {
-			set[0] = false;
-			set[1] = false;
+	public void setIntake(boolean eject, boolean intake, boolean _grabBin) {
+		if (eject == intake) {
+			intake = false;
+			eject = false;
 		}
-		eject = set[0];
-		intake = set[1];
-		grabBin = set[2];
+		grabBin = _grabBin;
 	}
 	
 	public void setSpeed(double _speed) {
@@ -60,15 +58,14 @@ public class Intake extends Runnable{
 	}
 	
 	public void run() {
-		if (grabBin) grabberOfBin.set(true);
-		else grabberOfBin.set(false);
+		grabberOfBin.set(grabBin);
 		
 		if (eject) {
 			ejector.set(true); 
-			speed = -1;
+			speed = -0.75;
 		} else  if (intake) {
 			ejector.set(false);
-			speed = 1;
+			speed = 0.75;
 		} else{
 			ejector.set(false);
 			speed = 0;

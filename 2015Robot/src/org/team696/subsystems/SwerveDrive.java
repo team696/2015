@@ -10,6 +10,7 @@ import com.kauailabs.nav6.frc.IMUAdvanced;
 import edu.wpi.first.wpilibj.SerialPort;
 
 import org.team696.subsystems.SwerveModule;
+import org.team696.baseClasses.ModuleConfigs;
 import org.team696.baseClasses.Runnable;
 
 public class SwerveDrive extends Runnable{
@@ -30,20 +31,20 @@ public class SwerveDrive extends Runnable{
 	
 	private double[] robotPosition = {0.0,0.0,0.0}; //x, y, and rotation
 	
-	private SwerveModule frontLeft;
-	private SwerveModule frontRight;
-	private SwerveModule backRight;
-	private SwerveModule backLeft;
+	SwerveModule frontLeft;
+	SwerveModule frontRight;
+	SwerveModule backRight;
+	SwerveModule backLeft;
 	
 	IMUAdvanced navX;
 	SerialPort port;
 	
-	public SwerveDrive(int[][] _moduleChannels)throws FileNotFoundException, UnsupportedEncodingException,IOException{
-		moduleChannels = _moduleChannels;
-	    frontLeft = new SwerveModule(moduleChannels[0]);
-		frontRight = new SwerveModule(moduleChannels[1]);
-		backRight = new SwerveModule(moduleChannels[2]);
-		backLeft = new SwerveModule(moduleChannels[3]);
+	public SwerveDrive(ModuleConfigs[] _swerveConfigs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
+
+	    frontLeft = new SwerveModule(_swerveConfigs[0]);
+		frontRight = new SwerveModule(_swerveConfigs[1]);
+		backRight = new SwerveModule(_swerveConfigs[2]);
+		backLeft = new SwerveModule(_swerveConfigs[3]);
 		
 	    try{
 	    	byte updateRateHZ = 50;

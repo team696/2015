@@ -14,41 +14,36 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.team696.baseClasses.CustomPID;
 import org.team696.baseClasses.Runnable;
+import org.team696.baseClasses.ModuleConfigs;
 
 public class SwerveModule extends Runnable{
 
 	Encoder driveEncoder;
 	SteeringEncoder steerEncoder;
+	ModuleConfigs configs;
 	
 	double setAngle;
 	double angle;
 	
 	double setSpeed;
 	double speed;
-	int wheel;
 	
-	Talon steerMotor;
-	Talon driveMotor;
+	Victor steerMotor;
+	Victor driveMotor;
 	
 	//PIDController driveController;
 	CustomPID steerController;
 	
 	
-	public SwerveModule(int[] configs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
-		wheel = configs[5];
-		steerMotor = new Talon(configs[0]);
-		driveMotor = new Talon(configs[1]);
-		steerEncoder = new SteeringEncoder(configs[2],wheel);
+	public SwerveModule(ModuleConfigs _configs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
+		configs = _configs;
+		steerMotor = new Victor(configs.kSteerMotor);
+		driveMotor = new Victor(configs.kDriveMotor);
+		steerEncoder = new SteeringEncoder(configs.kSteerEncoder,configs.kWheelNumber);
 		steerController = new CustomPID(0.05,0, 0.3);
-		driveEncoder = new Encoder(configs[3], configs[4]);
-		//driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);
-	}
-	
-//	public void enablePID(boolean drive){
-//		
-//		if(drive) driveController.enable();
-//		else driveController.disable();
-//	}
+		driveEncoder = new Encoder(configs.kDriveEncoderA, configs.kDriveEncoderB);
+		}
+
 	@Override
 	public void start(int periodMS){
 		super.start(periodMS);
@@ -99,10 +94,6 @@ public class SwerveModule extends Runnable{
 	public void setSteerPID(double P, double I, double D){
 		steerController.setConstants(P, I, D);
 	}
-	
-//	public void setDrivePID(double P, double I, double D, double F){
-//		driveController.setPID(P, I, D, F);
-//	}
 	
 	public double[] getVelocity(){
 		

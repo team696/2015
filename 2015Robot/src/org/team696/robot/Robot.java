@@ -93,8 +93,6 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
-//    	//drive.start(100);
-//    	logger.init();
 		intake.start(20);
 		canner.start(20);
 		elevator.start(20);
@@ -129,6 +127,7 @@ public class Robot extends IterativeRobot {
     }
     
     public void teleopPeriodic() {
+    	
 //    	logger.update();
 //    	kP = SmartDashboard.getNumber("kP", 0.04);
 //    	kI = SmartDashboard.getNumber("kI", 0.0);

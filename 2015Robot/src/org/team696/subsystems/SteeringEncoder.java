@@ -34,7 +34,7 @@ public class SteeringEncoder extends Runnable {
 		counter = new Logger(new String[] {""});
 		centerLogger.setPath("/usr/local/frc/logs/zcenter"+ wheel +".txt");
 		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");		
-		center = Integer.parseInt(centerLogger.read(1)[0].substring(0,1));
+		center = Double.parseDouble(centerLogger.read(1)[0]);
 		count = Integer.parseInt(counter.read(1)[0].substring(0, 1));
 	}
 	
@@ -53,7 +53,7 @@ public class SteeringEncoder extends Runnable {
 		counter.setString(false);
 	}
 	
-	public void trimCenter(int trim){
+	public void trimCenter(double trim){
 		center+=trim;
 	}
 	

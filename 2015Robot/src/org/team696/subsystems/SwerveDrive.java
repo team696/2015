@@ -38,9 +38,9 @@ public class SwerveDrive extends Runnable{
 	IMUAdvanced navX;
 	SerialPort port;
 	
-	public SwerveDrive(int[][] _moduleChannels, int wheel)throws FileNotFoundException, UnsupportedEncodingException,IOException{
+	public SwerveDrive(int[][] _moduleChannels)throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		moduleChannels = _moduleChannels;
-	    frontLeft = new SwerveModule(moduleChannels[0], wheel);
+	    frontLeft = new SwerveModule(moduleChannels[0]);
 		//frontRight = new SwerveModule(moduleChannels[1]);
 		//backRight = new SwerveModule(moduleChannels[2]);
 		//backLeft = new SwerveModule(moduleChannels[3]);

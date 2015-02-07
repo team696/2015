@@ -30,14 +30,14 @@ public class Robot extends IterativeRobot {
 	//public static Logger logger = new Logger(configName);
 	public Robot() throws FileNotFoundException, UnsupportedEncodingException,IOException{	
 		logger = new Logger(new String[] {"Empty"});
-		testModule = new SwerveModule(testValues, 1);
+		testModule = new SwerveModule(testValues);
 	}
 	
 	double x = 0;
 	double y = 0;
 	boolean firstRun = true;
 	int[][] moduleValues;
-	static int[] testValues = {0,1,0,0,1};
+	static int[] testValues = {0,1,0,0,1,1};
 	Joystick stick = new Joystick(0);
 	double kP=0;
 	double kI=0;

@@ -30,8 +30,8 @@ public class SteeringEncoder extends Runnable {
 	public SteeringEncoder(int channel, int _wheel) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		encoder = new AnalogInput(channel);
 		wheel = _wheel;
-		centerLogger = new Logger(new String[] {"Center1","Center2","Center3","Center4"});
-		counter = new Logger(new String[] {"CountPos1","CountPos2","CountPos3","CountPos4"});
+		centerLogger = new Logger(new String[] {""});
+		counter = new Logger(new String[] {""});
 		centerLogger.setPath("/usr/local/frc/logs/zcenter"+ wheel +".txt");
 		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");		
 		center = Integer.parseInt(centerLogger.read(1)[0].substring(0,1));

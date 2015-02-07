@@ -34,13 +34,14 @@ public class SwerveModule extends Runnable{
 	CustomPID steerController;
 	
 	
-	public SwerveModule(int[] configs, int _wheel)throws FileNotFoundException, UnsupportedEncodingException,IOException{
-		wheel = _wheel;
+	public SwerveModule(int[] configs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
+		
 		steerMotor = new Talon(configs[0]);
 		driveMotor = new Talon(configs[1]);
 		steerEncoder = new SteeringEncoder(configs[2],wheel);
 		steerController = new CustomPID(0.05,0, 0.3);
 		driveEncoder = new Encoder(configs[3], configs[4]);
+		wheel = configs[5];
 		//driveController = new PIDController(0, 0, 0, 0, driveEncoder, driveMotor);
 	}
 	

@@ -21,11 +21,6 @@ public class AutoCanner extends Runnable {
 	}
 	
 	@Override
-	public void start(int frequency) {
-		super.start(frequency);
-	}
-	
-	@Override
 	public void update() {
 		run();
 		//org.team696.robot.Robot.logger[0] = ;

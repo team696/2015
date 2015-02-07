@@ -13,16 +13,15 @@ public class Elevator extends Runnable {
 	DigitalInput limitSwitchBot;
 	DigitalInput limitSwitchTop;
 	VictorSP elevMotor;
-	CustomPID heightController;
-	Solenoid breaker;
+	Solenoid brake;
 	
 	boolean[] move = new boolean[2];
 	boolean override = false;
-	boolean startBreaking;
-	double cliksPerTote = 360;
+	boolean startBraking;
+	double clicksPerTote = 360;
 	double goalPos;	
 	int loc = 1;
-	int goalLoc = loc;
+	int goalTotesHigh = loc;
 
 	/*
 	 * @param config - encoderSlotA, encoderSlotB, limitSwitchBot, limitSwitchTop, Kp, Ki, Kd, BreakerChannel
@@ -33,14 +32,7 @@ public class Elevator extends Runnable {
 		limitSwitchBot = new DigitalInput(config[2]);
 		limitSwitchTop = new DigitalInput(config[3]);
 		
-		heightController = new CustomPID(config[4], config[5], config[6]);
-		
-		breaker = new Solenoid(config[7]);
-	}
-
-	@Override
-	public void start(int frequency) {
-		super.start(frequency);
+		brake = new Solenoid(config[4]);
 	}
 	
 	public void setGoalPos(double _goalPos) {
@@ -48,26 +40,26 @@ public class Elevator extends Runnable {
 	}
 	
 	public void setBreaking(boolean _startBreaking) {
-		startBreaking = _startBreaking;
+		startBraking = _startBreaking;
 	}
 	
 	public void movePerTote(){
-		if (goalLoc>loc)elevMotor.set(1);
-		if (goalLoc<loc)elevMotor.set(-1);
-		if (goalLoc==loc)elevMotor.set(0);
+		if (goalTotesHigh>loc)elevMotor.set(1);
+		if (goalTotesHigh<loc)elevMotor.set(-1);
+		if (goalTotesHigh==loc)elevMotor.set(0);
 	}
 	
 	public void setHeight() {
-		breakSys();
-		if(override){
-			if (limitSwitchTop.get() && goalPos>cliksPerTote*6.5) elevMotor.set(0);
+		brakeSys();
+		if(!override){
+			if (limitSwitchTop.get() && goalPos>clicksPerTote*6.5) elevMotor.set(0);
 			else if (limitSwitchBot.get()) encoder.reset();
 			else if (limitSwitchBot.get() && goalPos<0) elevMotor.set(0);
-			if(goalPos/cliksPerTote>encoder.get()/cliksPerTote)goalLoc++;
-			if(goalPos/cliksPerTote<encoder.get()/cliksPerTote)goalLoc--;
+			if(goalPos/clicksPerTote>encoder.get()/clicksPerTote)goalTotesHigh++;
+			if(goalPos/clicksPerTote<encoder.get()/clicksPerTote)goalTotesHigh--;
 			movePerTote();
 		} else {
-			if (limitSwitchTop.get() && goalPos>cliksPerTote*6.5) elevMotor.set(0);
+			if (limitSwitchTop.get() && goalPos>clicksPerTote*6.5) elevMotor.set(0);
 			else if (limitSwitchBot.get()) encoder.reset();
 			else if (limitSwitchBot.get() && goalPos<0) elevMotor.set(0);
 			else elevMotor.set(goalPos - encoder.get());
@@ -78,16 +70,15 @@ public class Elevator extends Runnable {
 		override = _override;
 	}
 	
-	public void breakSys() {
-		if (startBreaking) breaker.set(true);
+	public void brakeSys() {
+		if (startBraking) brake.set(true);
 		
-		breaker.set(false);
+		brake.set(false);
 	}
 	
 	@Override
 	public void update() {
 		setHeight();
-		heightController.update(goalPos - encoder.get());
 	}
 	
 }

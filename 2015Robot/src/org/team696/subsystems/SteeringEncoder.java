@@ -55,7 +55,13 @@ public class SteeringEncoder extends Runnable {
 	
 	public void trimCenter(double trim){
 		offset+=trim;
-		if(offset>degreesPerRotation)
+		if(offset>degreesPerRotation){
+			offset-=degreesPerRotation;
+			count--;
+		}else if(offset<0){
+			offset+=degreesPerRotation;
+			count++;
+		}
 	}
 	
 	@Override

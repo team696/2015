@@ -17,7 +17,9 @@ public class SwerveDrive extends Runnable{
 
 	private boolean fieldCentric = false;
 	
-	private double L2WRatio = 1; //length to width ratio
+	private double length = 21;
+	private double width = 33;
+	private double[] centerArray = {0.0,0.0};
 	//first dimension refers to each module from front left to back right
 	//in a clockwise order
 	//second dimension is each 
@@ -137,14 +139,30 @@ public class SwerveDrive extends Runnable{
 			//vectors[fish][0] += rotationRadians*Math.cos((Math.PI/4) + (fish*Math.PI/2));
 			//vectors[fish][1] += rotationRadians*Math.sin((Math.PI/4) + (fish*Math.PI/2));
 		}
-		vectors[0][0] += rotationRadians*L2WRatio;
-		vectors[0][1] += rotationRadians;
-		vectors[1][0] += rotationRadians*L2WRatio;
-		vectors[1][1] -= rotationRadians;
-		vectors[2][0] -= rotationRadians*L2WRatio;
-		vectors[2][1] += rotationRadians;
-		vectors[3][0] += rotationRadians*L2WRatio;
-		vectors[3][1] += rotationRadians;
+//		vectors[0][0] += rotationRadians*length/width;
+//		vectors[0][1] += rotationRadians;
+//		vectors[1][0] += rotationRadians*length/width;
+//		vectors[1][1] -= rotationRadians;
+//		vectors[2][0] -= rotationRadians*length/width;
+//		vectors[2][1] += rotationRadians;
+//		vectors[3][0] += rotationRadians*length/width;
+//		vectors[3][1] += rotationRadians;
+		
+		double[][] posArray = new double[4][2]; // measured in theta and R
+		posArray[0][0] = Math.atan2(width/2 -centerArray[0], length/2 -centerArray[0]);
+		posArray[0][1] = rotationRadians*Math.sqrt(Math.pow(width/2-centerArray[0], 2)+ Math.pow(length/2-centerArray[1], 2));
+		posArray[1][0] = Math.atan2(width/2 -centerArray[0], -length/2 -centerArray[0]);
+		posArray[1][1] = rotationRadians*Math.sqrt(Math.pow(width/2-centerArray[0], 2)+ Math.pow(-length/2-centerArray[1], 2));
+		posArray[2][0] = Math.atan2(-width/2 -centerArray[0], -length/2 -centerArray[0]);
+		posArray[2][1] = rotationRadians*Math.sqrt(Math.pow(-width/2-centerArray[0], 2)+ Math.pow(-length/2-centerArray[1], 2));
+		posArray[3][0] = Math.atan2(-width/2 -centerArray[0], length/2 -centerArray[0]);
+		posArray[3][1] = rotationRadians*Math.sqrt(Math.pow(-width/2-centerArray[0], 2)+ Math.pow(length/2-centerArray[1], 2));
+		
+		
+		for(int fish = 0; fish < 4; fish++){
+			vectors[fish][0] = posArray[fish][1]*Math.sin(posArray[fish][0]);
+			vectors[fish][1] = posArray[fish][1]*Math.cos(posArray[fish][0]);
+		}
 		
 		return vectors;
 	}

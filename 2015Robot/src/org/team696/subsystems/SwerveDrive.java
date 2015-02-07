@@ -33,10 +33,10 @@ public class SwerveDrive extends Runnable{
 	
 	private double[] robotPosition = {0.0,0.0,0.0}; //x, y, and rotation
 	
-	SwerveModule frontLeft;
-	SwerveModule frontRight;
-	SwerveModule backRight;
-	SwerveModule backLeft;
+	public SwerveModule frontLeft;
+	public SwerveModule frontRight;
+	public SwerveModule backRight;
+	public SwerveModule backLeft;
 	
 	IMUAdvanced navX;
 	SerialPort port;

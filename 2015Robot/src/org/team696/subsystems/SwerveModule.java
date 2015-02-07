@@ -19,7 +19,7 @@ import org.team696.baseClasses.ModuleConfigs;
 public class SwerveModule extends Runnable{
 
 	Encoder driveEncoder;
-	SteeringEncoder steerEncoder;
+	public SteeringEncoder steerEncoder;
 	ModuleConfigs configs;
 	double[] odometryVector = {0.0,0.0};
 	

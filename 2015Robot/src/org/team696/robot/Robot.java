@@ -48,12 +48,12 @@ public class Robot extends IterativeRobot {
 //	public static SwerveModule testModule;
 	
 	Joystick        controlBoard;
-	SwerveDrive     drive;
-	Intake          intake;
-	AutoCanner      canner;
-	Elevator        elevator;	
+	static SwerveDrive     drive;
+	static Intake          intake;
+	static AutoCanner      canner;
+	static Elevator        elevator;	
 	
-	Logger          logger;
+	static Logger          logger;
 	
 	double          speed;
 	int             goalTotes = 0;
@@ -73,6 +73,7 @@ public class Robot extends IterativeRobot {
 	double          rotation        = 0;
 	double          yAxis           = controlBoard.getY();
 	double          xAxis           = controlBoard.getX();
+	double          trim            = 0;
 	ModuleConfigs[] configs         = new ModuleConfigs[4];
 	
 	public void setConfig(){
@@ -177,18 +178,18 @@ public class Robot extends IterativeRobot {
 //    	testModule.setSteerPID(kP, kI, kD);
 //    	testModule.setValues(speed/2,angle);
     	
-    	intakeWheelsIn  = controlBoard.getRawButton(0);
-    	intakeWheelsOut = controlBoard.getRawButton(1);
-    	ejectMech       = controlBoard.getRawButton(2);
-    	intakeMech      = controlBoard.getRawButton(3);
-    	grabBin         = controlBoard.getRawButton(4);
-    	leftOut         = controlBoard.getRawButton(5);
-    	rightOut        = controlBoard.getRawButton(6);
-    	override        = controlBoard.getRawButton(7);
+    	intakeWheelsIn  = controlBoard.getRawButton(12);
+    	intakeWheelsOut = controlBoard.getRawButton(12);
+    	ejectMech       = controlBoard.getRawButton(12);
+    	intakeMech      = controlBoard.getRawButton(12);
+    	grabBin         = controlBoard.getRawButton(12);
+    	leftOut         = controlBoard.getRawButton(12);
+    	rightOut        = controlBoard.getRawButton(12);
+    	override        = controlBoard.getRawButton(12);
     	moveUpOld 		= moveUp;
     	moveDownOld     = moveDown;
-    	moveUp          = controlBoard.getRawButton(8);
-    	moveDown        = controlBoard.getRawButton(9);
+    	moveUp          = controlBoard.getRawButton(12);
+    	moveDown        = controlBoard.getRawButton(12);
     	rotation        = Util.deadZone(controlBoard.getZ(), -0.1, 1, 0);
     	yAxis           = controlBoard.getY();
     	xAxis           = controlBoard.getX();
@@ -204,6 +205,15 @@ public class Robot extends IterativeRobot {
     		if(!moveUp && moveDown && !moveDownOld)goalTotes--;
     		elevator.setGoalPos(goalTotes);
     	}    	
+    	
+    	if(controlBoard.getRawButton(6)) trim=0.1;
+    	else if(controlBoard.getRawButton(8)) trim=-0.1;
+    	else trim=0;
+    	
+    	if(controlBoard.getRawButton(0)) drive.frontLeft.steerEncoder.trimCenter(trim);
+    	else if (controlBoard.getRawButton(1))drive.frontRight.steerEncoder.trimCenter(trim);
+    	else if (controlBoard.getRawButton(2))drive.backRight.steerEncoder.trimCenter(trim);
+    	else if (controlBoard.getRawButton(3))drive.backLeft.steerEncoder.trimCenter(trim);
     	
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.atan2(yAxis, xAxis), rotation);
     	intake.update();

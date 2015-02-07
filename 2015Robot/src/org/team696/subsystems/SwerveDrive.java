@@ -20,7 +20,7 @@ public class SwerveDrive extends Runnable{
 	//first dimension refers to each module from front left to back right
 	//in a clockwise order
 	//second dimension is each 
-	private int[][] moduleChannels = new int[4][5];
+	private int[][] moduleChannels = new int[4][5]; 
 	
 	private double[] setRobotVector = new double[3];       //speed, heading, and rotation Speed (robotCentric)
 	

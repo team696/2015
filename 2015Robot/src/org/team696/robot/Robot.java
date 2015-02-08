@@ -27,9 +27,9 @@ public class Robot extends IterativeRobot {
 	
 	Joystick        controlBoard;
 	public static SwerveDrive     drive;
-	public static Intake          intake;
-	public static AutoCanner      canner;
-	public static Elevator        elevator;	
+	//public static Intake          intake;
+	//public static AutoCanner      canner;
+	//public static Elevator        elevator;	
 	
 	static Logger          logger;
 	
@@ -95,9 +95,9 @@ public class Robot extends IterativeRobot {
 	public void initiate(){
 		setConfig();
 		controlBoard = new Joystick(0);
-		intake = new Intake(0, 1, 2, 3);
-		canner = new AutoCanner(4, 5);
-		elevator = new Elevator(new int[] {6,7,8,9,10});
+		//intake = new Intake(0, 1, 2, 3);
+		//canner = new AutoCanner(4, 5);
+		//elevator = new Elevator(new int[] {6,7,8,9,10});
 		try {
 			drive = new SwerveDrive(configs);
 			logger = new Logger(new String[] {
@@ -109,10 +109,10 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
-		intake.start(20);
-		canner.start(20);
-		elevator.start(20);
-		drive.start(20);
+		//intake.start(20);
+		//canner.start(20);
+		//elevator.start(20);
+		drive.start(10);
 		logger.init();
     }
 
@@ -172,20 +172,20 @@ public class Robot extends IterativeRobot {
     	yAxis           = controlBoard.getY();
     	xAxis           = controlBoard.getX();
     	
-    	if(intakeWheelsIn)speed=0.75;
-    	if(intakeWheelsOut)speed= -0.75;
-    	intake.setIntake(ejectMech, intakeMech,grabBin, speed);
-    	canner.set(leftOut, rightOut);
-    	elevator.override(override);
-    	elevator.setMotion(moveUp,moveDown);
-    	if (!override){
-    		if(moveUp && !moveDown && !moveUpOld)goalTotes++;
-    		if(!moveUp && moveDown && !moveDownOld)goalTotes--;
-    		elevator.setGoalPos(goalTotes);
-    	}    	
+    	//if(intakeWheelsIn)speed=0.75;
+    	//if(intakeWheelsOut)speed= -0.75;
+    	//intake.setIntake(ejectMech, intakeMech,grabBin, speed);
+    	//canner.set(leftOut, rightOut);
+    	//elevator.override(override);
+    	//elevator.setMotion(moveUp,moveDown);
+//    	if (!override){
+//    		if(moveUp && !moveDown && !moveUpOld)goalTotes++;
+//    		if(!moveUp && moveDown && !moveDownOld)goalTotes--;
+//    		elevator.setGoalPos(goalTotes);
+//    	}    	
     	
-    	if(controlBoard.getRawButton(6)) trim=0.1;
-    	else if(controlBoard.getRawButton(8)) trim=-0.1;
+    	if(controlBoard.getRawButton(6)) trim=0.001;
+    	else if(controlBoard.getRawButton(8)) trim=-0.001;
     	else trim=0;
     	
     	if(controlBoard.getRawButton(0)) drive.frontLeft.steerEncoder.trimCenter(trim);
@@ -194,11 +194,7 @@ public class Robot extends IterativeRobot {
     	else if (controlBoard.getRawButton(3))drive.backLeft.steerEncoder.trimCenter(trim);
     	
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.atan2(yAxis, xAxis), rotation, false);
-    	intake.update();
-    	canner.update();
-    	elevator.update();
-    	drive.update();
-    	logger.update();
+    	
     }
     
     /**

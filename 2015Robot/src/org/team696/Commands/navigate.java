@@ -27,9 +27,14 @@ public class navigate extends Command{
 	public void update(){
 		position = Robot.drive.getPosition();
 		
-		setVector
+		setVector[0] = Math.atan2(navVector[0]-position[0],navVector[1]-position[1]);
+		double distance = Math.sqrt(Math.pow(navVector[0]-position[0], 2) + Math.pow(navVector[1]-position[1], 2));
+		if(distance> 12) setVector[1] = 0.6;
+		else speedController.update(distance);
 		
-		rotationController.update(navVector[2]-position[2]);
+		rotationController.update(navVector[2]- position[2]);
+		
+		if(distance<3) isFinished = true;
 		
 	}
 	

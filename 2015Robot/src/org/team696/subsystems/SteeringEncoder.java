@@ -33,9 +33,28 @@ public class SteeringEncoder extends Runnable {
 		centerLogger = new Logger(new String[] {""});
 		counter = new Logger(new String[] {""});
 		centerLogger.setPath("/usr/local/frc/logs/zcenter"+ wheel +".txt");
-		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");		
-		offset = Double.parseDouble(centerLogger.read(1)[0]);
-		count = Integer.parseInt(counter.read(1)[0].substring(0, 1));
+		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");
+		try {
+			System.out.println("centerLogger: "+centerLogger.read(1)[0]+"  |  "+"counter: "+counter.read(1)[0]);
+		}
+		catch(FileNotFoundException e) {
+			centerLogger.write("0");
+			counter.write("0");
+		}
+//		try {
+//		offset = Double.parseDouble(centerLogger.read(1)[0]);
+//		}
+//		catch(FileNotFoundException e) {
+//			centerLogger.write("0");
+//			offset = 123456789;
+//		}
+//		try {
+//			count = Integer.parseInt(counter.read(1)[0]);
+//		}
+//		catch(FileNotFoundException e) {
+//			counter.write("0");
+//			count = 0;
+//		}
 	}
 	
 	@Override
@@ -51,6 +70,11 @@ public class SteeringEncoder extends Runnable {
 		counter.set(count,1);
 		centerLogger.setString(false);
 		counter.setString(false);
+		
+		try{
+			System.out.println("centerLogger: "+centerLogger.read(1)[0]+"  |  "+"counter: "+counter.read(1)[0]);
+		}
+		catch (IOException e){};
 	}
 	
 	public void trimCenter(double trim){

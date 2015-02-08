@@ -42,16 +42,16 @@ public class Robot extends IterativeRobot {
 	double          speed;
 	int             goalTotes = 0;
 	int             temp = 0;
-	boolean         intakeWheelsIn  = controlBoard.getRawButton(0);
-	boolean         intakeWheelsOut = controlBoard.getRawButton(1);
-	boolean         ejectMech       = controlBoard.getRawButton(2);
-	boolean         intakeMech      = controlBoard.getRawButton(3);
-	boolean         grabBin         = controlBoard.getRawButton(4);
-	boolean         leftOut         = controlBoard.getRawButton(5);
-	boolean         rightOut        = controlBoard.getRawButton(6);
-	boolean         override        = controlBoard.getRawButton(7);
-	boolean         moveUp          = controlBoard.getRawButton(8);
-	boolean         moveDown        = controlBoard.getRawButton(9);
+	boolean         intakeWheelsIn  = controlBoard.getRawButton(1);
+	boolean         intakeWheelsOut = controlBoard.getRawButton(2);
+	boolean         ejectMech       = controlBoard.getRawButton(3);
+	boolean         intakeMech      = controlBoard.getRawButton(4);
+	boolean         grabBin         = controlBoard.getRawButton(5);
+	boolean         leftOut         = controlBoard.getRawButton(6);
+	boolean         rightOut        = controlBoard.getRawButton(7);
+	boolean         override        = controlBoard.getRawButton(8);
+	boolean         moveUp          = controlBoard.getRawButton(9);
+	boolean         moveDown        = controlBoard.getRawButton(10);
 	boolean         moveUpOld;
 	boolean         moveDownOld;
 	double          rotation        = 0;
@@ -111,7 +111,7 @@ public class Robot extends IterativeRobot {
 		try {
 			drive = new SwerveDrive(configs);
 			logger = new Logger(new String[] {
-					"null"
+					""
 			});
 		} 
 		catch(FileNotFoundException fnfE){}
@@ -150,6 +150,7 @@ public class Robot extends IterativeRobot {
     	
     	logger.stop();
     	logger.start(20);
+    	logger.set("teleopInit",0);
     }
     
     public void teleopPeriodic() {
@@ -165,6 +166,8 @@ public class Robot extends IterativeRobot {
 //    	
 //    	testModule.setSteerPID(kP, kI, kD);
 //    	testModule.setValues(speed/2,angle);
+    	
+    	logger.set("teleopPeriodic",0);
     	
     	intakeWheelsIn  = controlBoard.getRawButton(12);
     	intakeWheelsOut = controlBoard.getRawButton(12);
@@ -216,6 +219,7 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void disabledInit() {
+    	logger.set("disabled", 0);
     	logger.stop();
 //    	testModule.stop();
     }

@@ -12,7 +12,6 @@ public class Logger extends Runnable {
 	FileReader reader;
 	Timer timer = new Timer();
 	BufferedReader br;
-		
 	String[] names; 
 	String[] values;
 	String toSend;
@@ -90,6 +89,17 @@ public class Logger extends Runnable {
 		if (values[pos].length() >= 5)values[pos]=values[pos].substring(0, 5);
 		if(values[pos].length()<5){
 			int lenDif =5-values[pos].length();
+			for(int fish = 0; fish < lenDif;fish++){
+				values[pos]+=" ";
+			}
+		}
+	}
+	
+	public void set(String val,int pos){
+		values[pos] = val+"";
+		if (values[pos].length() >= 10)values[pos]=values[pos].substring(0, 10);
+		if(values[pos].length()<10){
+			int lenDif =10-values[pos].length();
 			for(int fish = 0; fish < lenDif;fish++){
 				values[pos]+=" ";
 			}

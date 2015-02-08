@@ -24,34 +24,12 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */			
-//	public static Logger logger;
-	//0   			1				2			3		4					5					6					7				8				9				10				11				13				14
-	//static String[] configName = new String[] {"AutoCannerLeft","AutoCannerRight","Elevator","Intake","SteeringEncoder1","SteeringEncoder2","SteeringEncoder3","SteeringEncoder4","SwerveModule1","SwerveModule2","SwerveModule2","SwerveModule3","SwerveModule4","SwerveDrive"};
-	//public static Logger logger = new Logger(configName);
-//	public Robot() throws FileNotFoundException, UnsupportedEncodingException,IOException{	
-//		logger = new Logger(new String[] {"Empty"});
-//		testModule = new SwerveModule(testValues);
-//	}
-	
-//	double x = 0;
-//	double y = 0;
-//	boolean firstRun = true;
-//	int[][] moduleValues;
-//	static int[] testValues = {0,1,0,0,1,1};
-//	Joystick stick = new Joystick(0);
-//	double kP=0;
-//	double kI=0;
-//	double kD=0;
-//	double angle=0;
-//	double speed=0;
-//	//SwerveDrive drive = new SwerveDrive(moduleValues);
-//	public static SwerveModule testModule;
 	
 	Joystick        controlBoard;
-	static SwerveDrive     drive;
-	static Intake          intake;
-	static AutoCanner      canner;
-	static Elevator        elevator;	
+	public static SwerveDrive     drive;
+	public static Intake          intake;
+	public static AutoCanner      canner;
+	public static Elevator        elevator;	
 	
 	static Logger          logger;
 	
@@ -215,7 +193,7 @@ public class Robot extends IterativeRobot {
     	else if (controlBoard.getRawButton(2))drive.backRight.steerEncoder.trimCenter(trim);
     	else if (controlBoard.getRawButton(3))drive.backLeft.steerEncoder.trimCenter(trim);
     	
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.atan2(yAxis, xAxis), rotation);
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.atan2(yAxis, xAxis), rotation, false);
     	intake.update();
     	canner.update();
     	elevator.update();

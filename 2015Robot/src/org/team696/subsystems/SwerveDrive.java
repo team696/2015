@@ -167,6 +167,10 @@ public class SwerveDrive extends Runnable{
 		return vectors;
 	}
 	
+	public double[] getPosition(){
+		return robotPosition;
+	}
+	
 	double[][] calculateWheelValues(double[][] vectors){
 		double values[][] = new double[4][2];
 		
@@ -188,28 +192,15 @@ public class SwerveDrive extends Runnable{
 		return values;
 	}
 	
-	public boolean setDriveValues(double speed, double headingDegrees, double rotation){
+	public boolean setDriveValues(double speed, double headingDegrees, double rotation, boolean fieldCentric){
 		setRobotVector[0] = speed;
 		setRobotVector[1] = headingDegrees;
 		setRobotVector[2] = rotation;
+		if(fieldCentric) setRobotVector[1]+= navX.getYaw();
 		return true;
 	}
 	
-	
-	boolean setWheelAngles(double[] angles){
-		if(angles.length == 4){
-			setWheelValues[0] = angles;
-		}else return false;
-		return true;
-	}
-	boolean setWheelSpeeds(double[] speeds){
-		if(speeds.length == 4){
-			setWheelValues[1] = speeds;
-		}else return false;
-		return true;
-	}
-	boolean setFieldCentric(boolean _fieldCentric){
-		fieldCentric = _fieldCentric;
-		return true;
+	public void zeroNavX(){
+		navX.zeroYaw();
 	}
 }

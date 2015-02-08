@@ -5,12 +5,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+
 import org.team696.baseClasses.*;
 import org.team696.subsystems.*;
 
+import com.kauailabs.nav6.frc.*;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,6 +29,7 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */			
+	
 	
 	Joystick        controlBoard;
 	public static SwerveDrive     drive;
@@ -53,41 +59,45 @@ public class Robot extends IterativeRobot {
 	double          xAxis           = controlBoard.getX();
 	double          trim            = 0;
 	ModuleConfigs[] configs         = new ModuleConfigs[4];
+
+	SerialPort imu_serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
+	SerialPort sPort = new SerialPort(57600, SerialPort.Port.kMXP);
+	IMUAdvanced mxp = new IMUAdvanced(sPort);
 	
 	public void setConfig(){
 		configs[0].kSteerMotor     = 0;
-		configs[0].kDriveMotor     = 0;
-		configs[0].kSteerEncoder   = 0;
-		configs[0].kDriveEncoderA  = 0;
-		configs[0].kDriveEncoderB  = 0;
-		configs[0].kWheelNumber    = 0;
+		configs[0].kDriveMotor     = 14;
+		configs[0].kSteerEncoder   = 2;
+//		configs[0].kDriveEncoderA  = 0;
+//		configs[0].kDriveEncoderB  = 0;
+		configs[0].kWheelNumber    = 1;
 		configs[0].kReverseEncoder = false;
 		configs[0].kReverseMotor   = false;
 		
-		configs[1].kSteerMotor     = 0;
-		configs[1].kDriveMotor     = 0;
-		configs[1].kSteerEncoder   = 0;
-		configs[1].kDriveEncoderA  = 0;
-		configs[1].kDriveEncoderB  = 0;
-		configs[1].kWheelNumber    = 0;
+		configs[1].kSteerMotor     = 6;
+		configs[1].kDriveMotor     = 5;
+		configs[1].kSteerEncoder   = 1;
+//		configs[1].kDriveEncoderA  = 0;
+//		configs[1].kDriveEncoderB  = 0;
+		configs[1].kWheelNumber    = 2;
 		configs[1].kReverseEncoder = false;
 		configs[1].kReverseMotor   = false;
 		
-		configs[2].kSteerMotor     = 0;
-		configs[2].kDriveMotor     = 0;
+		configs[2].kSteerMotor     = 7;
+		configs[2].kDriveMotor     = 8;
 		configs[2].kSteerEncoder   = 0;
 		configs[2].kDriveEncoderA  = 0;
 		configs[2].kDriveEncoderB  = 0;
-		configs[2].kWheelNumber    = 0;
+		configs[2].kWheelNumber    = 3;
 		configs[2].kReverseEncoder = false;
 		configs[2].kReverseMotor   = false;
 		
-		configs[3].kSteerMotor     = 0;
-		configs[3].kDriveMotor     = 0;
-		configs[3].kSteerEncoder   = 0;
-		configs[3].kDriveEncoderA  = 0;
-		configs[3].kDriveEncoderB  = 0;
-		configs[3].kWheelNumber    = 0;
+		configs[3].kSteerMotor     = 13;
+		configs[3].kDriveMotor     = 12;
+		configs[3].kSteerEncoder   = 3;
+//		configs[3].kDriveEncoderA  = 0;
+//		configs[3].kDriveEncoderB  = 0;
+		configs[3].kWheelNumber    = 4;
 		configs[3].kReverseEncoder = false;
 		configs[3].kReverseMotor   = false;
 	}
@@ -172,12 +182,12 @@ public class Robot extends IterativeRobot {
     	yAxis           = controlBoard.getY();
     	xAxis           = controlBoard.getX();
     	
-    	//if(intakeWheelsIn)speed=0.75;
-    	//if(intakeWheelsOut)speed= -0.75;
-    	//intake.setIntake(ejectMech, intakeMech,grabBin, speed);
-    	//canner.set(leftOut, rightOut);
-    	//elevator.override(override);
-    	//elevator.setMotion(moveUp,moveDown);
+//    	if(intakeWheelsIn)speed=0.75;
+//    	if(intakeWheelsOut)speed= -0.75;
+//    	intake.setIntake(ejectMech, intakeMech,grabBin, speed);
+//    	canner.set(leftOut, rightOut);
+//    	elevator.override(override);
+//    	elevator.setMotion(moveUp,moveDown);
 //    	if (!override){
 //    		if(moveUp && !moveDown && !moveUpOld)goalTotes++;
 //    		if(!moveUp && moveDown && !moveDownOld)goalTotes--;

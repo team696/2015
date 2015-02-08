@@ -86,8 +86,8 @@ public class Robot extends IterativeRobot {
 		configs[2].kSteerMotor     = 7;
 		configs[2].kDriveMotor     = 8;
 		configs[2].kSteerEncoder   = 0;
-		configs[2].kDriveEncoderA  = 0;
-		configs[2].kDriveEncoderB  = 0;
+		//configs[2].kDriveEncoderA  = 0;
+		//configs[2].kDriveEncoderB  = 0;
 		configs[2].kWheelNumber    = 3;
 		configs[2].kReverseEncoder = false;
 		configs[2].kReverseMotor   = false;

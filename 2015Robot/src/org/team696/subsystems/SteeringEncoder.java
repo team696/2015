@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 public class SteeringEncoder extends Runnable {
 	Logger centerLogger;
-	Logger counter;
 	double offset;
 	int wheel;
 	
@@ -24,16 +23,28 @@ public class SteeringEncoder extends Runnable {
 	double voltage;
 	double angle;
 	
-	int count = 0;
+	int count;
 	double degreesPerRotation = 102.85714285714285714285714285714;
 	
 	public SteeringEncoder(int channel, int _wheel) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		encoder = new AnalogInput(channel);
 		wheel = _wheel;
 		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
-//		centerLogger.setPath("/usr/local/frc/logs/zcenter"+ wheel +".txt");
-//		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");
-		offset = Double.parseDouble(centerLogger.read(1)[0].split(".")[0]);
+		String str = "0.0";
+		try {
+			str = centerLogger.read(1)[0];
+			if (str.charAt(0)==':'){
+				str = str.split(" ")[1];
+			}
+		}
+		catch(FileNotFoundException e){
+			str = "0.0";
+		}
+		
+		String[] string = str.split(".");
+		str = string[0];
+		offset = Integer.parseInt(str);
+		offset = 0;
 		count = 0;
 	}
 	
@@ -46,13 +57,6 @@ public class SteeringEncoder extends Runnable {
 		if(testClockWise) count++;
 		if(testCounterClockWise) count--;
 		oldVoltage = voltage;
-		
-		//System.out.println(wheel + "   " + offset);
-		
-//		try{
-//			System.out.println("centerLogger: "+centerLogger.read(1)[0]+"  |  "+"counter: "+counter.read(1)[0]);
-//		}
-//		catch (IOException e){};
 	}
 	
 	public void trimCenter(double trim){
@@ -78,10 +82,8 @@ public class SteeringEncoder extends Runnable {
 	@Override
 	public void stop(){
 		centerLogger.delete();
-		counter.delete();
 		
 		centerLogger.setString(true);
-		counter.setString(true);
 		
 	}
 	

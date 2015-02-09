@@ -125,6 +125,7 @@ public class Robot extends IterativeRobot {
 		//canner = new AutoCanner(4, 5);
 		//elevator = new Elevator(new int[] {6,7,8,9,10});
 		setConfig();
+		
 		try {
 			drive = new SwerveDrive(configs);
 			logger = new Logger(new String[] {
@@ -185,7 +186,6 @@ public class Robot extends IterativeRobot {
     	} else{
     		robotMovement();
     	}
-    	
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
     	
     }
@@ -206,7 +206,6 @@ public class Robot extends IterativeRobot {
 		else if (controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
     	else if (controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
     	else if (controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
-		drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
     }
     
     public void robotMovement(){
@@ -222,6 +221,7 @@ public class Robot extends IterativeRobot {
 //    	moveDownOld     = moveDown;
 //    	moveUp          = controlBoard.getRawButton(12);
 //    	moveDown        = controlBoard.getRawButton(12);
+    	
     	rotation        = Util.deadZone(controlBoard.getRawAxis(2), -0.1, 0.1, 0);
     	yAxis           = controlBoard.getRawAxis(1);
     	xAxis           = controlBoard.getRawAxis(0);

@@ -191,9 +191,9 @@ public class Robot extends IterativeRobot {
 //    	moveDownOld     = moveDown;
 //    	moveUp          = controlBoard.getRawButton(12);
 //    	moveDown        = controlBoard.getRawButton(12);
-    	rotation        = Util.deadZone(controlBoard.getZ(), -0.1, 1, 0);
-    	yAxis           = controlBoard.getY();
-    	xAxis           = controlBoard.getX();
+    	rotation        = Util.deadZone(controlBoard.getRawAxis(2), -0.1, 0.1, 0);
+    	yAxis           = controlBoard.getRawAxis(1);
+    	xAxis           = controlBoard.getRawAxis(0);
     	
 //    	if(intakeWheelsIn)speed=0.75;
 //    	if(intakeWheelsOut)speed= -0.75;
@@ -207,19 +207,17 @@ public class Robot extends IterativeRobot {
 //    		elevator.setGoalPos(goalTotes);
 //    	}    	
     	
-    	if(controlBoard.getRawButton(6)) trim=0.05;
-    	else if(controlBoard.getRawButton(8)) trim=-0.05;
+    	if(controlBoard.getRawButton(6)) trim=0.5;
+    	else if(controlBoard.getRawButton(8)) trim=-0.5;
     	else trim=0;
     	
     	if(controlBoard.getRawButton(1)) drive.frontLeft.steerEncoder.trimCenter(trim);
     	else if (controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
     	else if (controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
     	else if (controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
+    	System.out.println(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))+ "    "+Math.toDegrees(-Math.atan2(-xAxis, -yAxis)) + "   " + rotation);
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
     	
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.atan2(yAxis, xAxis), rotation, false);
-    	//System.out.println("frontleft:    " + pdp.getCurrent(2)+ "   backleft:    "+ pdp.getCurrent(3)+ "   backright:   "+ pdp.getCurrent(12)+ "    frontright:   "+ pdp.getCurrent(13));
-    	System.out.println("    front left:  " + drive.frontLeft.steerEncoder.getAngleDegrees() + "    front right:  " + drive.frontRight.steerEncoder.getAngleDegrees()
-    			+ "    back right:  " + drive.backRight.steerEncoder.getAngleDegrees()+ "    back left:  " + drive.backLeft.steerEncoder.getAngleDegrees());
     }
     
     /**

@@ -80,13 +80,13 @@ public class SteeringEncoder extends Runnable {
 	
 	public void trimCenter(double trim){
 		offset+=trim;
-		if(offset>degreesPerRotation){
-			offset-=degreesPerRotation;
-			count--;
-		}else if(offset<0){
-			offset+=degreesPerRotation;
-			count++;
-		}
+//		if(offset>degreesPerRotation){
+//			offset-=degreesPerRotation;
+//			count--;
+//		}else if(offset<0){
+//			offset+=degreesPerRotation;
+//			count++;
+//		}
 	}
 	
 	@Override
@@ -105,6 +105,7 @@ public class SteeringEncoder extends Runnable {
 	
 	public double getAngleDegrees(){
 		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))+offset)%360;
+		//System.out.println(wheel + "   " + offset + "   " + count);
 		return angle;
 	}
 }

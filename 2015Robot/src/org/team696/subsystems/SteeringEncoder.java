@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 
 public class SteeringEncoder extends Runnable {
-	//Logger centerLogger;
+	Logger centerLogger;
 	public double offset;
 	int wheel;
 	String str;
@@ -34,8 +34,20 @@ public class SteeringEncoder extends Runnable {
 		while(center<0) center+=degreesPerRotation;
 		offset = center;
 		offset = 0;
-//		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
-//		
+		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
+		
+		try {
+			String str = centerLogger.read(1)[0];
+			if (str == null){
+				str = "0.0";
+			}
+			System.out.println(wheel + "  " + str);
+		}
+		catch(IOException e){
+			System.out.print("reading error   ");
+			e.printStackTrace();
+		}
+		
 //		try {
 //			str = centerLogger.read(1)[0];
 //			str = str.split(" ")[1];
@@ -50,7 +62,7 @@ public class SteeringEncoder extends Runnable {
 	@Override
 	public void update(){
 		super.update();
-    	System.out.println("angle:   " + getAngleDegrees()+ "   voltage:   " + voltage+ "    count:   " + count);
+//    	System.out.println("angle:   " + getAngleDegrees()+ "   voltage:   " + voltage+ "    count:   " + count);
 		voltage = encoder.getVoltage();
 		boolean testClockWise = voltage<0.5 && oldVoltage>4.5;
 		boolean testCounterClockWise = voltage>4.5 && oldVoltage<0.5;
@@ -63,11 +75,11 @@ public class SteeringEncoder extends Runnable {
 		offset+=trim;
 	}
 	
-//	public void writeOffset(){
-//		double temp=offset%degreesPerRotation;
-//		if (temp < 0)temp+=degreesPerRotation;
-//		centerLogger.write(temp+"");
-//	}
+	public void writeOffset(){
+		double temp=offset%degreesPerRotation;
+		if (temp < 0)temp+=degreesPerRotation;
+		centerLogger.write(temp+"");
+	}
 	
 	@Override
 	public void start(int periodMS){

@@ -32,11 +32,11 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */			
-	boolean 		calibrate 		= true;
+	boolean 		calibrate 		= false;
 	
 	Joystick        controlBoard = new Joystick(0);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
-	public static SwerveModule testModule;
+//	public static SwerveModule testModule;
 	public static SwerveDrive     drive;
 	//public static Intake          intake;
 	//public static AutoCanner      canner;
@@ -57,6 +57,10 @@ public class Robot extends IterativeRobot {
 	boolean         override        = controlBoard.getRawButton(8);
 	boolean         moveUp          = controlBoard.getRawButton(9);
 	boolean         moveDown        = controlBoard.getRawButton(10);
+	
+	boolean 		moveRight 		= false;
+	boolean 		moveLeft  		= false;
+	
 	boolean         moveUpOld;
 	boolean         moveDownOld;
 	double          rotation        = 0;
@@ -173,17 +177,44 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	
     	
+    	
+    	
     	if(calibrate) calibrate();
     	else robotCode();
     	
     }
     
     public void calibrate(){
+    	moveLeft = controlBoard.getRawButton(8);
+    	moveRight = controlBoard.getRawButton(6);
     	
-    	drive.frontLeft.override(true, );
-    	drive.frontRight.override(true, _overrideSpeed);
-    	drive.backRight.override(true, _overrideSpeed);
-    	drive.backLeft.override(true, _overrideSpeed);
+    	if(moveRight)trim = 0.5;
+    	else if(moveLeft)trim = -0.5;
+    	else trim = 0;
+    	
+    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
+    	else drive.frontLeft.steerEncoder.trimCenter(0);
+    	if(controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
+    	else drive.frontRight.steerEncoder.trimCenter(0);
+    	if(controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
+    	else drive.backRight.steerEncoder.trimCenter(0);
+    	if(controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
+    	else drive.backLeft.steerEncoder.trimCenter(0);
+    	
+    	
+    	oldWrite = write;
+    	write = controlBoard.getRawButton(5);
+    	if(write && !oldWrite){
+    		drive.frontLeft.steerEncoder.writeOffset();
+    		drive.frontRight.steerEncoder.writeOffset();
+    		drive.backLeft.steerEncoder.writeOffset();
+    		drive.backRight.steerEncoder.writeOffset();
+    	}
+    	
+//    	drive.frontLeft.override(true, );
+//    	drive.frontRight.override(true, _overrideSpeed);
+//    	drive.backRight.override(true, _overrideSpeed);
+//    	drive.backLeft.override(true, _overrideSpeed);
     	
     }
     public void robotCode(){
@@ -231,6 +262,6 @@ public class Robot extends IterativeRobot {
     @Override
     public void disabledInit() {
     	logger.stop();
-    	testModule.stop();
+//    	testModule.stop();
     }
 }

@@ -8,15 +8,14 @@ import java.util.Date;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Logger extends Runnable {
-	PrintWriter writer;
+	public PrintWriter writer;
 	FileReader reader;
 	Timer timer = new Timer();
 	BufferedReader br;
 	String[] names; 
 	String[] values;
 	String toSend;
-	String fn;
-	File f;
+	public String fn;
 	boolean write = false;
 	boolean dontPut = false;
 	
@@ -44,7 +43,6 @@ public class Logger extends Runnable {
 	
 	public Logger(String[] configName, String _fn) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		fn = _fn;
-		f = new File(fn);
 		writer = new PrintWriter(fn);
 		reader = new FileReader(fn);
 		br = new BufferedReader(reader);
@@ -55,11 +53,14 @@ public class Logger extends Runnable {
 			names[fish] = configName[fish];
 		}
 	}
-	
-	public void delete(){
-		f.delete();
-	}
-	
+//	
+//	public void delete(){
+//		writer.close();
+//		f.delete();
+//		try{f.createNewFile();}
+//		catch(IOException e){}
+//	}
+//	
 	public void init() {
 		write = false;
 	}
@@ -179,7 +180,6 @@ public class Logger extends Runnable {
 		if(!dontPut){
 			writer.println(str);
 			writer.flush();
-			
 		}
 	}
 	

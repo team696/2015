@@ -42,7 +42,7 @@ public class SwerveModule extends Runnable{
 		configs = _configs;
 		steerMotor = new Victor(configs.kSteerMotor);
 		driveMotor = new Victor(configs.kDriveMotor);
-		steerEncoder = new SteeringEncoder(configs.kSteerEncoder,configs.kWheelNumber);
+		steerEncoder = new SteeringEncoder(configs.kSteerEncoder,configs.kWheelNumber, configs.kCenter);
 //		steerController = new CustomPID(0.05,0, 0.3);
 		steerController = new CustomPID(0.03,0, 0.2);
 //		driveEncoder = new Encoder(configs.kDriveEncoderA, configs.kDriveEncoderB);

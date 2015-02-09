@@ -32,11 +32,12 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */			
-	boolean 		calibrate 		= false;
+	boolean 		calibrate 		= true;
 	
 	Joystick        controlBoard = new Joystick(0);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
-	public static SwerveDrive     drive;
+	public static SwerveModule testModule;
+	//public static SwerveDrive     drive;
 	//public static Intake          intake;
 	//public static AutoCanner      canner;
 	//public static Elevator        elevator;	
@@ -62,7 +63,8 @@ public class Robot extends IterativeRobot {
 	double          yAxis           = controlBoard.getY();
 	double          xAxis           = controlBoard.getX();
 	double          trim            = 0;
-	double          oldTrim 		= trim;
+	boolean			write			= false;
+	boolean			oldWrite		= write;
 	ModuleConfigs[] configs;
 
 	SerialPort imu_serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
@@ -82,6 +84,7 @@ public class Robot extends IterativeRobot {
 		configs[0].kWheelNumber    = 1;
 		configs[0].kReverseEncoder = false;
 		configs[0].kReverseMotor   = false;
+		configs[0].kCenter         = 47.85;
 		
 		configs[1].kSteerMotor     = 6;
 		configs[1].kDriveMotor     = 5;
@@ -91,6 +94,7 @@ public class Robot extends IterativeRobot {
 		configs[1].kWheelNumber    = 2;
 		configs[1].kReverseEncoder = false;
 		configs[1].kReverseMotor   = false;
+		configs[1].kCenter         = 69.14;
 		
 		configs[2].kSteerMotor     = 7;
 		configs[2].kDriveMotor     = 8;
@@ -100,6 +104,7 @@ public class Robot extends IterativeRobot {
 		configs[2].kWheelNumber    = 3;
 		configs[2].kReverseEncoder = false;
 		configs[2].kReverseMotor   = false;
+		configs[2].kCenter         = 79.3;
 		
 		configs[3].kSteerMotor     = 17;
 		configs[3].kDriveMotor     = 18;
@@ -109,6 +114,8 @@ public class Robot extends IterativeRobot {
 		configs[3].kWheelNumber    = 4;
 		configs[3].kReverseEncoder = false;
 		configs[3].kReverseMotor   = false;
+		configs[3].kCenter         = 29.3;
+		
 	}
 	
 	public String getDate(){
@@ -125,16 +132,16 @@ public class Robot extends IterativeRobot {
 		//canner = new AutoCanner(4, 5);
 		//elevator = new Elevator(new int[] {6,7,8,9,10});
 		setConfig();
-		
 		try {
-			drive = new SwerveDrive(configs);
+			//drive = new SwerveDrive(configs);
+			testModule = new SwerveModule(configs[0]);
 			logger = new Logger(new String[] {
+					"",
 					""
 			},"/usr/local/frc/logs/"+getDate()+".txt");
 		} 
 		catch(FileNotFoundException fnfE){}
 		catch(IOException ioE){}
-		drive.start(10);
 		logger.init();
     }
 
@@ -159,55 +166,47 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopInit() {   	
 //    	testModule.start(10);
-    	
+    	//drive.start(10);
     	logger.stop();
     	logger.start(20);
-    	logger.set("teleopInit",0);
     }
     
     public void teleopPeriodic() {
     	
-//    	logger.update();
-//    	kP = SmartDashboard.getNumber("kP", 0.04);
-//    	kI = SmartDashboard.getNumber("kI", 0.0);
-//    	kD = SmartDashboard.getNumber("kD", 0.3);
-//    	testModule.setSteerPID(kP, kI, kD);
-//    	speed = Math.sqrt(Math.pow(stick.getRawAxis(0),2) + Math.pow(stick.getRawAxis(1),2));
-//    	if(Math.abs(stick.getRawAxis(0))>0.05 || Math.abs(stick.getRawAxis(1))>0.05) angle = -Math.toDegrees(Math.atan2(-stick.getRawAxis(0),-stick.getRawAxis(1)));
-//    	if(angle<0) angle += 360;
-//    	
-//    	testModule.setSteerPID(kP, kI, kD);
-//    	testModule.setValues(speed/2,angle);
-    	
-    	logger.set("teleopPeriodic",0);
-    	
-    	if (calibrate){
-	    	calibrate();
-    	} else{
-    		robotMovement();
-    	}
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
-    	
-    }
-    
-    public void calibrate(){
-    	oldTrim = trim;
+    	oldWrite = write;
+    	write = controlBoard.getRawButton(5);
     	if(controlBoard.getRawButton(6)) trim=0.5;
     	else if(controlBoard.getRawButton(8)) trim=-0.5;
     	else trim=0;
     	
-    	if (oldTrim > 0 || oldTrim < 0 && trim == 0){
-    		drive.frontLeft.steerEncoder.writeOffset();
-    		drive.frontRight.steerEncoder.writeOffset();
-    		drive.backLeft.steerEncoder.writeOffset();
-    		drive.backRight.steerEncoder.writeOffset();
-    	} 
-		if(controlBoard.getRawButton(1)) drive.frontLeft.steerEncoder.trimCenter(trim);
-		else if (controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
-    	else if (controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
-    	else if (controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
+    	robotMovement();
+    	//drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
+    	
     }
     
+    public void calibrate(){
+    	oldWrite = write;
+    	write = controlBoard.getRawButton(5);
+    	if(controlBoard.getRawButton(6)) trim=0.5;
+    	else if(controlBoard.getRawButton(8)) trim=-0.5;
+    	else trim=0;
+    	
+//    	if (write && !oldWrite){
+//    		drive.frontLeft.steerEncoder.writeOffset();
+//    		drive.frontRight.steerEncoder.writeOffset();
+//    		drive.backLeft.steerEncoder.writeOffset();
+//    		drive.backRight.steerEncoder.writeOffset();
+//    	} 
+		//if(controlBoard.getRawButton(1)) drive.frontLeft.steerEncoder.trimCenter(trim);
+		//else if (controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
+    	//else if (controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
+    	//else if (controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
+		
+//		System.out.println(drive.frontLeft.steerEncoder.offset + "   " + 
+//				drive.frontRight.steerEncoder.offset + "   " +
+//				drive.backRight.steerEncoder.offset + "   " +
+//				drive.backLeft.steerEncoder.offset);
+    }
     public void robotMovement(){
 //    	intakeWheelsIn  = controlBoard.getRawButton(12);
 //    	intakeWheelsOut = controlBoard.getRawButton(12);
@@ -248,7 +247,6 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void disabledInit() {
-    	logger.set("disabled", 0);
     	logger.stop();
 //    	testModule.stop();
     }

@@ -76,6 +76,7 @@ public class SwerveDrive extends Runnable{
 		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
 		backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
 		backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
+		System.out.println(frontRight.steerEncoder.encoder.getVoltage() + "   " + frontRight.steerEncoder.count + "   "+ frontRight.steerEncoder.getAngleDegrees());
 				
 	}
 	

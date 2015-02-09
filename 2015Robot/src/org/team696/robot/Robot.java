@@ -32,7 +32,7 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */			
-	
+	boolean 		calibrate 		= false;
 	
 	Joystick        controlBoard = new Joystick(0);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
@@ -62,6 +62,7 @@ public class Robot extends IterativeRobot {
 	double          yAxis           = controlBoard.getY();
 	double          xAxis           = controlBoard.getX();
 	double          trim            = 0;
+	double          oldTrim 		= trim;
 	ModuleConfigs[] configs;
 
 	SerialPort imu_serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
@@ -179,6 +180,36 @@ public class Robot extends IterativeRobot {
     	
     	logger.set("teleopPeriodic",0);
     	
+    	if (calibrate){
+	    	calibrate();
+    	} else{
+    		robotMovement();
+    	}
+    	
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
+    	
+    }
+    
+    public void calibrate(){
+    	oldTrim = trim;
+    	if(controlBoard.getRawButton(6)) trim=0.5;
+    	else if(controlBoard.getRawButton(8)) trim=-0.5;
+    	else trim=0;
+    	
+    	if (oldTrim > 0 || oldTrim < 0 && trim == 0){
+    		drive.frontLeft.steerEncoder.writeOffset();
+    		drive.frontRight.steerEncoder.writeOffset();
+    		drive.backLeft.steerEncoder.writeOffset();
+    		drive.backRight.steerEncoder.writeOffset();
+    	} 
+		if(controlBoard.getRawButton(1)) drive.frontLeft.steerEncoder.trimCenter(trim);
+		else if (controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
+    	else if (controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
+    	else if (controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
+		drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
+    }
+    
+    public void robotMovement(){
 //    	intakeWheelsIn  = controlBoard.getRawButton(12);
 //    	intakeWheelsOut = controlBoard.getRawButton(12);
 //    	ejectMech       = controlBoard.getRawButton(12);
@@ -205,19 +236,7 @@ public class Robot extends IterativeRobot {
 //    		if(moveUp && !moveDown && !moveUpOld)goalTotes++;
 //    		if(!moveUp && moveDown && !moveDownOld)goalTotes--;
 //    		elevator.setGoalPos(goalTotes);
-//    	}    	
-    	
-    	if(controlBoard.getRawButton(6)) trim=0.5;
-    	else if(controlBoard.getRawButton(8)) trim=-0.5;
-    	else trim=0;
-    	
-    	if(controlBoard.getRawButton(1)) drive.frontLeft.steerEncoder.trimCenter(trim);
-    	else if (controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
-    	else if (controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
-    	else if (controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
-    	System.out.println(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))+ "    "+Math.toDegrees(-Math.atan2(-xAxis, -yAxis)) + "   " + rotation);
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
-    	
+//    	} 
     }
     
     /**

@@ -31,29 +31,10 @@ public class SteeringEncoder extends Runnable {
 		encoder = new AnalogInput(channel);
 		wheel = _wheel;
 		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
-		counter = new Logger(new String[] {""},"/usr/local/frc/logs/zcounter"+wheel+".txt");
 //		centerLogger.setPath("/usr/local/frc/logs/zcenter"+ wheel +".txt");
 //		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");
-
-			centerLogger.write("0");
-			counter.write("0");
-			
-			offset = 0;
-			count = 0;
-//		try {
-//		offset = Double.parseDouble(centerLogger.read(1)[0]);
-//		}
-//		catch(FileNotFoundException e) {
-//			centerLogger.write("0");
-//			offset = 123456789;
-//		}
-//		try {
-//			count = Integer.parseInt(counter.read(1)[0]);
-//		}
-//		catch(FileNotFoundException e) {
-//			counter.write("0");
-//			count = 0;
-//		}
+		offset = Double.parseDouble(centerLogger.read(1)[0].split(".")[0]);
+		count = 0;
 	}
 	
 	@Override
@@ -65,10 +46,6 @@ public class SteeringEncoder extends Runnable {
 		if(testClockWise) count++;
 		if(testCounterClockWise) count--;
 		oldVoltage = voltage;
-		centerLogger.set(offset,0);
-		counter.set(count,0);
-		centerLogger.setString(true);
-		counter.setString(true);
 		
 		//System.out.println(wheel + "   " + offset);
 		
@@ -80,13 +57,15 @@ public class SteeringEncoder extends Runnable {
 	
 	public void trimCenter(double trim){
 		offset+=trim;
-//		if(offset>degreesPerRotation){
-//			offset-=degreesPerRotation;
-//			count--;
-//		}else if(offset<0){
-//			offset+=degreesPerRotation;
-//			count++;
-//		}
+	}
+	
+	public void writeOffset(){
+		centerLogger.delete();
+		offset=offset%degreesPerRotation;
+		if (offset < 0)offset+=degreesPerRotation;
+		centerLogger.set(offset, 0);
+		centerLogger.setString(true);
+		
 	}
 	
 	@Override
@@ -98,8 +77,11 @@ public class SteeringEncoder extends Runnable {
 	
 	@Override
 	public void stop(){
-		centerLogger.setString(false);
-		counter.setString(false);
+		centerLogger.delete();
+		counter.delete();
+		
+		centerLogger.setString(true);
+		counter.setString(true);
 		
 	}
 	

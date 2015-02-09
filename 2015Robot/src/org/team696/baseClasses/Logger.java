@@ -44,6 +44,7 @@ public class Logger extends Runnable {
 	
 	public Logger(String[] configName, String _fn) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		fn = _fn;
+		f = new File(fn);
 		writer = new PrintWriter(fn);
 		reader = new FileReader(fn);
 		br = new BufferedReader(reader);
@@ -53,6 +54,10 @@ public class Logger extends Runnable {
 		for(int fish = 0; fish < configName.length;fish++){
 			names[fish] = configName[fish];
 		}
+	}
+	
+	public void delete(){
+		f.delete();
 	}
 	
 	public void init() {

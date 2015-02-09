@@ -30,17 +30,16 @@ public class SteeringEncoder extends Runnable {
 	public SteeringEncoder(int channel, int _wheel) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		encoder = new AnalogInput(channel);
 		wheel = _wheel;
-		centerLogger = new Logger(new String[] {""});
-		counter = new Logger(new String[] {""});
-		centerLogger.setPath("/usr/local/frc/logs/zcenter"+ wheel +".txt");
-		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");
-		try {
-			System.out.println("centerLogger: "+centerLogger.read(1)[0]+"  |  "+"counter: "+counter.read(1)[0]);
-		}
-		catch(FileNotFoundException e) {
+		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
+		counter = new Logger(new String[] {""},"/usr/local/frc/logs/zcounter"+wheel+".txt");
+//		centerLogger.setPath("/usr/local/frc/logs/zcenter"+ wheel +".txt");
+//		counter.setPath("/usr/local/frc/logs/zcounter"+wheel+".txt");
+
 			centerLogger.write("0");
 			counter.write("0");
-		}
+			
+			offset = 0;
+			count = 0;
 //		try {
 //		offset = Double.parseDouble(centerLogger.read(1)[0]);
 //		}
@@ -66,15 +65,17 @@ public class SteeringEncoder extends Runnable {
 		if(testClockWise) count++;
 		if(testCounterClockWise) count--;
 		oldVoltage = voltage;
-		centerLogger.set(offset,1);
-		counter.set(count,1);
-		centerLogger.setString(false);
-		counter.setString(false);
+		centerLogger.set(offset,0);
+		counter.set(count,0);
+		centerLogger.setString(true);
+		counter.setString(true);
 		
-		try{
-			System.out.println("centerLogger: "+centerLogger.read(1)[0]+"  |  "+"counter: "+counter.read(1)[0]);
-		}
-		catch (IOException e){};
+		//System.out.println(wheel + "   " + offset);
+		
+//		try{
+//			System.out.println("centerLogger: "+centerLogger.read(1)[0]+"  |  "+"counter: "+counter.read(1)[0]);
+//		}
+//		catch (IOException e){};
 	}
 	
 	public void trimCenter(double trim){
@@ -97,8 +98,9 @@ public class SteeringEncoder extends Runnable {
 	
 	@Override
 	public void stop(){
-		centerLogger.setString(true);
-		counter.setString(true);
+		centerLogger.setString(false);
+		counter.setString(false);
+		
 	}
 	
 	public double getAngleDegrees(){

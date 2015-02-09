@@ -16,6 +16,7 @@ public class Logger extends Runnable {
 	String[] values;
 	String toSend;
 	String fn;
+	File f;
 	boolean write = false;
 	boolean dontPut = false;
 	
@@ -25,13 +26,13 @@ public class Logger extends Runnable {
 		return df.format(date);
 	}
 	
-	public void setPath(String path){
-		fn = "path";
-	}
+//	public void setPath(String path){
+//		fn = "path";
+//	}
 	
-	public void setPath(){
-		fn = "/usr/local/frc/logs/"+getDate()+".txt";
-	}
+//	public void setPath(){
+//		fn = "/usr/local/frc/logs/"+getDate()+".txt";
+//	}
 	
 	public String[] read(int lines) throws IOException{
 		String[] iRead = new String[lines];
@@ -41,8 +42,8 @@ public class Logger extends Runnable {
 		return iRead;
 	}
 	
-	public Logger(String[] configName) throws FileNotFoundException, UnsupportedEncodingException,IOException{
-		
+	public Logger(String[] configName, String _fn) throws FileNotFoundException, UnsupportedEncodingException,IOException{
+		fn = _fn;
 		writer = new PrintWriter(fn);
 		reader = new FileReader(fn);
 		br = new BufferedReader(reader);
@@ -113,7 +114,6 @@ public class Logger extends Runnable {
 			int lenDif = 5-values[pos].length();
 			for(int fish = 0; fish < lenDif;fish++){
 				values[pos]+=" ";
-				System.out.println(values[pos].length());
 			}
 		}
 	}
@@ -174,6 +174,7 @@ public class Logger extends Runnable {
 		if(!dontPut){
 			writer.println(str);
 			writer.flush();
+			
 		}
 	}
 	

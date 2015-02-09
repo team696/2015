@@ -4,7 +4,9 @@ package org.team696.robot;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.team696.baseClasses.*;
 import org.team696.subsystems.*;
@@ -13,6 +15,7 @@ import com.kauailabs.nav6.frc.*;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SerialPort.Port;
@@ -31,7 +34,8 @@ public class Robot extends IterativeRobot {
      */			
 	
 	
-	Joystick        controlBoard;
+	Joystick        controlBoard = new Joystick(0);
+	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	public static SwerveDrive     drive;
 	//public static Intake          intake;
 	//public static AutoCanner      canner;
@@ -58,15 +62,19 @@ public class Robot extends IterativeRobot {
 	double          yAxis           = controlBoard.getY();
 	double          xAxis           = controlBoard.getX();
 	double          trim            = 0;
-	ModuleConfigs[] configs         = new ModuleConfigs[4];
+	ModuleConfigs[] configs;
 
 	SerialPort imu_serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
 	SerialPort sPort = new SerialPort(57600, SerialPort.Port.kMXP);
 	IMUAdvanced mxp = new IMUAdvanced(sPort);
 	
 	public void setConfig(){
-		configs[0].kSteerMotor     = 0;
-		configs[0].kDriveMotor     = 14;
+		configs         = new ModuleConfigs[4];
+		for(int fish=0;fish<4;fish++){
+			configs[fish] = new ModuleConfigs();
+		}
+		configs[0].kSteerMotor     = 16;
+		configs[0].kDriveMotor     = 0;
 		configs[0].kSteerEncoder   = 2;
 //		configs[0].kDriveEncoderA  = 0;
 //		configs[0].kDriveEncoderB  = 0;
@@ -92,8 +100,8 @@ public class Robot extends IterativeRobot {
 		configs[2].kReverseEncoder = false;
 		configs[2].kReverseMotor   = false;
 		
-		configs[3].kSteerMotor     = 13;
-		configs[3].kDriveMotor     = 12;
+		configs[3].kSteerMotor     = 17;
+		configs[3].kDriveMotor     = 18;
 		configs[3].kSteerEncoder   = 3;
 //		configs[3].kDriveEncoderA  = 0;
 //		configs[3].kDriveEncoderB  = 0;
@@ -102,26 +110,28 @@ public class Robot extends IterativeRobot {
 		configs[3].kReverseMotor   = false;
 	}
 	
-	public void initiate(){
-		setConfig();
-		controlBoard = new Joystick(0);
-		//intake = new Intake(0, 1, 2, 3);
-		//canner = new AutoCanner(4, 5);
-		//elevator = new Elevator(new int[] {6,7,8,9,10});
-		try {
-			drive = new SwerveDrive(configs);
-			logger = new Logger(new String[] {
-					""
-			});
-		} 
-		catch(FileNotFoundException fnfE){}
-		catch(IOException ioE){}
+	public String getDate(){
+		Date date = new Date();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+		return df.format(date);
 	}
 	
 	public void robotInit(){
 		//intake.start(20);
 		//canner.start(20);
 		//elevator.start(20);
+		//intake = new Intake(0, 1, 2, 3);
+		//canner = new AutoCanner(4, 5);
+		//elevator = new Elevator(new int[] {6,7,8,9,10});
+		setConfig();
+		try {
+			drive = new SwerveDrive(configs);
+			logger = new Logger(new String[] {
+					""
+			},"/usr/local/frc/logs/"+getDate()+".txt");
+		} 
+		catch(FileNotFoundException fnfE){}
+		catch(IOException ioE){}
 		drive.start(10);
 		logger.init();
     }
@@ -169,18 +179,18 @@ public class Robot extends IterativeRobot {
     	
     	logger.set("teleopPeriodic",0);
     	
-    	intakeWheelsIn  = controlBoard.getRawButton(12);
-    	intakeWheelsOut = controlBoard.getRawButton(12);
-    	ejectMech       = controlBoard.getRawButton(12);
-    	intakeMech      = controlBoard.getRawButton(12);
-    	grabBin         = controlBoard.getRawButton(12);
-    	leftOut         = controlBoard.getRawButton(12);
-    	rightOut        = controlBoard.getRawButton(12);
-    	override        = controlBoard.getRawButton(12);
-    	moveUpOld 		= moveUp;
-    	moveDownOld     = moveDown;
-    	moveUp          = controlBoard.getRawButton(12);
-    	moveDown        = controlBoard.getRawButton(12);
+//    	intakeWheelsIn  = controlBoard.getRawButton(12);
+//    	intakeWheelsOut = controlBoard.getRawButton(12);
+//    	ejectMech       = controlBoard.getRawButton(12);
+//    	intakeMech      = controlBoard.getRawButton(12);
+//    	grabBin         = controlBoard.getRawButton(12);
+//    	leftOut         = controlBoard.getRawButton(12);
+//    	rightOut        = controlBoard.getRawButton(12);
+//    	override        = controlBoard.getRawButton(12);
+//    	moveUpOld 		= moveUp;
+//    	moveDownOld     = moveDown;
+//    	moveUp          = controlBoard.getRawButton(12);
+//    	moveDown        = controlBoard.getRawButton(12);
     	rotation        = Util.deadZone(controlBoard.getZ(), -0.1, 1, 0);
     	yAxis           = controlBoard.getY();
     	xAxis           = controlBoard.getX();
@@ -197,17 +207,19 @@ public class Robot extends IterativeRobot {
 //    		elevator.setGoalPos(goalTotes);
 //    	}    	
     	
-    	if(controlBoard.getRawButton(6)) trim=0.001;
-    	else if(controlBoard.getRawButton(8)) trim=-0.001;
+    	if(controlBoard.getRawButton(6)) trim=0.05;
+    	else if(controlBoard.getRawButton(8)) trim=-0.05;
     	else trim=0;
     	
-    	if(controlBoard.getRawButton(0)) drive.frontLeft.steerEncoder.trimCenter(trim);
-    	else if (controlBoard.getRawButton(1))drive.frontRight.steerEncoder.trimCenter(trim);
-    	else if (controlBoard.getRawButton(2))drive.backRight.steerEncoder.trimCenter(trim);
-    	else if (controlBoard.getRawButton(3))drive.backLeft.steerEncoder.trimCenter(trim);
+    	if(controlBoard.getRawButton(1)) drive.frontLeft.steerEncoder.trimCenter(trim);
+    	else if (controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
+    	else if (controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
+    	else if (controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
     	
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.atan2(yAxis, xAxis), rotation, false);
-    	
+    	//System.out.println("frontleft:    " + pdp.getCurrent(2)+ "   backleft:    "+ pdp.getCurrent(3)+ "   backright:   "+ pdp.getCurrent(12)+ "    frontright:   "+ pdp.getCurrent(13));
+    	System.out.println("    front left:  " + drive.frontLeft.steerEncoder.getAngleDegrees() + "    front right:  " + drive.frontRight.steerEncoder.getAngleDegrees()
+    			+ "    back right:  " + drive.backRight.steerEncoder.getAngleDegrees()+ "    back left:  " + drive.backLeft.steerEncoder.getAngleDegrees());
     }
     
     /**

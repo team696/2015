@@ -38,8 +38,8 @@ public class SwerveDrive extends Runnable{
 	public SwerveModule backRight;
 	public SwerveModule backLeft;
 	
-	IMUAdvanced navX;
-	SerialPort port;
+	//IMUAdvanced navX;
+	//SerialPort port;
 	
 	public SwerveDrive(ModuleConfigs[] _swerveConfigs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
 
@@ -48,11 +48,11 @@ public class SwerveDrive extends Runnable{
 		backRight = new SwerveModule(_swerveConfigs[2]);
 		backLeft = new SwerveModule(_swerveConfigs[3]);
 		
-	    try{
-	    	byte updateRateHZ = 50;
-	    	port = new SerialPort(57600, SerialPort.Port.kMXP);
-	    	navX = new IMUAdvanced(port, updateRateHZ);
-	    }catch(Exception ex){System.out.println("NAVX FAILURE!");}
+//	    try{
+//	    	byte updateRateHZ = 50;
+//	    	port = new SerialPort(57600, SerialPort.Port.kMXP);
+//	    	navX = new IMUAdvanced(port, updateRateHZ);
+//	    }catch(Exception ex){System.out.println("NAVX FAILURE!");}
 	    
 	}
 	@Override
@@ -96,7 +96,9 @@ public class SwerveDrive extends Runnable{
 		cumVectorsPolar[1] = -Math.toDegrees(Math.atan2(-cumVectors[0],cumVectors[1]));
 		//System.out.println(cumVectorsPolar[0]+ "     " +cumVectorsPolar[1]);
 		
-		cumVectorsPolar[1]+= navX.getYaw();
+		//cumVectorsPolar[1]+= navX.getYaw();
+		cumVectorsPolar[1] = 0;
+		
 		if(cumVectorsPolar[1]<0) cumVectorsPolar[1]+=360;
 		else if(cumVectorsPolar[1]>360) cumVectorsPolar[1]-=360;
 		//System.out.println(cumVectorsPolar[1]);
@@ -105,8 +107,8 @@ public class SwerveDrive extends Runnable{
 		cumVectorsAdjusted[1] = cumVectorsPolar[0]*Math.cos(Math.toRadians(cumVectorsPolar[1]));
 		robotPosition[0] += cumVectorsAdjusted[0]/1000;
 		robotPosition[1] += cumVectorsAdjusted[1]/1000;
-		robotPosition[2] = navX.getYaw();
-		System.out.println(robotPosition[0]+ "   "+ robotPosition[1]+ "   " + robotPosition[2]);
+		//robotPosition[2] = navX.getYaw();
+		//System.out.println(robotPosition[0]+ "   "+ robotPosition[1]+ "   " + robotPosition[2]);
 	}
 	
 	public void setSteerPID(double P, double I, double D){
@@ -196,11 +198,11 @@ public class SwerveDrive extends Runnable{
 		setRobotVector[0] = speed;
 		setRobotVector[1] = headingDegrees;
 		setRobotVector[2] = rotation;
-		if(fieldCentric) setRobotVector[1]+= navX.getYaw();
+		//if(fieldCentric) setRobotVector[1]+= navX.getYaw();
 		return true;
 	}
 	
 	public void zeroNavX(){
-		navX.zeroYaw();
+		//navX.zeroYaw();
 	}
 }

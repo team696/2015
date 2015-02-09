@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
 	Joystick        controlBoard = new Joystick(0);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	public static SwerveModule testModule;
-	//public static SwerveDrive     drive;
+	public static SwerveDrive     drive;
 	//public static Intake          intake;
 	//public static AutoCanner      canner;
 	//public static Elevator        elevator;	
@@ -133,8 +133,8 @@ public class Robot extends IterativeRobot {
 		//elevator = new Elevator(new int[] {6,7,8,9,10});
 		setConfig();
 		try {
-			//drive = new SwerveDrive(configs);
-			testModule = new SwerveModule(configs[0]);
+			drive = new SwerveDrive(configs);
+			//testModule = new SwerveModule(configs[1]);
 			logger = new Logger(new String[] {
 					"",
 					""
@@ -164,50 +164,29 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     @Override
-    public void teleopInit() {   	
-//    	testModule.start(10);
-    	//drive.start(10);
+    public void teleopInit() {
+    	drive.start(10);
     	logger.stop();
     	logger.start(20);
     }
     
     public void teleopPeriodic() {
     	
-    	oldWrite = write;
-    	write = controlBoard.getRawButton(5);
-    	if(controlBoard.getRawButton(6)) trim=0.5;
-    	else if(controlBoard.getRawButton(8)) trim=-0.5;
-    	else trim=0;
     	
-    	robotMovement();
-    	//drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
+    	if(calibrate) calibrate();
+    	else robotCode();
     	
     }
     
     public void calibrate(){
-    	oldWrite = write;
-    	write = controlBoard.getRawButton(5);
-    	if(controlBoard.getRawButton(6)) trim=0.5;
-    	else if(controlBoard.getRawButton(8)) trim=-0.5;
-    	else trim=0;
     	
-//    	if (write && !oldWrite){
-//    		drive.frontLeft.steerEncoder.writeOffset();
-//    		drive.frontRight.steerEncoder.writeOffset();
-//    		drive.backLeft.steerEncoder.writeOffset();
-//    		drive.backRight.steerEncoder.writeOffset();
-//    	} 
-		//if(controlBoard.getRawButton(1)) drive.frontLeft.steerEncoder.trimCenter(trim);
-		//else if (controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
-    	//else if (controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
-    	//else if (controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
-		
-//		System.out.println(drive.frontLeft.steerEncoder.offset + "   " + 
-//				drive.frontRight.steerEncoder.offset + "   " +
-//				drive.backRight.steerEncoder.offset + "   " +
-//				drive.backLeft.steerEncoder.offset);
+    	drive.frontLeft.override(true, );
+    	drive.frontRight.override(true, _overrideSpeed);
+    	drive.backRight.override(true, _overrideSpeed);
+    	drive.backLeft.override(true, _overrideSpeed);
+    	
     }
-    public void robotMovement(){
+    public void robotCode(){
 //    	intakeWheelsIn  = controlBoard.getRawButton(12);
 //    	intakeWheelsOut = controlBoard.getRawButton(12);
 //    	ejectMech       = controlBoard.getRawButton(12);
@@ -224,7 +203,11 @@ public class Robot extends IterativeRobot {
     	rotation        = Util.deadZone(controlBoard.getRawAxis(2), -0.1, 0.1, 0);
     	yAxis           = controlBoard.getRawAxis(1);
     	xAxis           = controlBoard.getRawAxis(0);
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
     	
+//    	testModule.setValues(Math.sqrt(xAxis *xAxis) +((yAxis *yAxis)), -Math.toDegrees(Math.atan2(-xAxis,-yAxis)));
+//    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
+//    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
 //    	if(intakeWheelsIn)speed=0.75;
 //    	if(intakeWheelsOut)speed= -0.75;
 //    	intake.setIntake(ejectMech, intakeMech,grabBin, speed);
@@ -248,6 +231,6 @@ public class Robot extends IterativeRobot {
     @Override
     public void disabledInit() {
     	logger.stop();
-//    	testModule.stop();
+    	testModule.stop();
     }
 }

@@ -50,6 +50,7 @@ public class SteeringEncoder extends Runnable {
 	@Override
 	public void update(){
 		super.update();
+    	System.out.println("angle:   " + getAngleDegrees()+ "   voltage:   " + voltage+ "    count:   " + count);
 		voltage = encoder.getVoltage();
 		boolean testClockWise = voltage<0.5 && oldVoltage>4.5;
 		boolean testCounterClockWise = voltage>4.5 && oldVoltage<0.5;
@@ -71,7 +72,8 @@ public class SteeringEncoder extends Runnable {
 	@Override
 	public void start(int periodMS){
 		count = 0;
-		
+		offset = 0;
+		offset = getAngleDegrees();
 		super.start(periodMS);
 		oldVoltage = voltage;
 		voltage = encoder.getVoltage();
@@ -94,15 +96,12 @@ public class SteeringEncoder extends Runnable {
 //		}
 	}
 	
-	@Override
-	public void stop(){
-//		centerLogger.write();
-		
-	}
-	
 	public double getAngleDegrees(){
 		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))-offset)%360;
 		//System.out.println(wheel + "   " + offset + "   " + count);
 		return angle;
+	}
+	public double getRawVoltage(){
+		return voltage;
 	}
 }

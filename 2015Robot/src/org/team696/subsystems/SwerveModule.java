@@ -25,6 +25,9 @@ public class SwerveModule extends Runnable{
 	
 	double lastEncoderCount = 0;
 	
+	boolean override = false;
+	double overrideSteer = 0;
+	double overrideSpeed = 0;
 	double setAngle;
 	double angle;
 	
@@ -50,10 +53,18 @@ public class SwerveModule extends Runnable{
 
 	@Override
 	public void start(int periodMS){
+		
 		super.start(periodMS);
-		steerEncoder.start(5);
+		steerEncoder.start(2);
 		//driveEncoder.reset();
 	}
+	
+	@Override
+	public void stop(){
+		steerEncoder.stop();
+		super.stop();
+	}
+	
 	@Override
 	public void update(){
 		super.update();
@@ -89,8 +100,10 @@ public class SwerveModule extends Runnable{
 		//org.team696.robot.Robot.logger.set(setAngle, 1);
 		
 		steerController.update(-error);
-		if(Math.abs(steerController.getOutput())>0.1) steerMotor.set(steerController.getOutput());
+		if(override) steerMotor.set(overrideSteer);
+		else if(Math.abs(steerController.getOutput())>0.1) steerMotor.set(steerController.getOutput());
 		else steerMotor.set(0);
+		if(override) setSpeed = overrideSpeed;
 		if(reverseMotor) driveMotor.set(-setSpeed);
 		else driveMotor.set(setSpeed);
 	}
@@ -103,6 +116,12 @@ public class SwerveModule extends Runnable{
 	
 	public void setSteerPID(double P, double I, double D){
 		steerController.setConstants(P, I, D);
+	}
+	
+	public void override(boolean _override, double _overrideSteer, double _overrideSpeed){
+		override = _override;
+		overrideSteer = _overrideSteer;
+		overrideSpeed = _overrideSpeed;
 	}
 	
 	public double[] getCumVector(){

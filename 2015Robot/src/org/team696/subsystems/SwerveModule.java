@@ -54,7 +54,7 @@ public class SwerveModule extends Runnable{
 
 	@Override
 	public void start(int periodMS){
-		
+		override = false;
 		super.start(periodMS);
 		//steerEncoder.start(10);
 		//driveEncoder.reset();
@@ -109,7 +109,6 @@ public class SwerveModule extends Runnable{
 		}
 		else steerMotor.set(0);
 		if(override) setSpeed = overrideSpeed;
-		
 		if(reverseMotor) driveMotor.set(-setSpeed);
 		else driveMotor.set(setSpeed);
 	}

@@ -64,7 +64,6 @@ public class SteeringEncoder extends Runnable {
 	@Override
 	public void update(){
 		super.update();
-//    	System.out.println("angle:   " + getAngleDegrees()+ "   voltage:   " + voltage+ "    count:   " + count);
 		voltage = encoder.getVoltage();
 		boolean testClockWise = voltage-oldVoltage<-3;
 		boolean testCounterClockWise = voltage-oldVoltage>3;
@@ -117,6 +116,7 @@ public class SteeringEncoder extends Runnable {
 	
 	public double getAngleDegrees(){
 		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))-offset)%360;
+		if(angle<0) angle+=360;
 		//System.out.println(wheel + "   " + offset + "   " + count);
 		return angle;
 	}

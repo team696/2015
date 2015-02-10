@@ -238,8 +238,9 @@ public class Robot extends IterativeRobot {
     	rotation        = Util.deadZone(controlBoard.getRawAxis(2), -0.1, 0.1, 0);
     	yAxis           = controlBoard.getRawAxis(1);
     	xAxis           = controlBoard.getRawAxis(0);
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis)), Math.toDegrees(-Math.atan2(-xAxis, -yAxis)), rotation, false);
-    	
+    	double angle = Math.toDegrees(-Math.atan2(-xAxis, -yAxis));
+    	if(angle<0) angle+=360;
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, false);
 //    	testModule.setValues(Math.sqrt(xAxis *xAxis) +((yAxis *yAxis)), -Math.toDegrees(Math.atan2(-xAxis,-yAxis)));
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
@@ -267,5 +268,7 @@ public class Robot extends IterativeRobot {
     public void disabledInit() {
     	logger.stop();
 //    	testModule.stop();
+    	drive.stop();
+    	//testModule.stop();
     }
 }

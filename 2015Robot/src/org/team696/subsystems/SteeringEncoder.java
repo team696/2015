@@ -9,6 +9,10 @@ import org.team696.baseClasses.Runnable;
 import org.team696.baseClasses.Util;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogTrigger;
+import edu.wpi.first.wpilibj.AnalogTriggerOutput;
+import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.AnalogTriggerOutput.AnalogTriggerType;
 
 
 public class SteeringEncoder extends Runnable {
@@ -18,6 +22,9 @@ public class SteeringEncoder extends Runnable {
 	String str;
 	
 	AnalogInput encoder;
+	AnalogTriggerOutput upTick = new AnalogTriggerOutput(new AnalogTrigger(encoder), AnalogTriggerType.kRisingPulse);
+	AnalogTriggerOutput downTick = new AnalogTriggerOutput(new AnalogTrigger(encoder), AnalogTriggerType.kFallingPulse);
+	
 	double minVoltage = 0;
 	double maxVoltage = 5;
 	double oldVoltage;
@@ -30,6 +37,8 @@ public class SteeringEncoder extends Runnable {
 	
 	public SteeringEncoder(int channel, int _wheel, double center) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		encoder = new AnalogInput(channel);
+		
+		
 		wheel = _wheel;
 		while(center>degreesPerRotation) center-=degreesPerRotation;
 		while(center<0) center+=degreesPerRotation;
@@ -65,8 +74,12 @@ public class SteeringEncoder extends Runnable {
 	public void update(){
 		super.update();
 		voltage = encoder.getVoltage();
-		boolean testClockWise = voltage-oldVoltage<-3;
-		boolean testCounterClockWise = voltage-oldVoltage>3;
+		//boolean testClockWise = voltage-oldVoltage<-3;
+		//boolean testCounterClockWise = voltage-oldVoltage>3;
+		boolean testClockWise = upTick.get();
+		boolean testCounterClockWise = downTick.get();
+				
+		
 		if(testClockWise) count++;
 		if(testCounterClockWise) count--;
 		//if(wheel == 2)System.out.println(stopwatch.get()-lastStopWatch + "    " + voltage + "    " + oldVoltage);

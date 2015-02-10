@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 
@@ -33,6 +34,7 @@ public class Robot extends IterativeRobot {
      * used for any initialization code.
      */			
 	boolean 		calibrate 		= false;
+	
 	
 	Joystick        controlBoard = new Joystick(0);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
@@ -169,7 +171,7 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopInit() {
-    	drive.start(10);
+    	drive.start(20);
     	logger.stop();
     	logger.start(20);
     }
@@ -178,7 +180,7 @@ public class Robot extends IterativeRobot {
     	
     	
     	
-    	
+    	calibrate = controlBoard.getRawButton(7);
     	if(calibrate) calibrate();
     	else robotCode();
     	
@@ -192,8 +194,8 @@ public class Robot extends IterativeRobot {
     	else if(moveLeft)trim = -0.5;
     	else trim = 0;
     	
-    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
-    	else drive.frontLeft.steerEncoder.trimCenter(0);
+    	//if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
+    	//else drive.frontLeft.steerEncoder.trimCenter(0);
     	if(controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
     	else drive.frontRight.steerEncoder.trimCenter(0);
     	if(controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
@@ -205,11 +207,13 @@ public class Robot extends IterativeRobot {
     	oldWrite = write;
     	write = controlBoard.getRawButton(5);
     	if(write && !oldWrite){
-    		drive.frontLeft.steerEncoder.writeOffset();
+    		//drive.frontLeft.steerEncoder.writeOffset();
     		drive.frontRight.steerEncoder.writeOffset();
     		drive.backLeft.steerEncoder.writeOffset();
     		drive.backRight.steerEncoder.writeOffset();
     	}
+    	
+    	
     	
 //    	drive.frontLeft.override(true, );
 //    	drive.frontRight.override(true, _overrideSpeed);

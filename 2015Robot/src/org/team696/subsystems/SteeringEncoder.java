@@ -23,9 +23,10 @@ public class SteeringEncoder extends Runnable {
 	double oldVoltage;
 	public double voltage;
 	double angle;
-	
+	double lastStopWatch = 0;
 	public int count;
 	double degreesPerRotation = 102.85714285714285714285714285714;
+	edu.wpi.first.wpilibj.Timer stopwatch = new edu.wpi.first.wpilibj.Timer();
 	
 	public SteeringEncoder(int channel, int _wheel, double center) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		encoder = new AnalogInput(channel);
@@ -35,7 +36,8 @@ public class SteeringEncoder extends Runnable {
 		offset = center;
 		offset = 0;
 		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
-		
+		stopwatch.reset();
+		stopwatch.start();
 		try {
 			String str = centerLogger.read(1)[0];
 			if (str == null){
@@ -64,11 +66,16 @@ public class SteeringEncoder extends Runnable {
 		super.update();
 //    	System.out.println("angle:   " + getAngleDegrees()+ "   voltage:   " + voltage+ "    count:   " + count);
 		voltage = encoder.getVoltage();
-		boolean testClockWise = voltage<0.5 && oldVoltage>4.5;
-		boolean testCounterClockWise = voltage>4.5 && oldVoltage<0.5;
+		boolean testClockWise = voltage-oldVoltage<-3;
+		boolean testCounterClockWise = voltage-oldVoltage>3;
 		if(testClockWise) count++;
 		if(testCounterClockWise) count--;
+		//if(wheel == 2)System.out.println(stopwatch.get()-lastStopWatch + "    " + voltage + "    " + oldVoltage);
+		//if(Math.abs((voltage-oldVoltage))<3 && Math.abs((voltage-oldVoltage))>0.5) 
+		if(stopwatch.get()-lastStopWatch>0.05)	
+			System.out.println(wheel+ ":   "+(stopwatch.get()-lastStopWatch) + "   " +voltage + "    " + oldVoltage);
 		oldVoltage = voltage;
+		lastStopWatch = stopwatch.get();
 	}
 	
 	public void trimCenter(double trim){
@@ -87,8 +94,8 @@ public class SteeringEncoder extends Runnable {
 		offset = 0;
 		offset = getAngleDegrees();
 		super.start(periodMS);
-		oldVoltage = voltage;
 		voltage = encoder.getVoltage();
+		oldVoltage = voltage;
 //		try {
 //			str = centerLogger.read(1)[0];
 //			if (str.charAt(0)==':'){

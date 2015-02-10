@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.team696.baseClasses.CustomPID;
 import org.team696.baseClasses.Runnable;
 import org.team696.baseClasses.ModuleConfigs;
+import org.team696.baseClasses.Util;
 
 public class SwerveModule extends Runnable{
 
@@ -55,7 +56,7 @@ public class SwerveModule extends Runnable{
 	public void start(int periodMS){
 		
 		super.start(periodMS);
-		steerEncoder.start(2);
+		//steerEncoder.start(10);
 		//driveEncoder.reset();
 	}
 	
@@ -101,9 +102,14 @@ public class SwerveModule extends Runnable{
 		
 		steerController.update(-error);
 		if(override) steerMotor.set(overrideSteer);
-		else if(Math.abs(steerController.getOutput())>0.1) steerMotor.set(steerController.getOutput());
+		else if(Math.abs(steerController.getOutput())>0.1) {
+			double tmp = steerController.getOutput();
+			tmp =Util.constrain(tmp, -0.6, 0.6);
+			steerMotor.set(steerController.getOutput());
+		}
 		else steerMotor.set(0);
 		if(override) setSpeed = overrideSpeed;
+		
 		if(reverseMotor) driveMotor.set(-setSpeed);
 		else driveMotor.set(setSpeed);
 	}

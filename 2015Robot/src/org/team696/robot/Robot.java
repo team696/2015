@@ -171,7 +171,7 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopInit() {
-    	drive.start(20);
+    	drive.start(10);
     	logger.stop();
     	logger.start(20);
     }

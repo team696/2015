@@ -190,25 +190,30 @@ public class Robot extends IterativeRobot {
     	moveLeft = controlBoard.getRawButton(8);
     	moveRight = controlBoard.getRawButton(6);
     	
-    	if(moveRight)trim = 0.5;
-    	else if(moveLeft)trim = -0.5;
+    	if(moveRight)trim = 0.2;
+    	else if(moveLeft)trim = -0.2;
     	else trim = 0;
     	
     	//if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
     	//else drive.frontLeft.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
-    	else drive.frontRight.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
-    	else drive.backRight.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
-    	else drive.backLeft.steerEncoder.trimCenter(0);
+//    	if(controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
+//    	else drive.frontRight.steerEncoder.trimCenter(0);
+//    	if(controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
+//    	else drive.backRight.steerEncoder.trimCenter(0);
+//    	if(controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
+//    	else drive.backLeft.steerEncoder.trimCenter(0);
     	
-    	
+    	//if(controlBoard.getRawButton(2))drive.frontRight.override(true, trim, 0.2);
+    	//else drive.frontRight.override(true, 0.0, 0);
+    	if(controlBoard.getRawButton(3))drive.backRight.override(true, trim, 0.2);
+    	else drive.backRight.override(true, 0.0, 0);
+    	if(controlBoard.getRawButton(4))drive.backLeft.override(true, trim, 0.2);
+    	else drive.backLeft.override(true, 0.0, 0);
     	oldWrite = write;
     	write = controlBoard.getRawButton(5);
     	if(write && !oldWrite){
     		//drive.frontLeft.steerEncoder.writeOffset();
-    		drive.frontRight.steerEncoder.writeOffset();
+    		//drive.frontRight.steerEncoder.writeOffset();
     		drive.backLeft.steerEncoder.writeOffset();
     		drive.backRight.steerEncoder.writeOffset();
     	}

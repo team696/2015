@@ -7,7 +7,9 @@ import java.io.UnsupportedEncodingException;
 import com.kauailabs.nav6.frc.IMU;
 import com.kauailabs.nav6.frc.IMUAdvanced;
 
+import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.AnalogTriggerOutput.AnalogTriggerType;
 
 import org.team696.subsystems.SwerveModule;
 import org.team696.baseClasses.ModuleConfigs;
@@ -34,25 +36,28 @@ public class SwerveDrive extends Runnable{
 	private double[] robotPosition = {0.0,0.0,0.0}; //x, y, and rotation
 	
 	//public SwerveModule frontLeft;
-	public SwerveModule frontRight;
+	//public SwerveModule frontRight;
 	public SwerveModule backRight;
 	public SwerveModule backLeft;
 	
-	//IMUAdvanced navX;
-	//SerialPort port;
+	public Counter backRightCounter = new Counter();
+	public Counter backLeftCounter = new Counter();
+	
+	IMUAdvanced navX;
+	SerialPort port;
 	
 	public SwerveDrive(ModuleConfigs[] _swerveConfigs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
 
 	    //frontLeft = new SwerveModule(_swerveConfigs[0]);
-		frontRight = new SwerveModule(_swerveConfigs[1]);
+		//frontRight = new SwerveModule(_swerveConfigs[1]);
 		backRight = new SwerveModule(_swerveConfigs[2]);
 		backLeft = new SwerveModule(_swerveConfigs[3]);
 		
-//	    try{
-//	    	byte updateRateHZ = 50;
-//	    	port = new SerialPort(57600, SerialPort.Port.kMXP);
-//	    	navX = new IMUAdvanced(port, updateRateHZ);
-//	    }catch(Exception ex){System.out.println("NAVX FAILURE!");}
+	    try{
+	    	byte updateRateHZ = 50;
+	    	port = new SerialPort(57600, SerialPort.Port.kMXP);
+	    	navX = new IMUAdvanced(port, updateRateHZ);
+	    }catch(Exception ex){System.out.println("NAVX FAILURE!");}
 	    
 	}
 	@Override
@@ -61,28 +66,32 @@ public class SwerveDrive extends Runnable{
 		super.start(periodMS);
 		//frontLeft.start(periodMS);
 		//frontRight.start(periodMS);
-		//backRight.start(periodMS);
-		//backLeft.start(periodMS);
+		backRight.start(periodMS);
+		backLeft.start(periodMS);
 		
+		backRightCounter.setUpDownCounterMode();
+		backRightCounter.setUpSource(backRight.steerEncoder.turnTrigger, AnalogTriggerType.kFallingPulse);
+		backRightCounter.setDownSource(backRight.steerEncoder.turnTrigger, AnalogTriggerType.kRisingPulse);
+		backLeftCounter.setUpDownCounterMode();
+		backLeftCounter.setUpSource(backLeft.steerEncoder.turnTrigger, AnalogTriggerType.kFallingPulse);
+		backLeftCounter.setDownSource(backLeft.steerEncoder.turnTrigger, AnalogTriggerType.kRisingPulse);
 		
 		
 	}
 	@Override
 	public void update(){
-		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 		
-		frontRight.update();
-		backRight.update();
-		backLeft.update();
-		frontRight.steerEncoder.update();
-		backRight.steerEncoder.update();
-		backLeft.steerEncoder.update();
+		
+		
+		System.out.println(backRightCounter.get() + "   " +backLeftCounter.get() + "   " +
+		backRight.steerEncoder.turnTrigger.getTriggerState()  + "   " + backLeft.steerEncoder.turnTrigger.getTriggerState());
+		
 		
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
 		updateOdometry();
 		//frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
-		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
+		//frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
 		backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
 		backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
 	}
@@ -91,7 +100,7 @@ public class SwerveDrive extends Runnable{
 		double [][] wheelVectors = new double[4][2];
 		
 		//wheelVectors[0] = frontLeft.getCumVector();
-		wheelVectors[1] = frontRight.getCumVector();
+		//wheelVectors[1] = frontRight.getCumVector();
 		wheelVectors[2] = backRight.getCumVector();
 		wheelVectors[3] = backLeft.getCumVector();
 		double[] cumVectors = {0.0,0.0};
@@ -103,9 +112,9 @@ public class SwerveDrive extends Runnable{
 		cumVectorsPolar[0] = Math.sqrt(Math.pow(cumVectors[0], 2)+ Math.pow(cumVectors[1],2));
 		cumVectorsPolar[1] = -Math.toDegrees(Math.atan2(-cumVectors[0],cumVectors[1]));
 		//System.out.println(cumVectorsPolar[0]+ "     " +cumVectorsPolar[1]);
-		
-		//cumVectorsPolar[1]+= navX.getYaw();
 		cumVectorsPolar[1] = 0;
+		cumVectorsPolar[1]+= navX.getYaw();
+		System.out.println(cumVectorsPolar[1]);
 		
 		if(cumVectorsPolar[1]<0) cumVectorsPolar[1]+=360;
 		else if(cumVectorsPolar[1]>360) cumVectorsPolar[1]-=360;
@@ -121,7 +130,7 @@ public class SwerveDrive extends Runnable{
 	
 	public void setSteerPID(double P, double I, double D){
 		//frontLeft.setSteerPID(P, I, D);
-		frontRight.setSteerPID(P, I, D);
+		//frontRight.setSteerPID(P, I, D);
 		backRight.setSteerPID(P, I, D);
 		backLeft.setSteerPID(P, I, D);
 	}
@@ -134,7 +143,7 @@ public class SwerveDrive extends Runnable{
 	
 	void setWheels(){
 		//frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
-		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
+		//frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
 		backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
 		backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
 	}

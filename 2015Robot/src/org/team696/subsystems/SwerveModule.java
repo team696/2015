@@ -46,7 +46,7 @@ public class SwerveModule extends Runnable{
 		configs = _configs;
 		steerMotor = new Victor(configs.kSteerMotor);
 		driveMotor = new Victor(configs.kDriveMotor);
-		steerEncoder = new SteeringEncoder(configs.kSteerEncoder,configs.kWheelNumber, configs.kCenter);
+		steerEncoder = new SteeringEncoder(configs.kSteerEncoder,configs.kWheelNumber);
 //		steerController = new CustomPID(0.05,0, 0.3);
 		steerController = new CustomPID(0.03,0, 0.2);
 //		driveEncoder = new Encoder(configs.kDriveEncoderA, configs.kDriveEncoderB);
@@ -56,7 +56,7 @@ public class SwerveModule extends Runnable{
 	public void start(int periodMS){
 		override = false;
 		super.start(periodMS);
-		//steerEncoder.start(10);
+		steerEncoder.start(10);
 		//driveEncoder.reset();
 	}
 	

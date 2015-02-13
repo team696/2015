@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.AnalogTrigger;
 import edu.wpi.first.wpilibj.AnalogTriggerOutput;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.AnalogTriggerOutput.AnalogTriggerType;
+import edu.wpi.first.wpilibj.Encoder;
 
 
 public class SteeringEncoder extends Runnable {
@@ -21,9 +22,11 @@ public class SteeringEncoder extends Runnable {
 	int wheel;
 	String str;
 	
-	AnalogInput encoder;
-	AnalogTriggerOutput upTick = new AnalogTriggerOutput(new AnalogTrigger(encoder), AnalogTriggerType.kRisingPulse);
-	AnalogTriggerOutput downTick = new AnalogTriggerOutput(new AnalogTrigger(encoder), AnalogTriggerType.kFallingPulse);
+	//public Counter steerCounter;
+	
+	public AnalogInput encoder;
+	
+	public AnalogTrigger turnTrigger;
 	
 	double minVoltage = 0;
 	double maxVoltage = 5;
@@ -32,21 +35,24 @@ public class SteeringEncoder extends Runnable {
 	double angle;
 	double lastStopWatch = 0;
 	public int count;
+	
 	double degreesPerRotation = 102.85714285714285714285714285714;
 	edu.wpi.first.wpilibj.Timer stopwatch = new edu.wpi.first.wpilibj.Timer();
 	
-	public SteeringEncoder(int channel, int _wheel, double center) throws FileNotFoundException, UnsupportedEncodingException,IOException{
+	public SteeringEncoder(int channel, int _wheel) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		encoder = new AnalogInput(channel);
 		
+		turnTrigger = new AnalogTrigger(encoder);
+		turnTrigger.setLimitsVoltage(0.5, 4.5);
+		
+		//steerCounter.setUpDownCounterMode();
+		
+		//steerCounter.setUpSource(turnTrigger, AnalogTriggerType.kRisingPulse);
+		//steerCounter.setDownSource(turnTrigger, AnalogTriggerType.kFallingPulse);
 		
 		wheel = _wheel;
-		while(center>degreesPerRotation) center-=degreesPerRotation;
-		while(center<0) center+=degreesPerRotation;
-		offset = center;
 		offset = 0;
 		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
-		stopwatch.reset();
-		stopwatch.start();
 		try {
 			String str = centerLogger.read(1)[0];
 			if (str == null){
@@ -76,18 +82,17 @@ public class SteeringEncoder extends Runnable {
 		voltage = encoder.getVoltage();
 		//boolean testClockWise = voltage-oldVoltage<-3;
 		//boolean testCounterClockWise = voltage-oldVoltage>3;
-		boolean testClockWise = upTick.get();
-		boolean testCounterClockWise = downTick.get();
-				
+		//boolean testClockWise = upTick.get();
+		//boolean testCounterClockWise = downTick.get();
 		
-		if(testClockWise) count++;
-		if(testCounterClockWise) count--;
+		//if(testClockWise) count++;
+		//if(testCounterClockWise) count--;
+		//count = steerCounter.get();
+		
+		
 		//if(wheel == 2)System.out.println(stopwatch.get()-lastStopWatch + "    " + voltage + "    " + oldVoltage);
 		//if(Math.abs((voltage-oldVoltage))<3 && Math.abs((voltage-oldVoltage))>0.5) 
-		if(stopwatch.get()-lastStopWatch>0.05)	
-			System.out.println(wheel+ ":   "+(stopwatch.get()-lastStopWatch) + "   " +voltage + "    " + oldVoltage);
-		oldVoltage = voltage;
-		lastStopWatch = stopwatch.get();
+		
 	}
 	
 	public void trimCenter(double trim){
@@ -128,7 +133,7 @@ public class SteeringEncoder extends Runnable {
 	}
 	
 	public double getAngleDegrees(){
-		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))-offset)%360;
+		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation)))%360;
 		if(angle<0) angle+=360;
 		//System.out.println(wheel + "   " + offset + "   " + count);
 		return angle;

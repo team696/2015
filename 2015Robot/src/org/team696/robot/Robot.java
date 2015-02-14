@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 
@@ -38,9 +39,9 @@ public class Robot extends IterativeRobot {
 	
 	Joystick        controlBoard = new Joystick(0);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
-	public static SwerveModule testModule;
-	//public static SwerveDrive     drive;
-	//public static Intake          intake;
+//	public static SwerveModule testModule;
+	public static SwerveDrive     drive;
+	public static Intake          intake;
 	//public static AutoCanner      canner;
 	//public static Elevator        elevator;	
 	
@@ -131,16 +132,15 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
-		//intake.start(20);
 		//canner.start(20);
 		//elevator.start(20);
-		//intake = new Intake(0, 1, 2, 3);
+		intake = new Intake(69, 69, 1, 4);
 		//canner = new AutoCanner(4, 5);
 		//elevator = new Elevator(new int[] {6,7,8,9,10});
 		setConfig();
 		try {
-			//drive = new SwerveDrive(configs);
-			testModule = new SwerveModule(configs[2]);
+			drive = new SwerveDrive(configs);
+//			testModule = new SwerveModule(configs[2]);
 //			logger = new Logger(new String[] {
 //					"",
 //					""
@@ -171,8 +171,9 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopInit() {
-    	//drive.start(10);
-    	testModule.start(10);
+    	drive.start(10);
+//    	testModule.start(10);
+    	intake.start(20);
 //    	logger.stop();
 //    	logger.start(20);
     }
@@ -204,8 +205,8 @@ public class Robot extends IterativeRobot {
 //    	else drive.backRight.steerEncoder.trimCenter(0);
 //    	if(controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
 //    	else drive.backLeft.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(4))testModule.steerEncoder.trimCenter(trim);
-    	else testModule.steerEncoder.trimCenter(0);
+//    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
+//    	else drive.frontLeft.steerEncoder.trimCenter(0);
 //    	if(controlBoard.getRawButton(4))testModule.override(true,trim/2, 0.2);
 //    	else testModule.override(false, 0,0);
     	
@@ -216,18 +217,22 @@ public class Robot extends IterativeRobot {
     	
 //    	if(controlBoard.getRawButton(2))drive.frontRight.override(true, trim, 0.2);
 //    	else drive.frontRight.override(true, 0.0, 0);
-//    	if(controlBoard.getRawButton(3))drive.backRight.override(true, trim, 0.2);
-//    	else drive.backRight.override(true, 0.0, 0);
-//    	if(controlBoard.getRawButton(4))drive.backLeft.override(true, trim, 0.2);
-//    	else drive.backLeft.override(true, 0.0, 0);
+    	if(controlBoard.getRawButton(3))drive.backRight.override(true, trim, 0.2);
+    	else drive.backRight.override(true, 0.0, 0);
+    	if(controlBoard.getRawButton(4))drive.backLeft.override(true, trim, 0.2);
+    	else drive.backLeft.override(true, 0.0, 0);
     	oldWrite = write;
     	write = controlBoard.getRawButton(5);
+    	//System.out.print(drive.frontLeft.steerEncoder.count+"   ");
+    	//System.out.print(drive.frontRight.steerEncoder.count+"   ");
+    	System.out.print(drive.backRight.steerEncoder.count+"   ");
+    	System.out.println(drive.backLeft.steerEncoder.count+"   ");
     	if(write && !oldWrite){
 //    		drive.frontLeft.steerEncoder.writeOffset();
 //    		drive.frontRight.steerEncoder.writeOffset();
 //    		drive.backLeft.steerEncoder.writeOffset();
 //    		drive.backRight.steerEncoder.writeOffset();
-    		testModule.steerEncoder.writeOffset();
+//    		testModule.steerEncoder.writeOffset();
     	}
     	
     	
@@ -255,11 +260,17 @@ public class Robot extends IterativeRobot {
     	rotation        = Util.deadZone(controlBoard.getRawAxis(2), -0.1, 0.1, 0);
     	yAxis           = controlBoard.getRawAxis(1);
     	xAxis           = controlBoard.getRawAxis(0);
-    	double angle = Math.toDegrees(-Math.atan2(-xAxis, -yAxis));
+    	double angle;
+    	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
+    	else  angle = Math.toDegrees(-Math.atan2(-xAxis, -yAxis));
     	if(angle<0) angle+=360;
-    	//drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, false);
-    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
-//    	testModule.setValues(Math.sqrt(xAxis *xAxis) +((yAxis *yAxis)), -Math.toDegrees(Math.atan2(-xAxis,-yAxis)));
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, false);
+//    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
+    	
+    	if(controlBoard.getPOV() ==0) intake.setIntake(false, true, false, 1);
+    	else if (controlBoard.getPOV() == 180) intake.setIntake(true, false, false, 1);
+    	else intake.setIntake(false, false, false, 0);
+    	
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
 //    	if(intakeWheelsIn)speed=0.75;
@@ -285,8 +296,9 @@ public class Robot extends IterativeRobot {
     @Override
     public void disabledInit() {
 //    	logger.stop();
-    	testModule.stop();
-    	//drive.stop();
+//    	testModule.stop();
+    	intake.stop();
+    	drive.stop();
     	//testModule.stop();
     }
 }

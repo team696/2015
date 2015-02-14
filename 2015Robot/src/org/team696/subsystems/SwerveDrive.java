@@ -35,8 +35,8 @@ public class SwerveDrive extends Runnable{
 	
 	private double[] robotPosition = {0.0,0.0,0.0}; //x, y, and rotation
 	
-	public SwerveModule frontLeft;
-	public SwerveModule frontRight;
+	//public SwerveModule frontLeft;
+	//public SwerveModule frontRight;
 	public SwerveModule backRight;
 	public SwerveModule backLeft;
 		
@@ -45,8 +45,8 @@ public class SwerveDrive extends Runnable{
 	
 	public SwerveDrive(ModuleConfigs[] _swerveConfigs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
 
-	    frontLeft = new SwerveModule(_swerveConfigs[0]);
-		frontRight = new SwerveModule(_swerveConfigs[1]);
+	    //frontleft = new SwerveModule(_swerveConfigs[0]);
+		//frontRight = new SwerveModule(_swerveConfigs[1]);
 		backRight = new SwerveModule(_swerveConfigs[2]);
 		backLeft = new SwerveModule(_swerveConfigs[3]);
 		
@@ -61,8 +61,8 @@ public class SwerveDrive extends Runnable{
 	public void start(int periodMS){
 		
 		super.start(periodMS);
-		frontLeft.start(periodMS);
-		frontRight.start(periodMS);
+		//frontleft.start(periodMS);
+		//frontRight.start(periodMS);
 		backRight.start(periodMS);
 		backLeft.start(periodMS);	
 		
@@ -73,8 +73,8 @@ public class SwerveDrive extends Runnable{
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
 		updateOdometry();
-		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
-		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
+		//frontleft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
+		//frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
 		backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
 		backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
 	}
@@ -87,8 +87,8 @@ public class SwerveDrive extends Runnable{
 	private void updateOdometry(){
 		double [][] wheelVectors = new double[4][2];
 		
-		wheelVectors[0] = frontLeft.getCumVector();
-		wheelVectors[1] = frontRight.getCumVector();
+		//wheelVectors[0] = frontleft.getCumVector();
+		//wheelVectors[1] = frontRight.getCumVector();
 		wheelVectors[2] = backRight.getCumVector();
 		wheelVectors[3] = backLeft.getCumVector();
 		double[] cumVectors = {0.0,0.0};
@@ -117,21 +117,21 @@ public class SwerveDrive extends Runnable{
 	}
 	
 	public void setSteerPID(double P, double I, double D){
-		frontLeft.setSteerPID(P, I, D);
-		frontRight.setSteerPID(P, I, D);
+		//frontleft.setSteerPID(P, I, D);
+		//frontRight.setSteerPID(P, I, D);
 		backRight.setSteerPID(P, I, D);
 		backLeft.setSteerPID(P, I, D);
 	}
 //	public void setDrivePID(double P, double I, double D, double F){
-//		frontLeft.setDrivePID(P, I, D, F);
+//		//frontleft.setDrivePID(P, I, D, F);
 //		frontRight.setDrivePID(P, I, D, F);
 //		backRight.setDrivePID(P, I, D, F);
 //		backLeft.setDrivePID(P, I, D, F);
 //	}
 	
 	void setWheels(){
-		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
-		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
+		//frontleft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
+		//frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
 		backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
 		backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
 	}

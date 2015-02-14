@@ -113,27 +113,30 @@ public class SteeringEncoder extends Runnable {
 	public void start(int periodMS){
 		count = 0;
 		offset = 0;
+//		System.out.print(getAngleDegrees()+ "   ");
 		offset = getAngleDegrees();
-		super.start(periodMS);
 		voltage = encoder.getVoltage();
 		oldVoltage = voltage;
-		try {
-			str = centerLogger.read(1)[0];
-			if(str==null)str="0.0";
-			offset = Double.parseDouble(str);
-			
-		}
-		catch(NullPointerException e){
-			System.out.println("error reading " + e);
-			centerLogger.write(0+"");
-			offset = 0;
-			System.out.println(offset);
-		}
-		catch (IOException e){
-			System.out.println(e);
-			centerLogger.write(0+"");
-			offset = 0;
-		}
+//		System.out.println(offset + "   ");
+		super.start(periodMS);
+		
+		//		try {
+//			str = centerLogger.read(1)[0];
+//			if(str==null)str="0.0";
+//			offset = Double.parseDouble(str);
+//			
+//		}
+//		catch(NullPointerException e){
+//			System.out.println("error reading " + e);
+//			centerLogger.write(0+"");
+//			offset = 0;
+//			System.out.println(offset);
+//		}
+//		catch (IOException e){
+//			System.out.println(e);
+//			centerLogger.write(0+"");
+//			offset = 0;
+//		}
 	}
 	
 	public double getAngleDegrees(){

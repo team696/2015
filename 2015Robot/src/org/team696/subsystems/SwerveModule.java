@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -54,9 +55,10 @@ public class SwerveModule extends Runnable{
 
 	@Override
 	public void start(int periodMS){
+		steerEncoder.start(10);
+		Timer.delay(0.1);
 		override = false;
 		super.start(periodMS);
-		steerEncoder.start(10);
 		//driveEncoder.reset();
 	}
 	
@@ -84,37 +86,34 @@ public class SwerveModule extends Runnable{
 		double error = 0.0;
 		error = setAngle - angle;
 		//org.team696.robot.Robot.logger.set(error, 2);
-		//System.out.print(setAngle+ "   ");
-		//System.out.print(angle+ "   ");
-		//System.out.print(error+ "   ");
+//		System.out.print(setAngle+ "   ");
+//		System.out.print(angle+ "   ");
+//		System.out.print(error+ "   ");
 		boolean reverseMotor =  false;
 		if(error>180) error = -(360-error);  //check if over the
 		else if(error<-180) error = (360+error);//zero line to flip error 
-		//System.out.print(error+ "   ");
+//		System.out.print(error+ "   ");
 		//org.team696.robot.Robot.logger.set(error, 3);
 		
 		if(error > 90){
-			error = -(180-error);
+			error = error-180;
 			reverseMotor = true;
 		}else if(error<-90){
-			error = -(180+error);
+			error = error+180;
 			reverseMotor = true;
 		}
-		//System.out.print(error+ "   ");
-		//System.out.println();
+//		System.out.print(error+ "   ");
+//		System.out.println();
 		//org.team696.robot.Robot.logger.set(error, 4);
 		//org.team696.robot.Robot.logger.set(angle, 0);
 		//org.team696.robot.Robot.logger.set(setAngle, 1);
 		
 		steerController.update(-error);
 		if(override) steerMotor.set(overrideSteer);
-		else if(Math.abs(steerController.getOutput())>0.1) {
-			double tmp = steerController.getOutput();
-			tmp =Util.constrain(tmp, -0.3, 0.3);
-			steerMotor.set(tmp);
-		}
-		else steerMotor.set(0);
+		else steerMotor.set(steerController.getOutput());
 		if(override) driveMotor.set(overrideSpeed);
+		
+		
 		else if(reverseMotor) driveMotor.set(-setSpeed);
 		else driveMotor.set(setSpeed);
 	}

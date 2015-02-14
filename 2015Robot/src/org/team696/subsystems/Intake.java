@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.VictorSP;
 public class Intake extends Runnable{
 	VictorSP rightIn;
 	VictorSP leftIn;
-	Solenoid ejector;
-	Solenoid grabberOfBin;
+	//Solenoid ejector;
+	//Solenoid grabberOfBin;
 	
 	boolean grabBin = false;
 	boolean eject = false;
@@ -20,8 +20,8 @@ public class Intake extends Runnable{
 	 * @param config - ejectorChan, grabBinChan, rightInChan, leftInChan
 	 */
 	public Intake(int ejectorSolenoid, int grabberSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
-		ejector = new Solenoid(ejectorSolenoid);
-		grabberOfBin = new Solenoid(grabberSolenoid);
+//		ejector = new Solenoid(ejectorSolenoid);
+//		grabberOfBin = new Solenoid(grabberSolenoid);
 		
 		rightIn = new VictorSP(rightIntakeVictor);
 		leftIn = new VictorSP(leftIntakeVictor);
@@ -37,33 +37,49 @@ public class Intake extends Runnable{
 		run();
 	}
 	
-	public void setIntake(boolean eject, boolean intake, boolean _grabBin, double _speed) {
+	public void setIntake(boolean _eject, boolean _intake, boolean _grabBin, double _speed) {
+		eject = _eject;
+		intake = _intake;
+		speed = _speed;
+		
 		if (eject == intake) {
 			intake = false;
 			eject = false;
 		}
+		
+		if (eject) {
+//			ejector.set(true); 
+			speed = speed;
+		} else  if (intake) {
+//			ejector.set(false);
+			speed = -speed;
+		} else{
+//			ejector.set(false);
+			speed = 0;
+		}
+		
 		grabBin = _grabBin;
-		speed = _speed;
-	}
+		}
 	
 	public void motors() {
-		rightIn.set(speed);
+		System.out.println(speed);
+		rightIn.set(-speed);
 		leftIn.set(speed);
 	}
 	
 	public void run() {
-		grabberOfBin.set(grabBin);
+//		grabberOfBin.set(grabBin);
 		
-		if (eject) {
-			ejector.set(true); 
-			speed = -0.75;
-		} else  if (intake) {
-			ejector.set(false);
-			speed = 0.75;
-		} else{
-			ejector.set(false);
-			speed = 0;
-		}
-		motors();		
+//		if (eject) {
+////			ejector.set(true); 
+//			speed = speed;
+//		} else  if (intake) {
+////			ejector.set(false);
+//			speed = -speed;
+//		} else{
+////			ejector.set(false);
+//			speed = 0;
+//		}
+		motors();
 	}
 }

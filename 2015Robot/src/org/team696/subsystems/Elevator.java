@@ -24,6 +24,7 @@ public class Elevator extends Runnable {
 	double clicksPerTote = 360;
 	double goalPos;	
 	double distPerTote = 1.0;
+	double error;
 
 	/*
 	 * @param config - encoderSlotA, encoderSlotB, limitSwitchBot, limitSwitchTop, BreakerChannel
@@ -49,7 +50,7 @@ public class Elevator extends Runnable {
 	}
 	
 	private void elevPID(){
-		 PID.update(goalPos-encoder.get());
+		 PID.update(error);
 		
 	}
 	
@@ -91,6 +92,11 @@ public class Elevator extends Runnable {
 //		}
 //	}
 	
+	public boolean atLocation(){
+		if(error == 0)return true;
+		else return false;
+	}
+	
 	private void override(){
 		if (moveUp && !moveDown)elevMotor.set(0.75);
 		else if (moveDown && !moveUp)elevMotor.set(-0.75);
@@ -108,7 +114,9 @@ public class Elevator extends Runnable {
 	}
 	
 	@Override
-	public void update() {	
+	public void update() {
+		error = goalPos-encoder.get();
+		error = Util.deadZone(error, 0, 0.1, 0);
 		if (!override)setHeight();
 		else override();
 	}

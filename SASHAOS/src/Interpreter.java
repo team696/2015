@@ -36,14 +36,15 @@ public class Interpreter{
 			String[] argsString = splitCommand[1].split(",");
 			//scriptArgs = new double[argsString.length];
 			Object[] arguments = new Object[argsString.length];
-			System.out.println(argsString.length);
+			//System.out.println(argsString.length);
 			for(int jesus = 0; jesus <argsString.length; jesus++){
 				//scriptArgs[jesus] =  Double.parseDouble(argsString[jesus]);
 				try{
 					arguments[jesus] = Double.parseDouble(argsString[jesus]);
 				}catch(NumberFormatException e){
 					if(argsString[jesus].equalsIgnoreCase("parallel")) arguments[jesus] = true;
-					else arguments[jesus] = true;
+					else arguments[jesus] = false;
+					
 				}
 			}
 			Class[] classArg = new Class[arguments.length];
@@ -62,7 +63,7 @@ public class Interpreter{
 				//arguments[arguments.length-1] = false;
 				
 				Constructor constructor = command.getDeclaredConstructor(classArg);
-				System.out.println(constructor.getParameterCount());
+				//System.out.println(constructor.getParameterCount());
 				newCommand = (Command) constructor.newInstance(arguments);
 				
 			}catch(ClassNotFoundException ex){ex.printStackTrace();}

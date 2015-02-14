@@ -30,25 +30,31 @@ public class Interpreter{
 		
 		Command newCommand = new Command();
 		String[] splitCommand = lines[curLine].split(":");
-		double[] args = {};
+		Object[] scriptArgs = {};
+		
 		if(splitCommand.length>1){
 			String[] argsString = splitCommand[1].split(",");
-			args = new double[argsString.length];
+			//scriptArgs = new double[argsString.length];
+			Object[] arguments = new Object[argsString.length];
 			for(int jesus = 0; jesus <argsString.length; jesus++){
-				args[jesus] =  Double.parseDouble(argsString[jesus]);
+				//scriptArgs[jesus] =  Double.parseDouble(argsString[jesus]);
+				try{
+					arguments[jesus] = Double.parseDouble(argsString[jesus]);
+				}catch(NumberFormatException e){
+					
+				}
 			}
 			
 			try{
 				command = Class.forName(splitCommand[0].toLowerCase());
-				Class[] classArg = new Class[args.length+1];
-				Object[] arguments = new Object[args.length+1];
-				for(int fish = 0; fish < args.length; fish++){
+				Class[] classArg = new Class[scriptArgs.length+1];
+				for(int fish = 0; fish < scriptArgs.length; fish++){
 					classArg[fish] = Double.class;
 				}
 				classArg[classArg.length-1] = Boolean.class;
 				
-				for(int fish = 0; fish < args.length; fish++){
-					arguments[fish] = args[fish];
+				for(int fish = 0; fish < scriptArgs.length; fish++){
+					arguments[fish] = scriptArgs[fish];
 				}
 				arguments[arguments.length-1] = false;
 				

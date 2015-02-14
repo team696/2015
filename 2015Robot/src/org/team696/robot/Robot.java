@@ -38,6 +38,7 @@ public class Robot extends IterativeRobot {
 	
 	
 	Joystick        controlBoard = new Joystick(0);
+	Joystick 		rightStick   = new Joystick(1);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 //	public static SwerveModule testModule;
 	public static SwerveDrive     drive;
@@ -74,9 +75,6 @@ public class Robot extends IterativeRobot {
 	boolean			oldWrite		= write;
 	ModuleConfigs[] configs;
 
-	SerialPort imu_serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
-	SerialPort sPort = new SerialPort(57600, SerialPort.Port.kMXP);
-	IMUAdvanced mxp = new IMUAdvanced(sPort);
 	
 	public void setConfig(){
 		configs         = new ModuleConfigs[4];
@@ -182,26 +180,26 @@ public class Robot extends IterativeRobot {
     	
     	
     	
-    	calibrate = controlBoard.getRawButton(7);
+    	calibrate = rightStick.getRawButton(3);
     	if(calibrate) calibrate();
     	else robotCode();
-    	//System.out.println(testModule.steerEncoder.getAngleDegrees()+ "   "+ testModule.steerEncoder.offset);
- 	
+    	
     }
     
     public void calibrate(){
-    	moveLeft = controlBoard.getRawButton(8);
-    	moveRight = controlBoard.getRawButton(6);
+//    	moveLeft = controlBoard.getRawButton(8);
+//    	moveRight = controlBoard.getRawButton(6);
+//    	
+//    	if(moveRight)trim = 0.5;
+//    	else if(moveLeft)trim = -0.5;
+//    	else trim = 0;
     	
-    	if(moveRight)trim = 0.5;
-    	else if(moveLeft)trim = -0.5;
-    	else trim = 0;
-    	
-    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
+    	trim = rightStick.getRawAxis(0);
+    	if(controlBoard.getRawButton(3))drive.frontLeft.steerEncoder.trimCenter(trim);
     	else drive.frontLeft.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(2))drive.frontRight.steerEncoder.trimCenter(trim);
+    	if(controlBoard.getRawButton(5))drive.frontRight.steerEncoder.trimCenter(trim);
     	else drive.frontRight.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(3))drive.backRight.steerEncoder.trimCenter(trim);
+    	if(controlBoard.getRawButton(2))drive.backRight.steerEncoder.trimCenter(trim);
     	else drive.backRight.steerEncoder.trimCenter(0);
     	if(controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
     	else drive.backLeft.steerEncoder.trimCenter(0);
@@ -257,7 +255,7 @@ public class Robot extends IterativeRobot {
 //    	moveUp          = controlBoard.getRawButton(12);
 //    	moveDown        = controlBoard.getRawButton(12);
     	
-    	rotation        = Util.deadZone(controlBoard.getRawAxis(2), -0.1, 0.1, 0);
+    	rotation        = Util.deadZone(rightStick.getRawAxis(0), -0.1, 0.1, 0)/2;
     	yAxis           = controlBoard.getRawAxis(1);
     	xAxis           = controlBoard.getRawAxis(0);
     	double angle;
@@ -267,8 +265,8 @@ public class Robot extends IterativeRobot {
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, false);
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
     	
-    	if(controlBoard.getPOV() ==0) intake.setIntake(false, true, false, 1);
-    	else if (controlBoard.getPOV() == 180) intake.setIntake(true, false, false, 1);
+    	if(rightStick.getRawButton(1)) intake.setIntake(false, true, false, 1);
+    	else if (controlBoard.getRawButton(1)) intake.setIntake(true, false, false, 1);
     	else intake.setIntake(false, false, false, 0);
     	
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));

@@ -22,8 +22,7 @@ public class SteeringEncoder extends Runnable {
 	int wheel;
 	String str;
 	
-	//public Counter steerCounter;
-	
+	public Counter steerCounter;
 	public AnalogInput encoder;
 	
 	public AnalogTrigger turnTrigger;
@@ -37,27 +36,31 @@ public class SteeringEncoder extends Runnable {
 	public int count;
 	
 	double degreesPerRotation = 102.85714285714285714285714285714;
-	edu.wpi.first.wpilibj.Timer stopwatch = new edu.wpi.first.wpilibj.Timer();
+	//edu.wpi.first.wpilibj.Timer stopwatch = new edu.wpi.first.wpilibj.Timer();
 	
 	public SteeringEncoder(int channel, int _wheel) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		encoder = new AnalogInput(channel);
 		
 		turnTrigger = new AnalogTrigger(encoder);
-		turnTrigger.setLimitsVoltage(0.5, 4.5);
+		turnTrigger.setLimitsVoltage(1.0, 4.0);
+		turnTrigger.setFiltered(true);
+		steerCounter = new Counter();
+		steerCounter.setUpDownCounterMode();
 		
-		//steerCounter.setUpDownCounterMode();
-		
-		//steerCounter.setUpSource(turnTrigger, AnalogTriggerType.kRisingPulse);
-		//steerCounter.setDownSource(turnTrigger, AnalogTriggerType.kFallingPulse);
+		steerCounter.setUpSource(turnTrigger, AnalogTriggerType.kRisingPulse);
+		steerCounter.setDownSource(turnTrigger, AnalogTriggerType.kFallingPulse);
 		
 		wheel = _wheel;
 		offset = 0;
 		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
 		try {
-			String str = centerLogger.read(1)[0];
+			str = centerLogger.read(1)[0];
+			System.out.println("First read: "+str);
 			if (str == null){
+				System.out.println("ERROR!!!!!");
 				str = "0.0";
 			}
+			System.out.println("Second read: "+str);
 			System.out.println(wheel + "  " + str);
 		}
 		catch(IOException e){
@@ -65,14 +68,14 @@ public class SteeringEncoder extends Runnable {
 			e.printStackTrace();
 		}
 		
-//		try {
+		try {
 //			str = centerLogger.read(1)[0];
-//			str = str.split(" ")[1];
-//			offset = Double.parseDouble(str);
-//		}
-//		catch(NullPointerException e){
-//			offset = 0;
-//		}
+			offset = Double.parseDouble(str);
+			System.out.println("offset: "+offset);
+		}
+		catch(NullPointerException e){
+			offset = 0;
+		}
 		count = 0;
 	}
 	
@@ -87,8 +90,8 @@ public class SteeringEncoder extends Runnable {
 		
 		//if(testClockWise) count++;
 		//if(testCounterClockWise) count--;
-		//count = steerCounter.get();
-		
+		count = steerCounter.get();
+		//System.out.println(count + "  " + voltage + "   " + angle);
 		
 		//if(wheel == 2)System.out.println(stopwatch.get()-lastStopWatch + "    " + voltage + "    " + oldVoltage);
 		//if(Math.abs((voltage-oldVoltage))<3 && Math.abs((voltage-oldVoltage))>0.5) 
@@ -103,6 +106,7 @@ public class SteeringEncoder extends Runnable {
 		double temp=offset%degreesPerRotation;
 		if (temp < 0)temp+=degreesPerRotation;
 		centerLogger.write(temp+"");
+		System.out.println(temp+"");
 	}
 	
 	@Override
@@ -113,27 +117,27 @@ public class SteeringEncoder extends Runnable {
 		super.start(periodMS);
 		voltage = encoder.getVoltage();
 		oldVoltage = voltage;
-//		try {
-//			str = centerLogger.read(1)[0];
-//			if (str.charAt(0)==':'){
-//				str = str.split(" ")[1];
-//				offset = Double.parseDouble(str);
-//			}
-//		}
-//		catch(NullPointerException e){
-//			System.out.println(e);
-//			centerLogger.write(0+"");
-//			offset = 0;
-//		}
-//		catch (IOException e){
-//			System.out.println(e);
-//			centerLogger.write(0+"");
-//			offset = 0;
-//		}
+		try {
+			str = centerLogger.read(1)[0];
+			if(str==null)str="0.0";
+			offset = Double.parseDouble(str);
+			
+		}
+		catch(NullPointerException e){
+			System.out.println("error reading " + e);
+			centerLogger.write(0+"");
+			offset = 0;
+			System.out.println(offset);
+		}
+		catch (IOException e){
+			System.out.println(e);
+			centerLogger.write(0+"");
+			offset = 0;
+		}
 	}
 	
 	public double getAngleDegrees(){
-		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation)))%360;
+		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))- offset)%360;
 		if(angle<0) angle+=360;
 		//System.out.println(wheel + "   " + offset + "   " + count);
 		return angle;

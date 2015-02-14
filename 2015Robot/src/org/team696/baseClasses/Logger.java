@@ -37,6 +37,7 @@ public class Logger extends Runnable {
 		String[] iRead = new String[lines];
 		for(int fish=0;fish<lines;fish++){
 			iRead[fish]=br.readLine();
+			System.out.println(iRead[fish]);
 		}
 		return iRead;
 	}

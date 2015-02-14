@@ -7,7 +7,7 @@ public class ModuleConfigs {
 	public int kDriveEncoderA=0;
 	public int kDriveEncoderB=0;
 	public int kWheelNumber=0;
-	public double kCenter =0;
+//	public double kCenter =0;
 	public boolean kReverseMotor= false;
 	public boolean kReverseEncoder = false;
 }

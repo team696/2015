@@ -84,9 +84,13 @@ public class SwerveModule extends Runnable{
 		double error = 0.0;
 		error = setAngle - angle;
 		//org.team696.robot.Robot.logger.set(error, 2);
+		//System.out.print(setAngle+ "   ");
+		//System.out.print(angle+ "   ");
+		//System.out.print(error+ "   ");
 		boolean reverseMotor =  false;
 		if(error>180) error = -(360-error);  //check if over the
 		else if(error<-180) error = (360+error);//zero line to flip error 
+		//System.out.print(error+ "   ");
 		//org.team696.robot.Robot.logger.set(error, 3);
 		
 		if(error > 90){
@@ -96,6 +100,8 @@ public class SwerveModule extends Runnable{
 			error = -(180+error);
 			reverseMotor = true;
 		}
+		//System.out.print(error+ "   ");
+		//System.out.println();
 		//org.team696.robot.Robot.logger.set(error, 4);
 		//org.team696.robot.Robot.logger.set(angle, 0);
 		//org.team696.robot.Robot.logger.set(setAngle, 1);
@@ -104,12 +110,12 @@ public class SwerveModule extends Runnable{
 		if(override) steerMotor.set(overrideSteer);
 		else if(Math.abs(steerController.getOutput())>0.1) {
 			double tmp = steerController.getOutput();
-			tmp =Util.constrain(tmp, -0.6, 0.6);
-			steerMotor.set(steerController.getOutput());
+			tmp =Util.constrain(tmp, -0.3, 0.3);
+			steerMotor.set(tmp);
 		}
 		else steerMotor.set(0);
-		if(override) setSpeed = overrideSpeed;
-		if(reverseMotor) driveMotor.set(-setSpeed);
+		if(override) driveMotor.set(overrideSpeed);
+		else if(reverseMotor) driveMotor.set(-setSpeed);
 		else driveMotor.set(setSpeed);
 	}
 	

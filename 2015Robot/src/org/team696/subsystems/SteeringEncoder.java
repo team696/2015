@@ -106,7 +106,7 @@ public class SteeringEncoder extends Runnable {
 		double temp=offset%degreesPerRotation;
 		if (temp < 0)temp+=degreesPerRotation;
 		centerLogger.write(temp+"");
-		System.out.println(temp+"");
+		//System.out.println(temp+"");
 	}
 	
 	@Override

@@ -65,6 +65,9 @@ public class Robot extends IterativeRobot {
 	boolean 		moveRight 		= false;
 	boolean 		moveLeft  		= false;
 	
+	
+	boolean			fieldCentric	= true;
+	boolean 		oldFieldCentricButton = false;
 	boolean         moveUpOld;
 	boolean         moveDownOld;
 	double          rotation        = 0;
@@ -221,10 +224,6 @@ public class Robot extends IterativeRobot {
 //    	else drive.backLeft.override(true, 0.0, 0);
     	oldWrite = write;
     	write = controlBoard.getRawButton(5);
-    	//System.out.print(drive.frontLeft.steerEncoder.count+"   ");
-    	//System.out.print(drive.frontRight.steerEncoder.count+"   ");
-    	System.out.print(drive.backRight.steerEncoder.count+"   ");
-    	System.out.println(drive.backLeft.steerEncoder.count+"   ");
     	if(write && !oldWrite){
 //    		drive.frontLeft.steerEncoder.writeOffset();
 //    		drive.frontRight.steerEncoder.writeOffset();
@@ -234,11 +233,6 @@ public class Robot extends IterativeRobot {
     	}
     	
     	
-    	
-//    	drive.frontLeft.override(true, );
-//    	drive.frontRight.override(true, _overrideSpeed);
-//    	drive.backRight.override(true, _overrideSpeed);
-//    	drive.backLeft.override(true, _overrideSpeed);
     	
     }
     public void robotCode(){
@@ -254,20 +248,26 @@ public class Robot extends IterativeRobot {
 //    	moveDownOld     = moveDown;
 //    	moveUp          = controlBoard.getRawButton(12);
 //    	moveDown        = controlBoard.getRawButton(12);
+
+    	if(controlBoard.getRawButton(7)&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
     	
     	rotation        = Util.deadZone(rightStick.getRawAxis(0), -0.1, 0.1, 0)/2;
     	yAxis           = controlBoard.getRawAxis(1);
     	xAxis           = controlBoard.getRawAxis(0);
+    	//System.out.println(xAxis+ "   " + yAxis);
     	double angle;
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
     	else  angle = Math.toDegrees(-Math.atan2(-xAxis, -yAxis));
     	if(angle<0) angle+=360;
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, false);
+    	
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, fieldCentric);
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
     	
     	if(rightStick.getRawButton(1)) intake.setIntake(false, true, false, 1);
     	else if (controlBoard.getRawButton(1)) intake.setIntake(true, false, false, 1);
     	else intake.setIntake(false, false, false, 0);
+    	
+    	if(controlBoard.getRawButton(6)) drive.zeroNavX();
     	
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);

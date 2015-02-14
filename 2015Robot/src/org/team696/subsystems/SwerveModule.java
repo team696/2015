@@ -56,6 +56,7 @@ public class SwerveModule extends Runnable{
 	@Override
 	public void start(int periodMS){
 		steerEncoder.start(10);
+		
 		Timer.delay(0.1);
 		override = false;
 		super.start(periodMS);

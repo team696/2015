@@ -62,10 +62,10 @@ public class SwerveDrive extends Runnable{
 	@Override
 	public void start(int periodMS){
 		 
-//		frontLeft.start(periodMS);
-//		frontRight.start(periodMS);
-//		backRight.start(periodMS);
-//		backLeft.start(periodMS);	
+		frontLeft.start(periodMS);
+		frontRight.start(periodMS);
+		backRight.start(periodMS);
+		backLeft.start(periodMS);	
 		super.start(periodMS);
 	}
 	@Override
@@ -76,7 +76,7 @@ public class SwerveDrive extends Runnable{
             navX.zeroYaw();
             firstIteration = false;
         }
-        System.out.println(navX.getYaw());
+        //System.out.println(navX.getYaw());
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
 		updateOdometry();
@@ -109,7 +109,7 @@ public class SwerveDrive extends Runnable{
 		//System.out.println(cumVectorsPolar[0]+ "     " +cumVectorsPolar[1]);
 		cumVectorsPolar[1] = 0;
 		cumVectorsPolar[1]+= navX.getYaw();
-		System.out.println(cumVectorsPolar[1]);
+		//System.out.println(cumVectorsPolar[1]);
 		
 		if(cumVectorsPolar[1]<0) cumVectorsPolar[1]+=360;
 		else if(cumVectorsPolar[1]>360) cumVectorsPolar[1]-=360;
@@ -171,11 +171,11 @@ public class SwerveDrive extends Runnable{
 //		posArray[2][1] = rotationRadians*Math.sqrt(Math.pow(width/2-centerArray[0], 2)+ Math.pow(-length/2-centerArray[1], 2));
 //		posArray[3][0] = Math.atan2(-length/2 -centerArray[1], -width/2 -centerArray[0])-Math.toRadians(90);
 //		posArray[3][1] = rotationRadians*Math.sqrt(Math.pow(-width/2-centerArray[0], 2)+ Math.pow(-length/2-centerArray[1], 2));
-		
-		
+//		
+//		
 //		for(int fish = 0; fish < 4; fish++){
-//			vectors[fish][0] = posArray[fish][1]*Math.cos(posArray[fish][0]);
-//			vectors[fish][1] = posArray[fish][1]*Math.sin(posArray[fish][0]);
+//			vectors[fish][0] += posArray[fish][1]*Math.cos(posArray[fish][0]);
+//			vectors[fish][1] += posArray[fish][1]*Math.sin(posArray[fish][0]);
 //		}
 		
 		return vectors;
@@ -211,7 +211,8 @@ public class SwerveDrive extends Runnable{
 		setRobotVector[1] = headingDegrees;
 		if(headingDegrees<0) headingDegrees+=360;
 		setRobotVector[2] = rotation;
-		if(fieldCentric) setRobotVector[1]+= navX.getYaw();
+		if(fieldCentric) setRobotVector[1]-= navX.getYaw();
+		System.out.println(fieldCentric+ "   " + setRobotVector[1] + "   " + navX.getYaw());
 		return true;
 	}
 	

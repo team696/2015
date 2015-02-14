@@ -15,6 +15,7 @@ public class Elevator extends Runnable {
 	DigitalInput limitSwitchTop;
 	VictorSP elevMotor;
 	Solenoid brake;
+	CustomPID PID = new CustomPID(1, 1, 0);
 	
 	boolean moveUp = false;
 	boolean moveDown = false;
@@ -22,11 +23,11 @@ public class Elevator extends Runnable {
 	boolean startBraking;
 	double clicksPerTote = 360;
 	double goalPos;	
-	int goalTotesHigh = 0;
 	double distPerTote = 1.0;
+	double error;
 
 	/*
-	 * @param config - encoderSlotA, encoderSlotB, limitSwitchBot, limitSwitchTop, Kp, Ki, Kd, BreakerChannel
+	 * @param config - encoderSlotA, encoderSlotB, limitSwitchBot, limitSwitchTop, BreakerChannel
 	 */
 	public Elevator(int[] config) {
 		encoder = new Encoder(config[0], config[1]);
@@ -48,14 +49,19 @@ public class Elevator extends Runnable {
 		moveDown = _moveDown;
 	}
 	
+	private void elevPID(){
+		 PID.update(error);
+		
+	}
+	
 	public void move(){
-		if (goalTotesHigh>encoder.get() && !limitSwitchTop.get()){
-			elevMotor.set(0.75);
+		if (PID.getOutput()>0 && !limitSwitchTop.get()){
+			elevMotor.set(PID.getOutput());
 			startBraking = false;
-		} else if (goalTotesHigh<encoder.get() && !limitSwitchBot.get()){
-			elevMotor.set(-0.75);
+		} else if (PID.getOutput()<0 && !limitSwitchBot.get()){
+			elevMotor.set(PID.getOutput());
 			startBraking =false;
-		} else if (Util.deadZone(goalPos-encoder.get(), -0.1, 0.1, 0) == 0){
+		} else if (Util.deadZone(PID.getOutput(), 0, 0.1, 0) == 0){
 			elevMotor.set(0);
 			startBraking = true;
 		} else {
@@ -86,6 +92,11 @@ public class Elevator extends Runnable {
 //		}
 //	}
 	
+	public boolean atLocation(){
+		if(error == 0)return true;
+		else return false;
+	}
+	
 	private void override(){
 		if (moveUp && !moveDown)elevMotor.set(0.75);
 		else if (moveDown && !moveUp)elevMotor.set(-0.75);
@@ -103,7 +114,9 @@ public class Elevator extends Runnable {
 	}
 	
 	@Override
-	public void update() {	
+	public void update() {
+		error = goalPos-encoder.get();
+		error = Util.deadZone(error, 0, 0.1, 0);
 		if (!override)setHeight();
 		else override();
 	}

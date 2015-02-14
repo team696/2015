@@ -44,7 +44,7 @@ public class Robot extends IterativeRobot {
 	public static SwerveDrive     drive;
 	public static Intake          intake;
 	//public static AutoCanner      canner;
-	//public static Elevator        elevator;	
+	public static Elevator        elevator;	
 	
 //	static Logger          logger;
 	
@@ -67,6 +67,7 @@ public class Robot extends IterativeRobot {
 	
 	
 	boolean			fieldCentric	= true;
+	boolean			fieldCentricButton = false;
 	boolean 		oldFieldCentricButton = false;
 	boolean         moveUpOld;
 	boolean         moveDownOld;
@@ -133,11 +134,8 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
-		//canner.start(20);
-		//elevator.start(20);
-		intake = new Intake(69, 69, 1, 4);
-		//canner = new AutoCanner(4, 5);
-		//elevator = new Elevator(new int[] {6,7,8,9,10});
+		elevator = new Elevator(new int[] {0,1,2,3,4});
+		intake = new Intake(69, 1, 4);
 		setConfig();
 		try {
 			drive = new SwerveDrive(configs);
@@ -175,8 +173,7 @@ public class Robot extends IterativeRobot {
     	drive.start(10);
 //    	testModule.start(10);
     	intake.start(20);
-//    	logger.stop();
-//    	logger.start(20);
+    	elevator.start(10);
     }
     
     public void teleopPeriodic() {
@@ -197,14 +194,14 @@ public class Robot extends IterativeRobot {
 //    	else if(moveLeft)trim = -0.5;
 //    	else trim = 0;
     	
-    	trim = rightStick.getRawAxis(0);
-    	if(controlBoard.getRawButton(3))drive.frontLeft.steerEncoder.trimCenter(trim);
+    	trim = rightStick.getRawAxis(0)*2;
+    	if(controlBoard.getRawButton(6))drive.frontLeft.steerEncoder.trimCenter(trim);
     	else drive.frontLeft.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(5))drive.frontRight.steerEncoder.trimCenter(trim);
+    	if(controlBoard.getRawButton(11))drive.frontRight.steerEncoder.trimCenter(trim);
     	else drive.frontRight.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(2))drive.backRight.steerEncoder.trimCenter(trim);
+    	if(controlBoard.getRawButton(7))drive.backRight.steerEncoder.trimCenter(trim);
     	else drive.backRight.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(4))drive.backLeft.steerEncoder.trimCenter(trim);
+    	if(controlBoard.getRawButton(10))drive.backLeft.steerEncoder.trimCenter(trim);
     	else drive.backLeft.steerEncoder.trimCenter(0);
 //    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
 //    	else drive.frontLeft.steerEncoder.trimCenter(0);
@@ -244,12 +241,15 @@ public class Robot extends IterativeRobot {
 //    	leftOut         = controlBoard.getRawButton(12);
 //    	rightOut        = controlBoard.getRawButton(12);
 //    	override        = controlBoard.getRawButton(12);
-//    	moveUpOld 		= moveUp;
-//    	moveDownOld     = moveDown;
-//    	moveUp          = controlBoard.getRawButton(12);
-//    	moveDown        = controlBoard.getRawButton(12);
-
-    	if(controlBoard.getRawButton(7)&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
+    	moveUpOld 		= moveUp;
+    	moveDownOld     = moveDown;
+    	moveUp          = controlBoard.getRawButton(3);
+    	moveDown        = controlBoard.getRawButton(2);
+    	oldFieldCentricButton = fieldCentric;
+    	fieldCentricButton = rightStick.getRawButton(4);
+    	
+    	
+    	if(fieldCentric&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
     	
     	rotation        = Util.deadZone(rightStick.getRawAxis(0), -0.1, 0.1, 0)/2;
     	yAxis           = controlBoard.getRawAxis(1);
@@ -267,21 +267,17 @@ public class Robot extends IterativeRobot {
     	else if (controlBoard.getRawButton(1)) intake.setIntake(true, false, false, 1);
     	else intake.setIntake(false, false, false, 0);
     	
-    	if(controlBoard.getRawButton(6)) drive.zeroNavX();
+    	if(controlBoard.getRawButton(2)) drive.zeroNavX();
     	
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
-//    	if(intakeWheelsIn)speed=0.75;
-//    	if(intakeWheelsOut)speed= -0.75;
-//    	intake.setIntake(ejectMech, intakeMech,grabBin, speed);
-//    	canner.set(leftOut, rightOut);
-//    	elevator.override(override);
-//    	elevator.setMotion(moveUp,moveDown);
-//    	if (!override){
-//    		if(moveUp && !moveDown && !moveUpOld)goalTotes++;
-//    		if(!moveUp && moveDown && !moveDownOld)goalTotes--;
-//    		elevator.setGoalPos(goalTotes);
-//    	} 
+    	elevator.override(override);
+    	elevator.setMotion(moveUp,moveDown);
+    	if (!override){
+    		if(moveUp && !moveDown && !moveUpOld)goalTotes++;
+    		if(!moveUp && moveDown && !moveDownOld)goalTotes--;
+    		elevator.setGoalPos(goalTotes);
+    	} 
     }
     
     /**

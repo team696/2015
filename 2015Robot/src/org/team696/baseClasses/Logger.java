@@ -8,7 +8,8 @@ import java.util.Date;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Logger extends Runnable {
-	public PrintWriter writer;
+	public FileWriter writer;
+	BufferedWriter bw;
 	FileReader reader;
 	Timer timer = new Timer();
 	BufferedReader br;
@@ -37,14 +38,15 @@ public class Logger extends Runnable {
 		String[] iRead = new String[lines];
 		for(int fish=0;fish<lines;fish++){
 			iRead[fish]=br.readLine();
-			System.out.println(iRead[fish]);
+//			System.out.println(iRead[fish]);
 		}
 		return iRead;
 	}
 	
 	public Logger(String[] configName, String _fn) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		fn = _fn;
-		writer = new PrintWriter(fn);
+		writer = new FileWriter(fn,false);
+		bw = new BufferedWriter(writer);
 		reader = new FileReader(fn);
 		br = new BufferedReader(reader);
 		
@@ -53,6 +55,12 @@ public class Logger extends Runnable {
 		for(int fish = 0; fish < configName.length;fish++){
 			names[fish] = configName[fish];
 		}
+	}
+	
+	public void writerRefresh(){
+		try{
+			writer = new FileWriter(fn,false);
+		}catch(IOException e){System.out.println("Error");};
 	}
 //	
 //	public void delete(){
@@ -179,12 +187,15 @@ public class Logger extends Runnable {
 	
 	public void write(String str){
 		if(!dontPut){
-			writer.println(str);
-			writer.flush();
+			try{
+				bw.write(str);
+				bw.flush();
+			}catch(IOException e){System.out.println("IOException line 190 Logger.java");}
 		}
 	}
 	
 	public void sendString(){
-		write(toSend);
+			write(toSend);
+		
 	}
 }

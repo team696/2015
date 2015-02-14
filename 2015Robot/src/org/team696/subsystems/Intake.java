@@ -17,11 +17,10 @@ public class Intake extends Runnable{
 	double speed;
 	
 	/*
-	 * @param config - ejectorChan, grabBinChan, rightInChan, leftInChan
+	 * @param config - ejectorChan, rightInChan, leftInChan
 	 */
-	public Intake(int ejectorSolenoid, int grabberSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
+	public Intake(int ejectorSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
 //		ejector = new Solenoid(ejectorSolenoid);
-//		grabberOfBin = new Solenoid(grabberSolenoid);
 		
 		rightIn = new VictorSP(rightIntakeVictor);
 		leftIn = new VictorSP(leftIntakeVictor);
@@ -48,7 +47,7 @@ public class Intake extends Runnable{
 		}
 		
 		if (eject) {
-//			ejector.set(true); 
+//			ejector.set(true);
 			speed = speed;
 		} else  if (intake) {
 //			ejector.set(false);

@@ -9,7 +9,7 @@ import javax.print.attribute.standard.Finishings;
 public class Scheduler extends Runnable{
 	
 	Vector<Command> curCommands = new Vector<Command>();
-	Interpreter interpreter = new Interpreter("navigate: 3 , 4, 30 \n navigate: 2 , 2, 0");
+	Interpreter interpreter = new Interpreter("navigate: 3 , 4, 30, sequential \n navigate: 2 , 2, 0, parallel");
 	public Scheduler(){
 		
 	}

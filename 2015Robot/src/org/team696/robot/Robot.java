@@ -185,10 +185,10 @@ public class Robot extends IterativeRobot {
     	calibrate = joyStick.getRawButton(3);
     	if(calibrate) calibrate();
     	else robotCode();
-    	System.out.print(drive.frontLeft.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.print(drive.frontRight.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.print(drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.println(drive.backRight.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.print(drive.frontLeft.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.print(drive.frontRight.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.print(drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.println(drive.backRight.steerEncoder.getAngleDegrees()+ "   ");
     }
     
     public void calibrate(){
@@ -208,7 +208,7 @@ public class Robot extends IterativeRobot {
     	else drive.backRight.steerEncoder.trimCenter(0);
     	if(joyStick.getRawButton(10))drive.backLeft.steerEncoder.trimCenter(trim);
     	else drive.backLeft.steerEncoder.trimCenter(0);
-//    	System.out.println("In Calibrate    "+trim);
+    	System.out.println("In Calibrate    "+trim);
 
 //    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
 //    	else drive.frontLeft.steerEncoder.trimCenter(0);
@@ -227,12 +227,12 @@ public class Robot extends IterativeRobot {
 //    	if(controlBoard.getRawButton(4))drive.backLeft.override(true, trim, 0.2);
 //    	else drive.backLeft.override(true, 0.0, 0);
     	oldWrite = write;
-    	write = controlBoard.getRawButton(5);
+    	write = joyStick.getRawButton(1);
     	if(write && !oldWrite){
-//    		drive.frontLeft.steerEncoder.writeOffset();
-//    		drive.frontRight.steerEncoder.writeOffset();
-//    		drive.backLeft.steerEncoder.writeOffset();
-//    		drive.backRight.steerEncoder.writeOffset();
+    		drive.frontLeft.steerEncoder.writeOffset();
+    		drive.frontRight.steerEncoder.writeOffset();
+    		drive.backLeft.steerEncoder.writeOffset();
+    		drive.backRight.steerEncoder.writeOffset();
 //    		testModule.steerEncoder.writeOffset();
     	}
     	
@@ -278,12 +278,29 @@ public class Robot extends IterativeRobot {
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
     	
-		if(moveUp)elevator.setMotion(true,false);
-		else if(moveDown)elevator.setMotion(false, true);
-		else elevator.setMotion(false, false);
-//		else if(upOneTote && !oldUpOneTote)goalTotes++;
-//		else if(downOneTote && !oldDownOneTote)goalTotes--;
-//		elevator.setGoalPos(goalTotes);
+		if(moveUp){
+			elevator.setMotion(true,false);
+			elevator.overrideMotion();
+		}
+		else if(moveDown){
+			elevator.setMotion(false, true);
+			elevator.overrideMotion();
+		}
+//		else {
+//			elevator.setMotion(false, false);
+//		}
+		else if(upOneTote && !oldUpOneTote){
+			goalTotes++;
+			elevator.regularMotion();
+		}
+		else if(downOneTote && !oldDownOneTote){
+			goalTotes--;
+			elevator.regularMotion();
+		}
+		if(elevator.atLocation()){
+			elevator.overrideMotion();
+			elevator.setMotion(false,false);
+		} else elevator.setGoalPos(goalTotes);
     }
     
     /**

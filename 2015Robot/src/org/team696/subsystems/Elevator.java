@@ -44,6 +44,14 @@ public class Elevator extends Runnable {
 		encoder.setDistancePerPulse((1/256)*distPerTote);
 	}
 	
+	public void overrideMotion(){
+		override = true;
+	}
+	
+	public void regularMotion(){
+		override = false;
+	}
+	
 	@Override
 	public void start(int periodMS){
 		intake.start(20);
@@ -65,25 +73,25 @@ public class Elevator extends Runnable {
 	public void setMotion(boolean _moveUp,boolean _moveDown){
 		moveUp = _moveUp;
 		moveDown = _moveDown;
+		goalPos = encoder.get();
 		override();
 	}
 	
-	private void elevPID(){
-		 PID.update(error);
-	}
+	
 	
 	public void move(){
-		if (PID.getOutput()>0/* && !limitSwitchTop.get()*/){
-			elevMotor1.set(-PID.getOutput());
-			elevMotor2.set(PID.getOutput());
+		double error =goalPos-encoder.get();
+		if (error>0/* && !limitSwitchTop.get()*/){
+			elevMotor1.set(-1);
+			elevMotor2.set(1);
 			startBraking = false;
-		} else if (PID.getOutput()<0 /*&& !limitSwitchBot.get()*/){
-			elevMotor1.set(-PID.getOutput());
-			elevMotor2.set(PID.getOutput());
+		} else if (error<0 /*&& !limitSwitchBot.get()*/){
+			elevMotor1.set(-0.5);
+			elevMotor2.set(0.5);
 			startBraking =false;
-		} else if (Util.deadZone(PID.getOutput(), 0, 0.1, 0) == 0){
-			elevMotor1.set(-PID.getOutput());
-			elevMotor2.set(PID.getOutput());
+		} else if (Util.deadZone(error, 0, 0.1, 0) == 0){
+			elevMotor1.set(0);
+			elevMotor2.set(0);
 			startBraking = true;
 		} else {
 			elevMotor1.set(0);
@@ -116,8 +124,8 @@ public class Elevator extends Runnable {
 			try{
 				Thread.sleep(50);
 			}catch(InterruptedException e){}
-			elevMotor1.set(-1);
-			elevMotor2.set(1);
+			elevMotor1.set(-0.7);
+			elevMotor2.set(0.7);
 		}
 		else {
 			startBraking=true;
@@ -132,7 +140,6 @@ public class Elevator extends Runnable {
 	
 	@Override
 	public void update() {
-		elevPID();
 		error = goalPos-encoder.get();
 		error = Util.deadZone(error, 0, 0.1, 0);
 		if (!override)setHeight();

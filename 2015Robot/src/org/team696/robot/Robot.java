@@ -290,11 +290,11 @@ public class Robot extends IterativeRobot {
 //			elevator.setMotion(false, false);
 //		}
 		else if(upOneTote && !oldUpOneTote){
-			goalTotes++;
+			goalTotes+=10.25;
 			elevator.regularMotion();
 		}
 		else if(downOneTote && !oldDownOneTote){
-			goalTotes--;
+			goalTotes-=10.25;
 			elevator.regularMotion();
 		}
 		if(elevator.atLocation()){

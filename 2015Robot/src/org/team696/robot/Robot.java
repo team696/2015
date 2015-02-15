@@ -274,14 +274,16 @@ public class Robot extends IterativeRobot {
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, fieldCentric);
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
     	
+    	//System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1]+ "  "+ drive.getPosition()[2]);
+    	
     	if(openIntakeButton && !oldOpenIntakeButton) openIntake = true;
 //    	else elevator.setIntake(true, false, false);
     	else openIntake = false;
     	
     	elevator.setIntake(intakeWheelsOut, openIntake, intakeWheelsIn);
     	
-    	if(controlBoard.getRawButton(2)) drive.zeroNavX();
-    	
+    	if(controlBoard.getRawButton(2)) elevator.reset();;
+    	if(joyStick.getRawButton(1)) drive.zeroNavX();
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
     	

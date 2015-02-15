@@ -75,7 +75,7 @@ public class SwerveModule extends Runnable{
 		double encoderCount = driveEncoder.getDistance();
 		odometryVector[0] += (encoderCount-lastEncoderCount)*Math.sin(Math.toRadians(angle));
 		odometryVector[1] += (encoderCount-lastEncoderCount)*Math.cos(Math.toRadians(angle));
-		lastEncoderCount = driveEncoder.getDistance();
+		lastEncoderCount = encoderCount;
 		
 		
 		angle = steerEncoder.getAngleDegrees();

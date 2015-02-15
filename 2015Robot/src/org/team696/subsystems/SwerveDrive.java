@@ -95,6 +95,7 @@ public class SwerveDrive extends Runnable{
 		double [][] wheelVectors = new double[4][2];
 		
 		wheelVectors[0] = frontLeft.getCumVector();
+		System.out.println(frontLeft.getCumVector());
 		wheelVectors[1] = frontRight.getCumVector();
 		wheelVectors[2] = backRight.getCumVector();
 		wheelVectors[3] = backLeft.getCumVector();

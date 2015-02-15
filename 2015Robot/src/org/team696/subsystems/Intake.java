@@ -20,7 +20,7 @@ public class Intake extends Runnable{
 	 * @param config - ejectorChan, rightInChan, leftInChan
 	 */
 	public Intake(int ejectorSolenoid, int openSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
-		ejector = new Solenoid(ejectorSolenoid);
+//		ejector = new Solenoid(ejectorSolenoid);
 		open = new Solenoid(openSolenoid);
 		
 		rightIn = new VictorSP(rightIntakeVictor);

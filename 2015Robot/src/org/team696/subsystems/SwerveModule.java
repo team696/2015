@@ -20,7 +20,7 @@ import org.team696.baseClasses.Util;
 
 public class SwerveModule extends Runnable{
 
-	//Encoder driveEncoder;
+	Encoder driveEncoder;
 	public SteeringEncoder steerEncoder;
 	ModuleConfigs configs;
 	double[] odometryVector = {0.0,0.0};
@@ -50,7 +50,7 @@ public class SwerveModule extends Runnable{
 		steerEncoder = new SteeringEncoder(configs.kSteerEncoder,configs.kWheelNumber);
 //		steerController = new CustomPID(0.05,0, 0.3);
 		steerController = new CustomPID(0.03,0, 0.2);
-//		driveEncoder = new Encoder(configs.kDriveEncoderA, configs.kDriveEncoderB);
+		driveEncoder = new Encoder(configs.kDriveEncoderA, configs.kDriveEncoderB);
 		}
 
 	@Override
@@ -59,8 +59,8 @@ public class SwerveModule extends Runnable{
 		
 		Timer.delay(0.1);
 		override = false;
+		driveEncoder.reset();
 		super.start(periodMS);
-		//driveEncoder.reset();
 	}
 	
 	@Override
@@ -72,14 +72,10 @@ public class SwerveModule extends Runnable{
 	@Override
 	public void update(){
 		super.update();
-		
-		//System.out.println(configs.kWheelNumber + "  " + steerEncoder.getAngleDegrees() + "  "+steerMotor.get());
-
-		//odometryVector[0] += (driveEncoder.getDistance()-lastEncoderCount)*Math.sin(Math.toRadians(angle));
-		//odometryVector[1] += (driveEncoder.getDistance()-lastEncoderCount)*Math.cos(Math.toRadians(angle));
-		//lastEncoderCount = driveEncoder.getDistance();
-		odometryVector[0] = 0.0;
-		odometryVector[1] = 0.0;
+		double encoderCount = driveEncoder.getDistance();
+		odometryVector[0] += (encoderCount-lastEncoderCount)*Math.sin(Math.toRadians(angle));
+		odometryVector[1] += (encoderCount-lastEncoderCount)*Math.cos(Math.toRadians(angle));
+		lastEncoderCount = driveEncoder.getDistance();
 		
 		
 		angle = steerEncoder.getAngleDegrees();
@@ -87,13 +83,9 @@ public class SwerveModule extends Runnable{
 		double error = 0.0;
 		error = setAngle - angle;
 		//org.team696.robot.Robot.logger.set(error, 2);
-//		System.out.print(setAngle+ "   ");
-//		System.out.print(angle+ "   ");
-//		System.out.print(error+ "   ");
 		boolean reverseMotor =  false;
 		if(error>180) error = -(360-error);  //check if over the
 		else if(error<-180) error = (360+error);//zero line to flip error 
-//		System.out.print(error+ "   ");
 		//org.team696.robot.Robot.logger.set(error, 3);
 		
 		if(error > 90){
@@ -103,8 +95,6 @@ public class SwerveModule extends Runnable{
 			error = error+180;
 			reverseMotor = true;
 		}
-//		System.out.print(error+ "   ");
-//		System.out.println();
 		//org.team696.robot.Robot.logger.set(error, 4);
 		//org.team696.robot.Robot.logger.set(angle, 0);
 		//org.team696.robot.Robot.logger.set(setAngle, 1);

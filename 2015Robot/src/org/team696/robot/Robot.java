@@ -90,8 +90,8 @@ public class Robot extends IterativeRobot {
 		configs[0].kSteerMotor     = 16;
 		configs[0].kDriveMotor     = 0;
 		configs[0].kSteerEncoder   = 2;
-//		configs[0].kDriveEncoderA  = 0;
-//		configs[0].kDriveEncoderB  = 0;
+		configs[0].kDriveEncoderA  = 0;
+		configs[0].kDriveEncoderB  = 0;
 		configs[0].kWheelNumber    = 1;
 		configs[0].kReverseEncoder = false;
 		configs[0].kReverseMotor   = false;
@@ -100,8 +100,8 @@ public class Robot extends IterativeRobot {
 		configs[1].kSteerMotor     = 6;
 		configs[1].kDriveMotor     = 5;
 		configs[1].kSteerEncoder   = 1;
-//		configs[1].kDriveEncoderA  = 0;
-//		configs[1].kDriveEncoderB  = 0;
+		configs[1].kDriveEncoderA  = 0;
+		configs[1].kDriveEncoderB  = 0;
 		configs[1].kWheelNumber    = 2;
 		configs[1].kReverseEncoder = false;
 		configs[1].kReverseMotor   = false;
@@ -110,8 +110,8 @@ public class Robot extends IterativeRobot {
 		configs[2].kSteerMotor     = 7;
 		configs[2].kDriveMotor     = 8;
 		configs[2].kSteerEncoder   = 0;
-		//configs[2].kDriveEncoderA  = 0;
-		//configs[2].kDriveEncoderB  = 0;
+		configs[2].kDriveEncoderA  = 0;
+		configs[2].kDriveEncoderB  = 0;
 		configs[2].kWheelNumber    = 3;
 		configs[2].kReverseEncoder = false;
 		configs[2].kReverseMotor   = false;
@@ -120,8 +120,8 @@ public class Robot extends IterativeRobot {
 		configs[3].kSteerMotor     = 17;
 		configs[3].kDriveMotor     = 18;
 		configs[3].kSteerEncoder   = 3;
-//		configs[3].kDriveEncoderA  = 0;
-//		configs[3].kDriveEncoderB  = 0;
+		configs[3].kDriveEncoderA  = 0;
+		configs[3].kDriveEncoderB  = 0;
 		configs[3].kWheelNumber    = 4;
 		configs[3].kReverseEncoder = false;
 		configs[3].kReverseMotor   = false;
@@ -136,7 +136,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
-		elevator = new Elevator(new int[] {0,1,2,3,4});
+		elevator = new Elevator(new int[] {1,0,2,3,4,5,3,4,1,2,3});
 //		intake = new Intake(69, 1, 4);
 		setConfig();
 		try {

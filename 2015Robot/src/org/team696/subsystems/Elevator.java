@@ -13,7 +13,8 @@ public class Elevator extends Runnable {
 	Encoder encoder;
 	DigitalInput limitSwitchBot;
 	DigitalInput limitSwitchTop;
-	VictorSP elevMotor;
+	VictorSP elevMotor1;
+	VictorSP elevMotor2;
 	Solenoid brake;
 	CustomPID PID = new CustomPID(1, 1, 0);
 	Intake intake;
@@ -33,13 +34,15 @@ public class Elevator extends Runnable {
 	public Elevator(int[] config) {
 		encoder = new Encoder(config[0], config[1]);
 		
-		limitSwitchBot = new DigitalInput(config[2]);
-		limitSwitchTop = new DigitalInput(config[3]);
+//		limitSwitchBot = new DigitalInput(config[2]);
+//		limitSwitchTop = new DigitalInput(config[3]);
 		
 		brake = new Solenoid(config[4]);
 		
 		intake = new Intake(config[5],config[6], config[7], config[8]);
 		
+		elevMotor1 = new VictorSP(config[9]);
+		elevMotor2 = new VictorSP(config[10]);
 		encoder.setDistancePerPulse((1/256)*distPerTote);
 	}
 	
@@ -72,16 +75,16 @@ public class Elevator extends Runnable {
 	
 	public void move(){
 		if (PID.getOutput()>0 && !limitSwitchTop.get()){
-			elevMotor.set(PID.getOutput());
+			elevMotor1.set(PID.getOutput());
 			startBraking = false;
 		} else if (PID.getOutput()<0 && !limitSwitchBot.get()){
-			elevMotor.set(PID.getOutput());
+			elevMotor1.set(PID.getOutput());
 			startBraking =false;
 		} else if (Util.deadZone(PID.getOutput(), 0, 0.1, 0) == 0){
-			elevMotor.set(0);
+			elevMotor1.set(0);
 			startBraking = true;
 		} else {
-			elevMotor.set(0);
+			elevMotor1.set(0);
 			startBraking = true;
 		}
 	}
@@ -114,9 +117,9 @@ public class Elevator extends Runnable {
 	}
 	
 	private void override(){
-		if (moveUp && !moveDown)elevMotor.set(0.75);
-		else if (moveDown && !moveUp)elevMotor.set(-0.75);
-		else elevMotor.set(0);
+		if (moveUp && !moveDown)elevMotor1.set(0.75);
+		else if (moveDown && !moveUp)elevMotor1.set(-0.75);
+		else elevMotor1.set(0);
 	}
 	
 	public void override(boolean _override){

@@ -6,13 +6,13 @@ import java.lang.reflect.Parameter;
 
 
 public class Interpreter{
-	String rawString = "navigate: 3 , 4, 30 \n navigate: 2 , 20, 0";
+	String rawString = "navigate \n navigate: 2 , 20, 0, parallel";
 	String parsedCode;
 	String[] lines;
 	int curLine = 0;
 	
 	public Interpreter(String code){
-		rawString = code;
+		//rawString = code;
 		lines =rawString.split("\n");
 		
 		for (int fish = 0; fish < lines.length; fish++) {
@@ -31,30 +31,53 @@ public class Interpreter{
 		
 		Command newCommand = new Command();
 		String[] splitCommand = lines[curLine].split(":");
-		double[] args = {};
-		if(splitCommand.length>1){
+		Object[] scriptArgs = {};
+		
+		if(splitCommand.length<2){
+			
+			try{
+				command = Class.forName(splitCommand[0].toLowerCase());
+				Constructor constructor = command.getDeclaredConstructor();
+				newCommand = (Command) constructor.newInstance();
+				
+			}catch(ClassNotFoundException ex){ex.printStackTrace();}
+			catch(NoSuchMethodException ex){ex.printStackTrace();}
+			catch(InstantiationException ex){ex.printStackTrace();}
+			catch(IllegalAccessException ex){ex.printStackTrace();}
+			catch(InvocationTargetException ex){ex.printStackTrace();}
+			
+		}else{
 			String[] argsString = splitCommand[1].split(",");
-			args = new double[argsString.length];
+			//scriptArgs = new double[argsString.length];
+			Object[] arguments = new Object[argsString.length];
+			//System.out.println(argsString.length);
 			for(int jesus = 0; jesus <argsString.length; jesus++){
-				args[jesus] =  Double.parseDouble(argsString[jesus]);
+				//scriptArgs[jesus] =  Double.parseDouble(argsString[jesus]);
+				try{
+					arguments[jesus] = Double.parseDouble(argsString[jesus]);
+				}catch(NumberFormatException e){
+					if(argsString[jesus].equalsIgnoreCase("parallel")) arguments[jesus] = true;
+					else arguments[jesus] = false;
+					
+				}
+			}
+			Class[] classArg = new Class[arguments.length];
+			
+			for(int fish = 0; fish < arguments.length; fish++){
+				classArg[fish] = arguments[fish].getClass();
 			}
 			
 			try{
 				command = Class.forName(splitCommand[0].toLowerCase());
-				Class[] classArg = new Class[args.length+1];
-				Object[] arguments = new Object[args.length+1];
-				for(int fish = 0; fish < args.length; fish++){
-					classArg[fish] = Double.class;
-				}
-				classArg[classArg.length-1] = Boolean.class;
+				//classArg[classArg.length-1] = Boolean.class;
 				
-				for(int fish = 0; fish < args.length; fish++){
-					arguments[fish] = args[fish];
-				}
-				arguments[arguments.length-1] = false;
+//				for(int fish = 0; fish < scriptArgs.length; fish++){
+//					arguments[fish] = scriptArgs[fish];
+//				}
+				//arguments[arguments.length-1] = false;
 				
 				Constructor constructor = command.getDeclaredConstructor(classArg);
-				System.out.println(constructor.getParameterCount());
+				//System.out.println(constructor.getParameterCount());
 				newCommand = (Command) constructor.newInstance(arguments);
 				
 			}catch(ClassNotFoundException ex){ex.printStackTrace();}

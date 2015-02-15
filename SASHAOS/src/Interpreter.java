@@ -5,13 +5,13 @@ import java.lang.reflect.Parameter;
 
 
 public class Interpreter{
-	String rawString = "navigate: 3 , 4, 30, sequential \n navigate: 2 , 20, 0, parallel";
+	String rawString = "navigate \n navigate: 2 , 20, 0, parallel";
 	String parsedCode;
 	String[] lines;
 	int curLine = 0;
 	
 	public Interpreter(String code){
-		rawString = code;
+		//rawString = code;
 		lines =rawString.split("\n");
 		
 		for (int fish = 0; fish < lines.length; fish++) {
@@ -32,7 +32,20 @@ public class Interpreter{
 		String[] splitCommand = lines[curLine].split(":");
 		Object[] scriptArgs = {};
 		
-		if(splitCommand.length>1){
+		if(splitCommand.length<2){
+			
+			try{
+				command = Class.forName(splitCommand[0].toLowerCase());
+				Constructor constructor = command.getDeclaredConstructor();
+				newCommand = (Command) constructor.newInstance();
+				
+			}catch(ClassNotFoundException ex){ex.printStackTrace();}
+			catch(NoSuchMethodException ex){ex.printStackTrace();}
+			catch(InstantiationException ex){ex.printStackTrace();}
+			catch(IllegalAccessException ex){ex.printStackTrace();}
+			catch(InvocationTargetException ex){ex.printStackTrace();}
+			
+		}else{
 			String[] argsString = splitCommand[1].split(",");
 			//scriptArgs = new double[argsString.length];
 			Object[] arguments = new Object[argsString.length];

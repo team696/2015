@@ -17,7 +17,6 @@ public class Scheduler extends Runnable{
 	public void addCommand(Command command,int periodMS){
 		curCommands.addElement(command);
 		curCommands.lastElement().start(periodMS);
-		
 	}
 	
 	@Override 

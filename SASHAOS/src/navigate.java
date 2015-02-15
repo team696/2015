@@ -10,6 +10,11 @@ public class navigate extends Command{
 		counter+= arg3;
 		parallel = _parallel;
 	}
+	
+	public navigate(){
+		counter = 20;
+		parallel = false;
+	}
 
 	@Override
 	public void update(){

@@ -263,12 +263,12 @@ public class Robot extends IterativeRobot {
     	downOneTote = controlBoard.getRawButton(7);
     	
     	rotation        = Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
-    	yAxis           = Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	yAxis           = -Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	xAxis           = Util.deadZone(Util.map(joyStick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-    	//System.out.println(xAxis+ "   " + yAxis);
+    	
     	double angle;
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
-    	else  angle = Math.toDegrees(-Math.atan2(-xAxis, -yAxis));
+    	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
     	if(angle<0) angle+=360;
     	
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, fieldCentric);
@@ -285,30 +285,30 @@ public class Robot extends IterativeRobot {
     	
 		if(moveUp){
 			elevator.setMotion(true,false);
-			elevator.overrideMotion();
+//			elevator.overrideMotion();
 		}
 		else if(moveDown){
 			elevator.setMotion(false, true);
-			elevator.overrideMotion();
+//			elevator.overrideMotion();
 		}
-//		else {
-//			elevator.setMotion(false, false);
+		else {
+			elevator.setMotion(false, false);
+		}
+//		else if(upOneTote && !oldUpOneTote){
+//			goalTotes++;
+//			elevator.regularMotion();
 //		}
-		else if(upOneTote && !oldUpOneTote){
-			goalTotes++;
-			elevator.regularMotion();
-		}
-		else if(downOneTote && !oldDownOneTote){
-			goalTotes--;
-			elevator.regularMotion();
-		}
-		if(elevator.atLocation()){
-			elevator.overrideMotion();
-			elevator.setMotion(false,false);
-		} else elevator.setGoalPos(goalTotes);
+//		else if(downOneTote && !oldDownOneTote){
+//			goalTotes--;
+//			elevator.regularMotion();
+//		}
+//		if(elevator.atLocation()){
+//			elevator.overrideMotion();
+//			elevator.setMotion(false,false);
+//		} else elevator.setGoalPos(goalTotes);
 		
 		if(controlBoard.getRawButton(2)){
-			elevator.reset();
+			drive.zeroNavX();
 		}
     }
     

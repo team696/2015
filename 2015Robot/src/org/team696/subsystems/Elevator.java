@@ -73,8 +73,6 @@ public class Elevator extends Runnable {
 	public void setMotion(boolean _moveUp,boolean _moveDown){
 		moveUp = _moveUp;
 		moveDown = _moveDown;
-		goalPos = encoder.get();
-		override();
 	}
 	
 	public void reset(){
@@ -82,7 +80,8 @@ public class Elevator extends Runnable {
 	}
 	
 	public void move(){
-		double error =goalPos-encoder.get();
+		brakeSys();
+		double error =Util.deadZone(goalPos-encoder.get(), 0, 0.1, 0);
 		if (error>0/* && !limitSwitchTop.get()*/){
 			elevMotor1.set(-1);
 			elevMotor2.set(1);
@@ -100,11 +99,6 @@ public class Elevator extends Runnable {
 			startBraking = true;
 		}
 	}
-	
-	public void setHeight(){
-		brakeSys();	
-		move();
-	}
 		
 	public boolean atLocation(){
 		if(error == 0)return true;
@@ -115,25 +109,28 @@ public class Elevator extends Runnable {
 		brakeSys();
 		if (moveUp && !moveDown){
 			startBraking=false;
+			brake.set(startBraking);
 			try{
-				Thread.sleep(50);
+				Thread.sleep(100);
 			}catch(InterruptedException e){}
 			elevMotor1.set(1);
 			elevMotor2.set(-1);
 		}
 		else if (moveDown && !moveUp){
 			startBraking=false;
+			brake.set(startBraking);
 			try{
-				Thread.sleep(50);
+				Thread.sleep(100);
 			}catch(InterruptedException e){}
-			elevMotor1.set(-0.7);
-			elevMotor2.set(0.7);
+			elevMotor1.set(-0.5);
+			elevMotor2.set(0.5);
 		}
 		else {
 			startBraking=true;
 			elevMotor1.set(0);
 			elevMotor2.set(0);
 		}
+		goalPos=encoder.get();
 	}
 	
 	public void brakeSys() {
@@ -144,7 +141,7 @@ public class Elevator extends Runnable {
 	public void update() {
 		error = goalPos-encoder.get();
 		error = Util.deadZone(error, 0, 0.1, 0);
-		if (!override)setHeight();
+		if (!override)move();
 		else override();
 	}
 	

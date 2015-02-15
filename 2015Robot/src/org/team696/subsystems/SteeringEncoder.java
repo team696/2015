@@ -147,7 +147,6 @@ public class SteeringEncoder extends Runnable {
 	}
 	
 	public double getAngleDegrees(){
-		System.out.println("  "+ wheel+ "  " + voltage);
 		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))- offset)%360;
 		if(angle<0) angle+=360;
 		//System.out.println(wheel + "   " + offset + "   " + count);

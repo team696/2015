@@ -57,7 +57,7 @@ public class Elevator extends Runnable {
 		}
 	}
 	
-	public void setGoalPos(int _totesPos){	
+	public void setGoalPos(double _totesPos){	
 		goalPos = _totesPos;
 	}
 	

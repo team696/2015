@@ -38,7 +38,7 @@ public class Robot extends IterativeRobot {
 	
 	
 	Joystick        controlBoard = new Joystick(0);
-	Joystick 		rightStick   = new Joystick(1);
+	Joystick 		joyStick   = new Joystick(1);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 //	public static SwerveModule testModule;
 	public static SwerveDrive     drive;
@@ -51,21 +51,23 @@ public class Robot extends IterativeRobot {
 	double          speed;
 	int             goalTotes = 0;
 	int             temp = 0;
-	boolean         intakeWheelsIn  = controlBoard.getRawButton(1);
-	boolean         intakeWheelsOut = controlBoard.getRawButton(2);
-	boolean         ejectMech       = controlBoard.getRawButton(3);
-	boolean         intakeMech      = controlBoard.getRawButton(4);
-	boolean         grabBin         = controlBoard.getRawButton(5);
-	boolean         leftOut         = controlBoard.getRawButton(6);
-	boolean         rightOut        = controlBoard.getRawButton(7);
-	boolean         override        = controlBoard.getRawButton(8);
+	boolean         intakeWheelsIn  = controlBoard.getRawAxis(3)<-0.5;
+	boolean			intakeWheelsOut = controlBoard.getRawAxis(3)>0.5;
+//	boolean         ejectMech       = controlBoard.getRawButton(3);
+//	boolean         intakeMech      = controlBoard.getRawButton(4);
 	boolean         moveUp          = controlBoard.getRawButton(9);
 	boolean         moveDown        = controlBoard.getRawButton(10);
-	
 	boolean 		moveRight 		= false;
 	boolean 		moveLeft  		= false;
+	boolean 		openIntakeButton		=false;
+	boolean 		oldOpenIntakeButton	=openIntakeButton;
+	boolean			upOneTote= false;
+	boolean			oldUpOneTote = upOneTote;
+	boolean 		downOneTote = false;
+	boolean			oldDownOneTote = downOneTote;
 	
-	
+	boolean 		openIntake		= true;
+	boolean			eject			= false;
 	boolean			fieldCentric	= true;
 	boolean			fieldCentricButton = false;
 	boolean 		oldFieldCentricButton = false;
@@ -180,7 +182,7 @@ public class Robot extends IterativeRobot {
     	
     	
     	
-    	calibrate = rightStick.getRawButton(3);
+    	calibrate = joyStick.getRawButton(3);
     	if(calibrate) calibrate();
     	else robotCode();
     	
@@ -194,7 +196,7 @@ public class Robot extends IterativeRobot {
 //    	else if(moveLeft)trim = -0.5;
 //    	else trim = 0;
     	
-    	trim = rightStick.getRawAxis(0)*2;
+    	trim = joyStick.getRawAxis(0)*2;
     	if(controlBoard.getRawButton(6))drive.frontLeft.steerEncoder.trimCenter(trim);
     	else drive.frontLeft.steerEncoder.trimCenter(0);
     	if(controlBoard.getRawButton(11))drive.frontRight.steerEncoder.trimCenter(trim);
@@ -233,27 +235,27 @@ public class Robot extends IterativeRobot {
     	
     }
     public void robotCode(){
-//    	intakeWheelsIn  = controlBoard.getRawButton(12);
-//    	intakeWheelsOut = controlBoard.getRawButton(12);
+    	intakeWheelsIn  = controlBoard.getRawAxis(3)<-0.5;
+    	intakeWheelsOut = controlBoard.getRawAxis(3)>0.5;
 //    	ejectMech       = controlBoard.getRawButton(12);
 //    	intakeMech      = controlBoard.getRawButton(12);
-//    	grabBin         = controlBoard.getRawButton(12);
-//    	leftOut         = controlBoard.getRawButton(12);
-//    	rightOut        = controlBoard.getRawButton(12);
-//    	override        = controlBoard.getRawButton(12);
     	moveUpOld 		= moveUp;
     	moveDownOld     = moveDown;
-    	moveUp          = controlBoard.getRawButton(3);
-    	moveDown        = controlBoard.getRawButton(2);
+    	moveUp          = controlBoard.getRawButton(1);
+    	moveDown        = controlBoard.getRawButton(3);
     	oldFieldCentricButton = fieldCentric;
-    	fieldCentricButton = rightStick.getRawButton(4);
-    	
-    	
+    	fieldCentricButton = controlBoard.getRawButton(10);
     	if(fieldCentric&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
+    	oldOpenIntakeButton = openIntakeButton;
+    	openIntakeButton = controlBoard.getRawButton(5);
+    	oldUpOneTote = upOneTote;
+    	upOneTote = controlBoard.getRawButton(6);
+    	oldDownOneTote = downOneTote;
+    	downOneTote = controlBoard.getRawButton(7);
     	
-    	rotation        = Util.deadZone(rightStick.getRawAxis(0), -0.1, 0.1, 0)/2;
-    	yAxis           = controlBoard.getRawAxis(1);
-    	xAxis           = controlBoard.getRawAxis(0);
+    	rotation        = Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
+    	yAxis           = Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	xAxis           = Util.deadZone(Util.map(joyStick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	//System.out.println(xAxis+ "   " + yAxis);
     	double angle;
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
@@ -263,7 +265,7 @@ public class Robot extends IterativeRobot {
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, fieldCentric);
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
     	
-    	if(rightStick.getRawButton(1)) elevator.setIntake(false, true, false);
+    	if(openIntakeButton && !oldOpenIntakeButton) elevator.setIntake(false, true, false);
     	else if (controlBoard.getRawButton(1)) elevator.setIntake(true, false, false);
     	else elevator.setIntake(false, false, false);
     	
@@ -271,13 +273,12 @@ public class Robot extends IterativeRobot {
     	
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
-    	elevator.override(override);
-    	elevator.setMotion(moveUp,moveDown);
-    	if (!override){
-    		if(moveUp && !moveDown && !moveUpOld)goalTotes++;
-    		if(!moveUp && moveDown && !moveDownOld)goalTotes--;
-    		elevator.setGoalPos(goalTotes);
-    	} 
+    	
+		if(moveUp && !moveDown && !moveUpOld)elevator.setMotion(true,false);
+		else if(!moveUp && moveDown && !moveDownOld)elevator.setMotion(false, true);
+		else if(upOneTote && !oldUpOneTote)goalTotes++;
+		else if(downOneTote && !oldDownOneTote)goalTotes--;
+		elevator.setGoalPos(goalTotes);
     }
     
     /**

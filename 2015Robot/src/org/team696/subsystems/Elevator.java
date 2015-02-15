@@ -27,6 +27,7 @@ public class Elevator extends Runnable {
 	double goalPos;	
 	double distPerTote = 1.0;
 	double error;
+	public boolean firstTime = true;
 
 	/*
 	 * @param config - encoderSlotA, encoderSlotB, limitSwitchBot, limitSwitchTop, BreakerChannel
@@ -46,6 +47,10 @@ public class Elevator extends Runnable {
 	
 	public void overrideMotion(){
 		override = true;
+	}
+	
+	public void firstTime(){
+		firstTime = true;
 	}
 	
 	public void regularMotion(){
@@ -73,6 +78,8 @@ public class Elevator extends Runnable {
 	public void setMotion(boolean _moveUp,boolean _moveDown){
 		moveUp = _moveUp;
 		moveDown = _moveDown;
+		goalPos = encoder.get();
+		override();
 	}
 	
 	public void reset(){
@@ -110,18 +117,23 @@ public class Elevator extends Runnable {
 		if (moveUp && !moveDown){
 			startBraking=false;
 			brake.set(startBraking);
-			try{
-				Thread.sleep(100);
-			}catch(InterruptedException e){}
+			if(firstTime){
+				try{
+					Thread.sleep(50);
+				}	catch(InterruptedException e){}
+				firstTime=false;
+			}
 			elevMotor1.set(1);
 			elevMotor2.set(-1);
 		}
 		else if (moveDown && !moveUp){
 			startBraking=false;
-			brake.set(startBraking);
-			try{
-				Thread.sleep(100);
-			}catch(InterruptedException e){}
+			if(firstTime){
+				try{
+					Thread.sleep(100);
+				}	catch(InterruptedException e){}
+				firstTime=false;
+			}
 			elevMotor1.set(-0.5);
 			elevMotor2.set(0.5);
 		}

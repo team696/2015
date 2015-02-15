@@ -185,10 +185,14 @@ public class Robot extends IterativeRobot {
     	calibrate = joyStick.getRawButton(3);
     	if(calibrate) calibrate();
     	else robotCode();
-    	System.out.print(drive.frontLeft.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.print(drive.frontRight.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.print(drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.println(drive.backRight.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.print(drive.frontLeft.steerEncoder.getRawVoltage()+ "   ");
+//    	System.out.print(drive.frontRight.steerEncoder.getRawVoltage()+ "   ");
+//    	System.out.print(drive.backLeft.steerEncoder.getRawVoltage()+ "   ");
+//    	System.out.println(drive.backRight.steerEncoder.getRawVoltage()+ "   ");
+//    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");
+//    	System.out.print((int)drive.frontRight.steerEncoder.offset+ "   ");
+//    	System.out.print((int)drive.backLeft.steerEncoder.offset+ "   ");
+//    	System.out.println((int)drive.backRight.steerEncoder.offset+ "   ");
     }
     
     public void calibrate(){

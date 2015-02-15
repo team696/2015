@@ -16,6 +16,7 @@ public class Elevator extends Runnable {
 	VictorSP elevMotor;
 	Solenoid brake;
 	CustomPID PID = new CustomPID(1, 1, 0);
+	Intake intake;
 	
 	boolean moveUp = false;
 	boolean moveDown = false;
@@ -37,7 +38,23 @@ public class Elevator extends Runnable {
 		
 		brake = new Solenoid(config[4]);
 		
+		intake = new Intake(config[5],config[6], config[7], config[8]);
+		
 		encoder.setDistancePerPulse((1/256)*distPerTote);
+	}
+	
+	@Override
+	public void start(int periodMS){
+		intake.start(20);
+		super.start(periodMS);
+	}
+	
+	public void setIntake(boolean eject,boolean open, boolean _intake, double speed){
+		if(encoder.get() < 2.25){
+			intake.set(eject,false,_intake,speed);
+		} else {
+			intake.set(eject,open, _intake, speed);
+		}
 	}
 	
 	public void setGoalPos(int _totesPos){	
@@ -51,7 +68,6 @@ public class Elevator extends Runnable {
 	
 	private void elevPID(){
 		 PID.update(error);
-		
 	}
 	
 	public void move(){
@@ -115,10 +131,17 @@ public class Elevator extends Runnable {
 	
 	@Override
 	public void update() {
+		elevPID();
 		error = goalPos-encoder.get();
 		error = Util.deadZone(error, 0, 0.1, 0);
 		if (!override)setHeight();
 		else override();
+	}
+	
+	@Override
+	public void stop(){
+		super.stop();
+		intake.stop();
 	}
 	
 }

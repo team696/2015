@@ -42,7 +42,7 @@ public class Robot extends IterativeRobot {
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 //	public static SwerveModule testModule;
 	public static SwerveDrive     drive;
-	public static Intake          intake;
+//	public static Intake          intake;
 	//public static AutoCanner      canner;
 	public static Elevator        elevator;	
 	
@@ -135,7 +135,7 @@ public class Robot extends IterativeRobot {
 	
 	public void robotInit(){
 		elevator = new Elevator(new int[] {0,1,2,3,4});
-		intake = new Intake(69, 1, 4);
+//		intake = new Intake(69, 1, 4);
 		setConfig();
 		try {
 			drive = new SwerveDrive(configs);
@@ -172,7 +172,7 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
     	drive.start(10);
 //    	testModule.start(10);
-    	intake.start(20);
+//    	intake.start(20);
     	elevator.start(10);
     }
     
@@ -263,9 +263,9 @@ public class Robot extends IterativeRobot {
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, fieldCentric);
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
     	
-    	if(rightStick.getRawButton(1)) intake.setIntake(false, true, false, 1);
-    	else if (controlBoard.getRawButton(1)) intake.setIntake(true, false, false, 1);
-    	else intake.setIntake(false, false, false, 0);
+    	if(rightStick.getRawButton(1)) elevator.setIntake(false, true, false, 1);
+    	else if (controlBoard.getRawButton(1)) elevator.setIntake(true, false, false, 1);
+    	else elevator.setIntake(false, false, false, 0);
     	
     	if(controlBoard.getRawButton(2)) drive.zeroNavX();
     	
@@ -291,8 +291,7 @@ public class Robot extends IterativeRobot {
     public void disabledInit() {
 //    	logger.stop();
 //    	testModule.stop();
-    	intake.stop();
     	drive.stop();
-    	//testModule.stop();
+    	elevator.stop();
     }
 }

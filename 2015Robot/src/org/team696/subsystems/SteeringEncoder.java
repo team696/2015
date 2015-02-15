@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Encoder;
 
 
 public class SteeringEncoder extends Runnable {
-//	Logger centerLogger;
+	Logger centerLogger;
 //	Logger counter;
 	public double offset;
 	int wheel;
@@ -35,6 +35,7 @@ public class SteeringEncoder extends Runnable {
 	double angle;
 	double lastStopWatch = 0;
 	public int count;
+	
 	
 	double degreesPerRotation = 102.85714285714285714285714285714;
 	//edu.wpi.first.wpilibj.Timer stopwatch = new edu.wpi.first.wpilibj.Timer();
@@ -57,28 +58,30 @@ public class SteeringEncoder extends Runnable {
 //		counter = new Logger(new String[] {""},"/usr/local/frc/logs/zcounter"+ wheel +".txt");
 //		counter.write("0");
 		
-//		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
-//		try {
-//			str = centerLogger.read(1)[0];
-//			if (str == null){
-//				str = "0.0";
-//			}
-//			System.out.println(wheel + "  " + str);
-//		}
-//		catch(IOException e){
-//			System.out.print("reading error   ");
-//			e.printStackTrace();
-//		}
+		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
 		
-//		try {
-////			str = centerLogger.read(1)[0];
-//			offset = Double.parseDouble(str);
-//			System.out.println("offset: "+offset);
-//		}
-//		catch(NullPointerException e){
-//			offset = 0;
-//		}
+		String[] strAry = centerLogger.read(50);
+		boolean lastLine = false;
+		int x = 0;
+		while (!lastLine){
+			if(strAry[x].equals(null)){
+				lastLine = true;
+				if(x==0)str = "0";
+				else str = strAry[x-1];
+			}
+			x++;
+		}
+		offset = Integer.parseInt(str);
 		count = 0;
+		makeReader();
+	}
+	
+	public void makeWriter(){
+		centerLogger.makeWriter();
+	}
+	
+	public void makeReader(){
+		centerLogger.makeReader();
 	}
 	
 	@Override
@@ -106,42 +109,19 @@ public class SteeringEncoder extends Runnable {
 		}
 	
 	public void writeOffset(){
+		makeWriter();
 		double temp=offset%degreesPerRotation;
 		if (temp < 0)temp+=degreesPerRotation;
-//		centerLogger.write(temp+"");
+		centerLogger.write(temp+"");
 	}
 	
 	@Override
 	public void start(int periodMS){
-//		try{
-//			count = Integer.parseInt(counter.read(1)[0]);
-//		}catch(IOException e){System.out.println("Found IOException on line 118\nin SteeringEncoder.java");count=0;}
-		offset = 0;
 		count = 0;
-//		System.out.print(getAngleDegrees()+ "   ");
-		offset = getAngleDegrees();
+//		offset = getAngleDegrees();
 		voltage = encoder.getVoltage();
 		oldVoltage = voltage;
-//		System.out.println(offset + "   ");
 		super.start(periodMS);
-		
-//		try {
-//			str = centerLogger.read(1)[0];
-//			if(str==null)str="0.0";
-//			offset = Double.parseDouble(str);
-//			
-//		}
-//		catch(NullPointerException e){
-//			System.out.println("error reading " + e);
-//			centerLogger.write(0+"");
-//			offset = 0;
-//			System.out.println(offset);
-//		}
-//		catch (IOException e){
-//			System.out.println(e);
-//			centerLogger.write(0+"");
-//			offset = 0;
-//		}
 	}
 	
 	public double getAngleDegrees(){

@@ -8,19 +8,20 @@ import edu.wpi.first.wpilibj.VictorSP;
 public class Intake extends Runnable{
 	VictorSP rightIn;
 	VictorSP leftIn;
-	//Solenoid ejector;
-	//Solenoid grabberOfBin;
+	Solenoid ejector;
+	Solenoid open;
 	
-	boolean grabBin = false;
 	boolean eject = false;
 	boolean intake = false;
 	double speed;
+	boolean intakeOpen;
 	
 	/*
 	 * @param config - ejectorChan, rightInChan, leftInChan
 	 */
-	public Intake(int ejectorSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
-//		ejector = new Solenoid(ejectorSolenoid);
+	public Intake(int ejectorSolenoid, int openSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
+		ejector = new Solenoid(ejectorSolenoid);
+		open = new Solenoid(openSolenoid);
 		
 		rightIn = new VictorSP(rightIntakeVictor);
 		leftIn = new VictorSP(leftIntakeVictor);
@@ -36,10 +37,11 @@ public class Intake extends Runnable{
 		run();
 	}
 	
-	public void setIntake(boolean _eject, boolean _intake, boolean _grabBin, double _speed) {
+	public void set(boolean _eject, boolean _open, boolean _intake, double _speed) {
 		eject = _eject;
 		intake = _intake;
 		speed = _speed;
+		intakeOpen = _open;
 		
 		if (eject == intake) {
 			intake = false;
@@ -48,7 +50,6 @@ public class Intake extends Runnable{
 		
 		if (eject) {
 //			ejector.set(true);
-			speed = speed;
 		} else  if (intake) {
 //			ejector.set(false);
 			speed = -speed;
@@ -57,8 +58,7 @@ public class Intake extends Runnable{
 			speed = 0;
 		}
 		
-		grabBin = _grabBin;
-		}
+	}
 	
 	public void motors() {
 		System.out.println(speed);
@@ -68,17 +68,6 @@ public class Intake extends Runnable{
 	
 	public void run() {
 //		grabberOfBin.set(grabBin);
-		
-//		if (eject) {
-////			ejector.set(true); 
-//			speed = speed;
-//		} else  if (intake) {
-////			ejector.set(false);
-//			speed = -speed;
-//		} else{
-////			ejector.set(false);
-//			speed = 0;
-//		}
 		motors();
 	}
 }

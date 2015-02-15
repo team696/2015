@@ -17,7 +17,6 @@ public class Logger extends Runnable {
 	String[] values;
 	String toSend;
 	public String fn;
-	boolean write = false;
 	boolean dontPut = false;
 	
 	public String getDate(){
@@ -43,12 +42,10 @@ public class Logger extends Runnable {
 		return iRead;
 	}
 	
-	public Logger(String[] configName, String _fn) throws FileNotFoundException, UnsupportedEncodingException,IOException{
+	public Logger(String[] configName, String _fn) {
 		fn = _fn;
-		writer = new FileWriter(fn,false);
-		bw = new BufferedWriter(writer);
-		reader = new FileReader(fn);
-		br = new BufferedReader(reader);
+		
+		makeReader();
 		
 		names = new String[configName.length];
 		values = new String[names.length];
@@ -57,21 +54,37 @@ public class Logger extends Runnable {
 		}
 	}
 	
+	public void makeWriter(){
+		try{
+			writer = new FileWriter(fn,false);
+			bw = new BufferedWriter(writer);
+		}catch(IOException e){
+			e.printStackTrace();
+			try{
+				bw.write("");
+				bw.flush();
+			}catch(IOException f){
+				f.printStackTrace();
+			}
+		}
+	}
+	
+	public void makeReader(){
+		try{
+			reader = new FileReader(fn);
+			br = new BufferedReader(reader);
+		} catch(FileNotFoundException e){
+			e.printStackTrace();
+		}
+	}
+	
 	public void writerRefresh(){
 		try{
 			writer = new FileWriter(fn,false);
 		}catch(IOException e){System.out.println("Error");};
 	}
-//	
-//	public void delete(){
-//		writer.close();
-//		f.delete();
-//		try{f.createNewFile();}
-//		catch(IOException e){}
-//	}
-//	
+
 	public void init() {
-		write = false;
 	}
 	
 	@Override
@@ -79,7 +92,6 @@ public class Logger extends Runnable {
 		super.start(periodMS);
 		toSend = "";
 		timer.start();
-		write = false;
 	}
 	
 	@Override
@@ -88,16 +100,13 @@ public class Logger extends Runnable {
 	}
 	
 	public void stop(){
-		write = true;
 		timer.stop();
 		timer.reset();
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		write = false;
 	}
 	
 	public void set(int val,int pos){
@@ -190,7 +199,9 @@ public class Logger extends Runnable {
 			try{
 				bw.write(str);
 				bw.flush();
-			}catch(IOException e){System.out.println("IOException line 190 Logger.java");}
+			}catch(IOException e){e.printStackTrace();}
+		} else {
+			System.out.println("Not Writing");
 		}
 	}
 	

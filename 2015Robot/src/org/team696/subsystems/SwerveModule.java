@@ -56,7 +56,6 @@ public class SwerveModule extends Runnable{
 	@Override
 	public void start(int periodMS){
 		steerEncoder.start(10);
-		
 		Timer.delay(0.1);
 		override = false;
 		driveEncoder.reset();
@@ -75,6 +74,8 @@ public class SwerveModule extends Runnable{
 		double encoderCount = driveEncoder.getDistance();
 		odometryVector[0] += (encoderCount-lastEncoderCount)*Math.sin(Math.toRadians(angle));
 		odometryVector[1] += (encoderCount-lastEncoderCount)*Math.cos(Math.toRadians(angle));
+		
+		if(configs.kWheelNumber ==3)System.out.println(odometryVector[0] + "   " + odometryVector[1] + "   " + encoderCount);
 		lastEncoderCount = encoderCount;
 		
 		

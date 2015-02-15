@@ -95,7 +95,6 @@ public class SteeringEncoder extends Runnable {
 		//if(testClockWise) count++;
 		//if(testCounterClockWise) count--;
 		count = steerCounter.get();
-		//System.out.println(count + "  " + voltage + "   " + angle);
 		
 		//if(wheel == 2)System.out.println(stopwatch.get()-lastStopWatch + "    " + voltage + "    " + oldVoltage);
 		//if(Math.abs((voltage-oldVoltage))<3 && Math.abs((voltage-oldVoltage))>0.5) 
@@ -110,7 +109,6 @@ public class SteeringEncoder extends Runnable {
 		double temp=offset%degreesPerRotation;
 		if (temp < 0)temp+=degreesPerRotation;
 //		centerLogger.write(temp+"");
-		//System.out.println(temp+"");
 	}
 	
 	@Override
@@ -149,7 +147,6 @@ public class SteeringEncoder extends Runnable {
 	public double getAngleDegrees(){
 		angle = ((count*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))- offset)%360;
 		if(angle<0) angle+=360;
-		//System.out.println(wheel + "   " + offset + "   " + count);
 		return angle;
 	}
 	public double getRawVoltage(){

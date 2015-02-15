@@ -136,7 +136,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
-		//elevator = new Elevator(new int[] {1,0,2,3,4,5,3,4,1,2,3});
+		elevator = new Elevator(new int[] {1,0,2,3,4,5,3,4,1,2,3});
 //		intake = new Intake(69, 1, 4);
 		setConfig();
 		try {
@@ -175,7 +175,7 @@ public class Robot extends IterativeRobot {
     	drive.start(10);
 //    	testModule.start(10);
 //    	intake.start(20);
-//    	elevator.start(10);
+    	elevator.start(10);
     }
     
     public void teleopPeriodic() {
@@ -267,52 +267,47 @@ public class Robot extends IterativeRobot {
     	
 
     	if(openIntakeButton && !oldOpenIntakeButton) openIntake = true;
-//    	else elevator.setIntake(true, false, false);
     	else openIntake = false;
     	
-    	//elevator.setIntake(intakeWheelsOut, openIntake, intakeWheelsIn);
+    	elevator.setIntake(intakeWheelsOut, openIntake, intakeWheelsIn);
     	
-//    	if(controlBoard.getRawButton(2)) elevator.reset();
+    	if(controlBoard.getRawButton(2)) elevator.reset();
     	if(joyStick.getRawButton(1)) drive.zeroNavX();
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
     	
-//		if(moveUp){
-//			elevator.setMotion(true,false);
-////			elevator.overrideMotion();
-//		}
-//		else if(moveDown){
-//			elevator.setMotion(false, true);
-////			elevator.overrideMotion();
-//		}
-//		
-////		else if(upOneTote && !oldUpOneTote){
-////			goalTotes++;
-////			elevator.regularMotion();
-////		}
-////		else if(downOneTote && !oldDownOneTote){
-////			goalTotes--;
-////			elevator.regularMotion();
-//		else {
-//			elevator.setMotion(false, false);
-//			elevator.firstTime();
-//		}
-////		else if(upOneTote && !oldUpOneTote){
-////			goalTotes++;
-////			elevator.regularMotion();
-////		}
-////		else if(downOneTote && !oldDownOneTote){
-////			goalTotes--;
-////			elevator.regularMotion();
-////		}
-////		if(elevator.atLocation()){
-////			elevator.overrideMotion();
-////			elevator.setMotion(false,false);
-////		} else elevator.setGoalPos(goalTotes);
-		
-		if(controlBoard.getRawButton(2)){
-			drive.zeroNavX();
+		if(moveUp){
+			elevator.setMotion(true,false);
+//			elevator.overrideMotion();
 		}
+		else if(moveDown){
+			elevator.setMotion(false, true);
+//			elevator.overrideMotion();
+		}
+		
+//		else if(upOneTote && !oldUpOneTote){
+//			goalTotes++;
+//			elevator.regularMotion();
+//		}
+//		else if(downOneTote && !oldDownOneTote){
+//			goalTotes--;
+//			elevator.regularMotion();
+		else {
+			elevator.setMotion(false, false);
+			elevator.firstTime();
+		}
+//		else if(upOneTote && !oldUpOneTote){
+//			goalTotes++;
+//			elevator.regularMotion();
+//		}
+//		else if(downOneTote && !oldDownOneTote){
+//			goalTotes--;
+//			elevator.regularMotion();
+//		}
+//		if(elevator.atLocation()){
+//			elevator.overrideMotion();
+//			elevator.setMotion(false,false);
+//		} else elevator.setGoalPos(goalTotes);
     }
     
     /**

@@ -61,7 +61,7 @@ public class Intake extends Runnable{
 	}
 	
 	public void motors() {
-		System.out.println(speed);
+//		System.out.println(speed);
 		rightIn.set(-speed);
 		leftIn.set(speed);
 	}

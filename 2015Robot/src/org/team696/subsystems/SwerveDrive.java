@@ -212,7 +212,7 @@ public class SwerveDrive extends Runnable{
 		if(headingDegrees<0) headingDegrees+=360;
 		setRobotVector[2] = rotation;
 		if(fieldCentric) setRobotVector[1]-= navX.getYaw();
-		System.out.println(fieldCentric+ "   " + setRobotVector[1] + "   " + navX.getYaw());
+//		System.out.println(fieldCentric+ "   " + setRobotVector[1] + "   " + navX.getYaw());
 		return true;
 	}
 	

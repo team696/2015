@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.VictorSP;
 
 public class Elevator extends Runnable {
 	Encoder encoder;
-	DigitalInput limitSwitchBot;
-	DigitalInput limitSwitchTop;
+//	DigitalInput limitSwitchBot;
+//	DigitalInput limitSwitchTop;
 	VictorSP elevMotor1;
 	VictorSP elevMotor2;
 	Solenoid brake;
@@ -21,7 +21,7 @@ public class Elevator extends Runnable {
 	
 	boolean moveUp = false;
 	boolean moveDown = false;
-	boolean override = false;
+	boolean override = true;
 	boolean startBraking;
 	double clicksPerTote = 360;
 	double goalPos;	
@@ -38,9 +38,7 @@ public class Elevator extends Runnable {
 //		limitSwitchTop = new DigitalInput(config[3]);
 		
 		brake = new Solenoid(config[4]);
-		
 		intake = new Intake(config[5],config[6], config[7], config[8]);
-		
 		elevMotor1 = new VictorSP(config[9]);
 		elevMotor2 = new VictorSP(config[10]);
 		encoder.setDistancePerPulse((1/256)*distPerTote);
@@ -67,6 +65,7 @@ public class Elevator extends Runnable {
 	public void setMotion(boolean _moveUp,boolean _moveDown){
 		moveUp = _moveUp;
 		moveDown = _moveDown;
+		override();
 	}
 	
 	private void elevPID(){
@@ -74,14 +73,17 @@ public class Elevator extends Runnable {
 	}
 	
 	public void move(){
-		if (PID.getOutput()>0 && !limitSwitchTop.get()){
-			elevMotor1.set(PID.getOutput());
+		if (PID.getOutput()>0/* && !limitSwitchTop.get()*/){
+			elevMotor1.set(-PID.getOutput());
+			elevMotor2.set(PID.getOutput());
 			startBraking = false;
-		} else if (PID.getOutput()<0 && !limitSwitchBot.get()){
-			elevMotor1.set(PID.getOutput());
+		} else if (PID.getOutput()<0 /*&& !limitSwitchBot.get()*/){
+			elevMotor1.set(-PID.getOutput());
+			elevMotor2.set(PID.getOutput());
 			startBraking =false;
 		} else if (Util.deadZone(PID.getOutput(), 0, 0.1, 0) == 0){
-			elevMotor1.set(0);
+			elevMotor1.set(-PID.getOutput());
+			elevMotor2.set(PID.getOutput());
 			startBraking = true;
 		} else {
 			elevMotor1.set(0);
@@ -93,43 +95,39 @@ public class Elevator extends Runnable {
 		brakeSys();	
 		move();
 	}
-	
-//	public void setHeight() {
-//		brakeSys();
-//		if(!override){
-//			if (limitSwitchTop.get() && goalPos>clicksPerTote*6.5) elevMotor.set(0);
-//			else if (limitSwitchBot.get()) encoder.reset();
-//			else if (limitSwitchBot.get() && goalPos<0) elevMotor.set(0);
-//			if(goalPos/clicksPerTote>encoder.get()/clicksPerTote)goalTotesHigh++;
-//			if(goalPos/clicksPerTote<encoder.get()/clicksPerTote)goalTotesHigh--;
-//			movePerTote();
-//		} else {
-//			if (limitSwitchTop.get() && goalPos>clicksPerTote*6.5) elevMotor.set(0);
-//			else if (limitSwitchBot.get()) encoder.reset();
-//			else if (limitSwitchBot.get() && goalPos<0) elevMotor.set(0);
-//			else elevMotor.set(goalPos - encoder.get());
-//		}
-//	}
-	
+		
 	public boolean atLocation(){
 		if(error == 0)return true;
 		else return false;
 	}
 	
 	private void override(){
-		if (moveUp && !moveDown)elevMotor1.set(0.75);
-		else if (moveDown && !moveUp)elevMotor1.set(-0.75);
-		else elevMotor1.set(0);
-	}
-	
-	public void override(boolean _override){
-		override = _override;
+		brakeSys();
+		if (moveUp && !moveDown){
+			startBraking=false;
+			try{
+				Thread.sleep(50);
+			}catch(InterruptedException e){}
+			elevMotor1.set(1);
+			elevMotor2.set(-1);
+		}
+		else if (moveDown && !moveUp){
+			startBraking=false;
+			try{
+				Thread.sleep(50);
+			}catch(InterruptedException e){}
+			elevMotor1.set(-1);
+			elevMotor2.set(1);
+		}
+		else {
+			startBraking=true;
+			elevMotor1.set(0);
+			elevMotor2.set(0);
+		}
 	}
 	
 	public void brakeSys() {
-		if (startBraking) brake.set(true);
-		
-		brake.set(false);
+		brake.set(startBraking);
 	}
 	
 	@Override

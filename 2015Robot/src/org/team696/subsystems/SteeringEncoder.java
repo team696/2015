@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.Encoder;
 
 
 public class SteeringEncoder extends Runnable {
-	Logger centerLogger;
-	Logger counter;
+//	Logger centerLogger;
+//	Logger counter;
 	public double offset;
 	int wheel;
 	String str;
@@ -54,37 +54,38 @@ public class SteeringEncoder extends Runnable {
 		wheel = _wheel;
 		offset = 0;
 		
-		counter = new Logger(new String[] {""},"/usr/local/frc/logs/zcounter"+ wheel +".txt");
-		counter.write("0.0");
-		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
-		try {
-			str = centerLogger.read(1)[0];
-			if (str == null){
-				str = "0.0";
-			}
-			System.out.println(wheel + "  " + str);
-		}
-		catch(IOException e){
-			System.out.print("reading error   ");
-			e.printStackTrace();
-		}
+//		counter = new Logger(new String[] {""},"/usr/local/frc/logs/zcounter"+ wheel +".txt");
+//		counter.write("0");
 		
-		try {
+//		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
+//		try {
 //			str = centerLogger.read(1)[0];
-			offset = Double.parseDouble(str);
-			System.out.println("offset: "+offset);
-		}
-		catch(NullPointerException e){
-			offset = 0;
-		}
+//			if (str == null){
+//				str = "0.0";
+//			}
+//			System.out.println(wheel + "  " + str);
+//		}
+//		catch(IOException e){
+//			System.out.print("reading error   ");
+//			e.printStackTrace();
+//		}
+		
+//		try {
+////			str = centerLogger.read(1)[0];
+//			offset = Double.parseDouble(str);
+//			System.out.println("offset: "+offset);
+//		}
+//		catch(NullPointerException e){
+//			offset = 0;
+//		}
 		count = 0;
 	}
 	
 	@Override
 	public void update(){
 		super.update();
-		counter.writerRefresh();
-		counter.write(count+"");
+//		counter.writerRefresh();
+//		counter.write(count+"");
 		voltage = encoder.getVoltage();
 		//boolean testClockWise = voltage-oldVoltage<-3;
 		//boolean testCounterClockWise = voltage-oldVoltage>3;
@@ -103,20 +104,21 @@ public class SteeringEncoder extends Runnable {
 	
 	public void trimCenter(double trim){
 		offset+=trim;
+		System.out.println(wheel + "   "+trim + "    "+offset);
 	}
 	
 	public void writeOffset(){
 		double temp=offset%degreesPerRotation;
 		if (temp < 0)temp+=degreesPerRotation;
-		centerLogger.write(temp+"");
+//		centerLogger.write(temp+"");
 		//System.out.println(temp+"");
 	}
 	
 	@Override
 	public void start(int periodMS){
-		try{
-			count = Integer.parseInt(counter.read(1)[0]);
-		}catch(IOException e){System.out.println("Found IOException on line 118\nin SteeringEncoder.java");count=0;}
+//		try{
+//			count = Integer.parseInt(counter.read(1)[0]);
+//		}catch(IOException e){System.out.println("Found IOException on line 118\nin SteeringEncoder.java");count=0;}
 //		offset = 0;
 //		System.out.print(getAngleDegrees()+ "   ");
 //		offset = getAngleDegrees();

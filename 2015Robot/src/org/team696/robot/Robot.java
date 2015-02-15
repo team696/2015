@@ -90,8 +90,8 @@ public class Robot extends IterativeRobot {
 		configs[0].kSteerMotor     = 16;
 		configs[0].kDriveMotor     = 0;
 		configs[0].kSteerEncoder   = 2;
-		configs[0].kDriveEncoderA  = 0;
-		configs[0].kDriveEncoderB  = 0;
+		configs[0].kDriveEncoderA  = 7;
+		configs[0].kDriveEncoderB  = 6;
 		configs[0].kWheelNumber    = 1;
 		configs[0].kReverseEncoder = false;
 		configs[0].kReverseMotor   = false;
@@ -100,8 +100,8 @@ public class Robot extends IterativeRobot {
 		configs[1].kSteerMotor     = 6;
 		configs[1].kDriveMotor     = 5;
 		configs[1].kSteerEncoder   = 1;
-		configs[1].kDriveEncoderA  = 0;
-		configs[1].kDriveEncoderB  = 0;
+		configs[1].kDriveEncoderA  = 5;
+		configs[1].kDriveEncoderB  = 4;
 		configs[1].kWheelNumber    = 2;
 		configs[1].kReverseEncoder = false;
 		configs[1].kReverseMotor   = false;
@@ -110,8 +110,8 @@ public class Robot extends IterativeRobot {
 		configs[2].kSteerMotor     = 7;
 		configs[2].kDriveMotor     = 8;
 		configs[2].kSteerEncoder   = 0;
-		configs[2].kDriveEncoderA  = 0;
-		configs[2].kDriveEncoderB  = 0;
+		configs[2].kDriveEncoderA  = 3;
+		configs[2].kDriveEncoderB  = 2;
 		configs[2].kWheelNumber    = 3;
 		configs[2].kReverseEncoder = false;
 		configs[2].kReverseMotor   = false;
@@ -120,8 +120,8 @@ public class Robot extends IterativeRobot {
 		configs[3].kSteerMotor     = 17;
 		configs[3].kDriveMotor     = 18;
 		configs[3].kSteerEncoder   = 3;
-		configs[3].kDriveEncoderA  = 0;
-		configs[3].kDriveEncoderB  = 0;
+		configs[3].kDriveEncoderA  = 9;
+		configs[3].kDriveEncoderB  = 8;
 		configs[3].kWheelNumber    = 4;
 		configs[3].kReverseEncoder = false;
 		configs[3].kReverseMotor   = false;
@@ -185,7 +185,10 @@ public class Robot extends IterativeRobot {
     	calibrate = joyStick.getRawButton(3);
     	if(calibrate) calibrate();
     	else robotCode();
-    	
+    	System.out.print(drive.frontLeft.steerEncoder.getAngleDegrees()+ "   ");
+    	System.out.print(drive.frontRight.steerEncoder.getAngleDegrees()+ "   ");
+    	System.out.print(drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
+    	System.out.println(drive.backRight.steerEncoder.getAngleDegrees()+ "   ");
     }
     
     public void calibrate(){
@@ -197,14 +200,16 @@ public class Robot extends IterativeRobot {
 //    	else trim = 0;
     	
     	trim = joyStick.getRawAxis(0)*2;
-    	if(controlBoard.getRawButton(6))drive.frontLeft.steerEncoder.trimCenter(trim);
+    	if(joyStick.getRawButton(6))drive.frontLeft.steerEncoder.trimCenter(trim);
     	else drive.frontLeft.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(11))drive.frontRight.steerEncoder.trimCenter(trim);
+    	if(joyStick.getRawButton(11))drive.frontRight.steerEncoder.trimCenter(trim);
     	else drive.frontRight.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(7))drive.backRight.steerEncoder.trimCenter(trim);
+    	if(joyStick.getRawButton(7))drive.backRight.steerEncoder.trimCenter(trim);
     	else drive.backRight.steerEncoder.trimCenter(0);
-    	if(controlBoard.getRawButton(10))drive.backLeft.steerEncoder.trimCenter(trim);
+    	if(joyStick.getRawButton(10))drive.backLeft.steerEncoder.trimCenter(trim);
     	else drive.backLeft.steerEncoder.trimCenter(0);
+//    	System.out.println("In Calibrate    "+trim);
+
 //    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
 //    	else drive.frontLeft.steerEncoder.trimCenter(0);
 //    	if(controlBoard.getRawButton(4))testModule.override(true,trim/2, 0.2);
@@ -239,10 +244,9 @@ public class Robot extends IterativeRobot {
     	intakeWheelsOut = controlBoard.getRawAxis(3)>0.5;
 //    	ejectMech       = controlBoard.getRawButton(12);
 //    	intakeMech      = controlBoard.getRawButton(12);
-    	moveUpOld 		= moveUp;
-    	moveDownOld     = moveDown;
     	moveUp          = controlBoard.getRawButton(1);
     	moveDown        = controlBoard.getRawButton(3);
+    	
     	oldFieldCentricButton = fieldCentric;
     	fieldCentricButton = controlBoard.getRawButton(10);
     	if(fieldCentric&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
@@ -266,7 +270,7 @@ public class Robot extends IterativeRobot {
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
     	
     	if(openIntakeButton && !oldOpenIntakeButton) elevator.setIntake(false, true, false);
-    	else if (controlBoard.getRawButton(1)) elevator.setIntake(true, false, false);
+//    	else elevator.setIntake(true, false, false);
     	else elevator.setIntake(false, false, false);
     	
     	if(controlBoard.getRawButton(2)) drive.zeroNavX();
@@ -274,11 +278,12 @@ public class Robot extends IterativeRobot {
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
 //    	System.out.println(controlBoard.getRawButton(1)+"    " + xAxis);
     	
-		if(moveUp && !moveDown && !moveUpOld)elevator.setMotion(true,false);
-		else if(!moveUp && moveDown && !moveDownOld)elevator.setMotion(false, true);
-		else if(upOneTote && !oldUpOneTote)goalTotes++;
-		else if(downOneTote && !oldDownOneTote)goalTotes--;
-		elevator.setGoalPos(goalTotes);
+		if(moveUp)elevator.setMotion(true,false);
+		else if(moveDown)elevator.setMotion(false, true);
+		else elevator.setMotion(false, false);
+//		else if(upOneTote && !oldUpOneTote)goalTotes++;
+//		else if(downOneTote && !oldDownOneTote)goalTotes--;
+//		elevator.setGoalPos(goalTotes);
     }
     
     /**

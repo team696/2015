@@ -104,8 +104,7 @@ public class SteeringEncoder extends Runnable {
 	
 	public void trimCenter(double trim){
 		offset+=trim;
-		System.out.println(wheel + "   "+trim + "    "+offset);
-	}
+		}
 	
 	public void writeOffset(){
 		double temp=offset%degreesPerRotation;
@@ -119,9 +118,10 @@ public class SteeringEncoder extends Runnable {
 //		try{
 //			count = Integer.parseInt(counter.read(1)[0]);
 //		}catch(IOException e){System.out.println("Found IOException on line 118\nin SteeringEncoder.java");count=0;}
-//		offset = 0;
+		offset = 0;
+		count = 0;
 //		System.out.print(getAngleDegrees()+ "   ");
-//		offset = getAngleDegrees();
+		offset = getAngleDegrees();
 		voltage = encoder.getVoltage();
 		oldVoltage = voltage;
 //		System.out.println(offset + "   ");

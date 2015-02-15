@@ -49,11 +49,11 @@ public class Elevator extends Runnable {
 		super.start(periodMS);
 	}
 	
-	public void setIntake(boolean eject,boolean open, boolean _intake, double speed){
+	public void setIntake(boolean eject,boolean open, boolean _intake){
 		if(encoder.get() < 2.25){
-			intake.set(eject,false,_intake,speed);
+			intake.set(eject,false,_intake);
 		} else {
-			intake.set(eject,open, _intake, speed);
+			intake.set(eject,open, _intake);
 		}
 	}
 	

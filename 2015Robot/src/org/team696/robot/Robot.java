@@ -263,9 +263,9 @@ public class Robot extends IterativeRobot {
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, fieldCentric);
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
     	
-    	if(rightStick.getRawButton(1)) elevator.setIntake(false, true, false, 1);
-    	else if (controlBoard.getRawButton(1)) elevator.setIntake(true, false, false, 1);
-    	else elevator.setIntake(false, false, false, 0);
+    	if(rightStick.getRawButton(1)) elevator.setIntake(false, true, false);
+    	else if (controlBoard.getRawButton(1)) elevator.setIntake(true, false, false);
+    	else elevator.setIntake(false, false, false);
     	
     	if(controlBoard.getRawButton(2)) drive.zeroNavX();
     	

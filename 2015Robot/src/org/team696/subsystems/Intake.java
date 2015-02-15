@@ -37,10 +37,9 @@ public class Intake extends Runnable{
 		run();
 	}
 	
-	public void set(boolean _eject, boolean _open, boolean _intake, double _speed) {
+	public void set(boolean _eject, boolean _open, boolean _intake) {
 		eject = _eject;
 		intake = _intake;
-		speed = _speed;
 		intakeOpen = _open;
 		
 		if (eject == intake) {
@@ -50,9 +49,10 @@ public class Intake extends Runnable{
 		
 		if (eject) {
 //			ejector.set(true);
+			speed = 1;
 		} else  if (intake) {
 //			ejector.set(false);
-			speed = -speed;
+			speed = -1;
 		} else{
 //			ejector.set(false);
 			speed = 0;

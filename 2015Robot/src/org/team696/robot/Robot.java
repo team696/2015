@@ -306,6 +306,10 @@ public class Robot extends IterativeRobot {
 			elevator.overrideMotion();
 			elevator.setMotion(false,false);
 		} else elevator.setGoalPos(goalTotes);
+		
+		if(controlBoard.getRawButton(2)){
+			elevator.reset();
+		}
     }
     
     /**

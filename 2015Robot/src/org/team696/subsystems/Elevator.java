@@ -77,7 +77,9 @@ public class Elevator extends Runnable {
 		override();
 	}
 	
-	
+	public void reset(){
+		encoder.reset();
+	}
 	
 	public void move(){
 		double error =goalPos-encoder.get();

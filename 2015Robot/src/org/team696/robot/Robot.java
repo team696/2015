@@ -293,21 +293,22 @@ public class Robot extends IterativeRobot {
 			elevator.setMotion(false, true);
 			elevator.overrideMotion();
 		}
-//		else {
-//			elevator.setMotion(false, false);
+		else {
+			elevator.setMotion(false, false);
+			elevator.firstTime();
+		}
+//		else if(upOneTote && !oldUpOneTote){
+//			goalTotes++;
+//			elevator.regularMotion();
 //		}
-		else if(upOneTote && !oldUpOneTote){
-			goalTotes++;
-			elevator.regularMotion();
-		}
-		else if(downOneTote && !oldDownOneTote){
-			goalTotes--;
-			elevator.regularMotion();
-		}
-		if(elevator.atLocation()){
-			elevator.overrideMotion();
-			elevator.setMotion(false,false);
-		} else elevator.setGoalPos(goalTotes);
+//		else if(downOneTote && !oldDownOneTote){
+//			goalTotes--;
+//			elevator.regularMotion();
+//		}
+//		if(elevator.atLocation()){
+//			elevator.overrideMotion();
+//			elevator.setMotion(false,false);
+//		} else elevator.setGoalPos(goalTotes);
 		
 		if(controlBoard.getRawButton(2)){
 			elevator.reset();

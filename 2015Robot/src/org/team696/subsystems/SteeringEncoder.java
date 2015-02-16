@@ -58,8 +58,6 @@ public class SteeringEncoder extends Runnable {
 		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
 		
 		
-		boolean lastLine = false;
-		int x = 0;
 		String str = "0";
 		str = centerLogger.read(1)[0];
 		offset = Double.parseDouble(str);

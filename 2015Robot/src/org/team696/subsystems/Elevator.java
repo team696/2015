@@ -103,12 +103,12 @@ public class Elevator extends Runnable {
 				try{
 					Thread.sleep(100);
 				}catch(InterruptedException e){e.printStackTrace();}
-				elevMotor1.set(1);
-				elevMotor2.set(-1);
+				elevMotor1.set(-1);
+				elevMotor2.set(1);
 				firstTime = false;
 			} else {
-				elevMotor1.set(1);
-				elevMotor2.set(-1);
+				elevMotor1.set(-1);
+				elevMotor2.set(1);
 				startBraking = false;
 			}
 		} else if (error<0 /*&& !limitSwitchBot.get()*/){
@@ -118,12 +118,12 @@ public class Elevator extends Runnable {
 				try{
 					Thread.sleep(100);
 				}catch(InterruptedException e){e.printStackTrace();}
-				elevMotor1.set(-0.5);
-				elevMotor2.set(0.5);
+				elevMotor1.set(0.3);
+				elevMotor2.set(-0.3);
 				firstTime = false;
 			} else {
-				elevMotor1.set(-0.3);
-				elevMotor2.set(0.3);
+				elevMotor1.set(0.3);
+				elevMotor2.set(-0.3);
 				startBraking = false;
 			}
 		} else if (Util.deadZone(error, 0, 0.1, 0) == 0){
@@ -153,8 +153,8 @@ public class Elevator extends Runnable {
 				}	catch(InterruptedException e){}
 				firstTime=false;
 			}
-			elevMotor1.set(1);
-			elevMotor2.set(-1);
+			elevMotor1.set(-1);
+			elevMotor2.set(1);
 		}
 		else if (moveDown && !moveUp){
 			startBraking=false;
@@ -167,8 +167,8 @@ public class Elevator extends Runnable {
 					}	catch(InterruptedException e){}
 					firstTime=false;
 				} else {
-					elevMotor1.set(0.3);
-					elevMotor2.set(-0.3);
+					elevMotor1.set(-0.3);
+					elevMotor2.set(0.3);
 				}
 			}
 		}

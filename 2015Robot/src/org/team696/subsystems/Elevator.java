@@ -49,13 +49,15 @@ public class Elevator extends Runnable {
 		override = true;
 	}
 	
+	public void regularMotion(){
+		override = false;
+	}
+	
 	public void firstTime(){
 		firstTime = true;
 	}
 	
-	public void regularMotion(){
-		override = false;
-	}
+	
 	
 	@Override
 	public void start(int periodMS){
@@ -78,7 +80,6 @@ public class Elevator extends Runnable {
 	public void setMotion(boolean _moveUp,boolean _moveDown){
 		moveUp = _moveUp;
 		moveDown = _moveDown;
-		goalPos = encoder.get();
 		override();
 	}
 	
@@ -87,22 +88,46 @@ public class Elevator extends Runnable {
 	}
 	
 	public void move(){
+		goalPos = Math.round(goalPos);
 		brakeSys();
 		double error =Util.deadZone(goalPos-encoder.get(), 0, 0.1, 0);
 		if (error>0/* && !limitSwitchTop.get()*/){
-			elevMotor1.set(-1);
-			elevMotor2.set(1);
-			startBraking = false;
+			if(firstTime){
+				startBraking = false;
+				brakeSys();
+				try{
+					Thread.sleep(100);
+				}catch(InterruptedException e){e.printStackTrace();}
+				elevMotor1.set(1);
+				elevMotor2.set(-1);
+				firstTime = false;
+			} else {
+				elevMotor1.set(1);
+				elevMotor2.set(-1);
+				startBraking = false;
+			}
 		} else if (error<0 /*&& !limitSwitchBot.get()*/){
-			elevMotor1.set(-0.5);
-			elevMotor2.set(0.5);
-			startBraking =false;
+			if(firstTime){
+				startBraking = false;
+				brakeSys();
+				try{
+					Thread.sleep(100);
+				}catch(InterruptedException e){e.printStackTrace();}
+				elevMotor1.set(-0.5);
+				elevMotor2.set(0.5);
+				firstTime = false;
+			} else {
+				elevMotor1.set(-0.3);
+				elevMotor2.set(0.3);
+				startBraking = false;
+			}
 		} else if (Util.deadZone(error, 0, 0.1, 0) == 0){
 			elevMotor1.set(0);
 			elevMotor2.set(0);
 			startBraking = true;
 		} else {
 			elevMotor1.set(0);
+			elevMotor2.set(0);
 			startBraking = true;
 		}
 	}
@@ -116,10 +141,10 @@ public class Elevator extends Runnable {
 		brakeSys();
 		if (moveUp && !moveDown){
 			startBraking=false;
-			brake.set(startBraking);
+			brakeSys();
 			if(firstTime){
 				try{
-					Thread.sleep(50);
+					Thread.sleep(100);
 				}	catch(InterruptedException e){}
 				firstTime=false;
 			}
@@ -128,21 +153,26 @@ public class Elevator extends Runnable {
 		}
 		else if (moveDown && !moveUp){
 			startBraking=false;
-			if(firstTime){
-				try{
-					Thread.sleep(100);
-				}	catch(InterruptedException e){}
-				firstTime=false;
+			if (moveUp && !moveDown){
+				startBraking=false;
+				brakeSys();
+				if(firstTime){
+					try{
+						Thread.sleep(100);
+					}	catch(InterruptedException e){}
+					firstTime=false;
+				} else {
+					elevMotor1.set(0.3);
+					elevMotor2.set(-0.3);
+				}
 			}
-			elevMotor1.set(-0.5);
-			elevMotor2.set(0.5);
 		}
 		else {
 			startBraking=true;
 			elevMotor1.set(0);
 			elevMotor2.set(0);
 		}
-		goalPos=encoder.get();
+		goalPos = encoder.get();
 	}
 	
 	public void brakeSys() {

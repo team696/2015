@@ -278,11 +278,21 @@ public class Robot extends IterativeRobot {
     	
 		if(moveUp){
 			elevator.setMotion(true,false);
-//			elevator.overrideMotion();
+			elevator.overrideMotion();
 		}
 		else if(moveDown){
 			elevator.setMotion(false, true);
-//			elevator.overrideMotion();
+			elevator.overrideMotion();
+		} else if (upOneTote && !oldUpOneTote) {
+			goalTotes++;
+			elevator.regularMotion();
+		}else if (downOneTote && !oldDownOneTote) {
+			goalTotes--;
+			elevator.regularMotion();
+		}else {
+			elevator.overrideMotion();
+			elevator.setMotion(false, false);
+			elevator.firstTime();
 		}
 		
 //		else if(upOneTote && !oldUpOneTote){
@@ -292,10 +302,6 @@ public class Robot extends IterativeRobot {
 //		else if(downOneTote && !oldDownOneTote){
 //			goalTotes--;
 //			elevator.regularMotion();
-		else {
-			elevator.setMotion(false, false);
-			elevator.firstTime();
-		}
 //		else if(upOneTote && !oldUpOneTote){
 //			goalTotes++;
 //			elevator.regularMotion();

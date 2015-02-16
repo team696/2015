@@ -216,9 +216,9 @@ public class Robot extends IterativeRobot {
     	moveUp          = controlBoard.getRawButton(1);
     	moveDown        = controlBoard.getRawButton(3);
     	
-    	oldFieldCentricButton = fieldCentric;
+    	oldFieldCentricButton = fieldCentricButton;
     	fieldCentricButton = controlBoard.getRawButton(10);
-    	if(fieldCentric&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
+    	if(fieldCentricButton&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
     	oldOpenIntakeButton = openIntakeButton;
     	openIntakeButton = controlBoard.getRawButton(5);
     	oldUpOneTote = upOneTote;
@@ -263,7 +263,7 @@ public class Robot extends IterativeRobot {
     	if(controlBoard.getRawButton(2)) elevator.reset();
     	if(joyStick.getRawButton(1)) drive.zeroNavX();
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
-    	
+    	System.out.println(moveUp+ "  " + moveDown);
 		if(moveUp){
 			elevator.setMotion(true,false);
 			elevator.overrideMotion();

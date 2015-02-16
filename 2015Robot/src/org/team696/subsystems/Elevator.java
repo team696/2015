@@ -66,7 +66,7 @@ public class Elevator extends Runnable {
 	}
 	
 	public void setIntakeOpen(boolean _open){
-		System.out.println(_open+ "   " +encoder.getDistance()+ encoder.getRate());
+		System.out.println("setintakeOpen _open:   " + _open+ "   " +encoder.getDistance()+ encoder.getRate());
 		if(encoder.getDistance() < 2.25){
 			System.out.print("intakeSetTrue");
 			intake.setOpen(true);
@@ -154,6 +154,7 @@ public class Elevator extends Runnable {
 	
 	private void override(){
 		brake.set(startBraking);
+		System.out.println("override encoder rate:   " + encoder.getRate());
 		if (moveUp && !moveDown && encoder.getDistance()<5){
 			startBraking=false;
 			brake.set(startBraking);
@@ -163,8 +164,8 @@ public class Elevator extends Runnable {
 				}	catch(InterruptedException e){}
 				firstTime=false;
 			}
-			elevMotor1.set(-1 + ((encoder.getRate()-1)/2));
-			elevMotor2.set(1 + ((encoder.getRate()-1)/2));
+			elevMotor1.set(-1);// + ((encoder.getRate()-4)/20));
+			elevMotor2.set(1);// + ((encoder.getRate()-4)/20));
 		}
 		else if (moveDown && !moveUp && encoder.getDistance()>0.5){
 			startBraking=false;
@@ -175,12 +176,12 @@ public class Elevator extends Runnable {
 				}	catch(InterruptedException e){}
 				firstTime=false;
 			}
-			elevMotor1.set(0.2+ ((encoder.getRate()+1)/2));
-			elevMotor2.set(-0.2 - ((encoder.getRate()+1)/2));
+			elevMotor1.set(0.2);//+ ((encoder.getRate()+4)/20));
+			elevMotor2.set(-0.2);// - ((encoder.getRate()+4)/20));
 		}else if(moveDown && !moveUp && encoder.getDistance()<0.5 && encoder.getDistance()>-0.5){
 			elevMotor1.set(0.1);
 			elevMotor1.set(-0.1);
-			if(encoder.getDistance()<0) encoder.reset();
+			if(encoder.getDistance()<0) reset();
 		}
 		
 		else {

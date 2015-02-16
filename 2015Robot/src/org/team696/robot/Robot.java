@@ -3,7 +3,6 @@ package org.team696.robot;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,16 +10,12 @@ import java.util.Date;
 import org.team696.baseClasses.*;
 import org.team696.subsystems.*;
 
-import com.kauailabs.nav6.frc.*;
-
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.SerialPort.Port;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -136,7 +131,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
-		elevator = new Elevator(new int[] {1,0,2,3,4,5,3,4,1,2,3});
+		elevator = new Elevator(new int[] {1,0,2,3,4,5,5,4,1,2,3});
 //		intake = new Intake(69, 1, 4);
 		setConfig();
 		try {

@@ -23,7 +23,7 @@ public class Elevator extends Runnable {
 	boolean moveDown = false;
 	boolean override = true;
 	boolean startBraking;
-	double clicksPerTote = 360;
+	double clicksPerTote = 0.017578125;
 	double goalPos;	
 	double distPerTote = 1.0;
 	double error;
@@ -33,8 +33,8 @@ public class Elevator extends Runnable {
 	 * @param config - encoderSlotA, encoderSlotB, limitSwitchBot, limitSwitchTop, BreakerChannel
 	 */
 	public Elevator(int[] config) {
-		encoder = new Encoder(config[0], config[1]);
-		
+		encoder = new Encoder(config[1], config[0]);
+		encoder.setSamplesToAverage(10);
 //		limitSwitchBot = new DigitalInput(config[2]);
 //		limitSwitchTop = new DigitalInput(config[3]);
 		
@@ -65,12 +65,21 @@ public class Elevator extends Runnable {
 		super.start(periodMS);
 	}
 	
-	public void setIntake(boolean eject,boolean open, boolean _intake){
-		if(encoder.get() < 2.25){
-			intake.set(eject,false,_intake);
+	public void setIntakeOpen(boolean _open){
+		System.out.println(_open+ "   " +encoder.getDistance()+ encoder.getRate());
+		if(encoder.getDistance() < 2.25){
+			System.out.print("intakeSetTrue");
+			intake.setOpen(true);
 		} else {
-			intake.set(eject,open, _intake);
+			intake.setOpen(_open);
 		}
+	}
+	
+	public void setIntakeMotors(double _speed){
+		intake.setMotors(_speed);
+	}
+	public void setEjector(){
+		
 	}
 	
 	public void setGoalPos(double _totesPos){	
@@ -93,13 +102,14 @@ public class Elevator extends Runnable {
 	}
 	
 	public void move(){
+		System.out.println("In Move");
 		goalPos = Math.round(goalPos);
-		brakeSys();
-		double error =Util.deadZone(goalPos-encoder.get(), 0, 0.1, 0);
+		brake.set(startBraking);
+		double error =Util.deadZone(goalPos-encoder.getDistance(), 0, 0.1, 0);
 		if (error>0/* && !limitSwitchTop.get()*/){
 			if(firstTime){
 				startBraking = false;
-				brakeSys();
+				brake.set(startBraking);
 				try{
 					Thread.sleep(100);
 				}catch(InterruptedException e){e.printStackTrace();}
@@ -114,16 +124,16 @@ public class Elevator extends Runnable {
 		} else if (error<0 /*&& !limitSwitchBot.get()*/){
 			if(firstTime){
 				startBraking = false;
-				brakeSys();
+				brake.set(startBraking);
 				try{
 					Thread.sleep(100);
 				}catch(InterruptedException e){e.printStackTrace();}
-				elevMotor1.set(0.3);
-				elevMotor2.set(-0.3);
+				elevMotor1.set(0.5);
+				elevMotor2.set(-0.5);
 				firstTime = false;
 			} else {
-				elevMotor1.set(0.3);
-				elevMotor2.set(-0.3);
+				elevMotor1.set(0.5);
+				elevMotor2.set(-0.5);
 				startBraking = false;
 			}
 		} else if (Util.deadZone(error, 0, 0.1, 0) == 0){
@@ -143,52 +153,49 @@ public class Elevator extends Runnable {
 	}
 	
 	private void override(){
-		brakeSys();
-		if (moveUp && !moveDown){
+		brake.set(startBraking);
+		if (moveUp && !moveDown && encoder.getDistance()<5){
 			startBraking=false;
-			brakeSys();
+			brake.set(startBraking);
 			if(firstTime){
 				try{
 					Thread.sleep(100);
 				}	catch(InterruptedException e){}
 				firstTime=false;
 			}
-			elevMotor1.set(-1);
-			elevMotor2.set(1);
+			elevMotor1.set(-1 + ((encoder.getRate()-1)/2));
+			elevMotor2.set(1 + ((encoder.getRate()-1)/2));
 		}
-		else if (moveDown && !moveUp){
+		else if (moveDown && !moveUp && encoder.getDistance()>0.5){
 			startBraking=false;
-			if (moveUp && !moveDown){
-				startBraking=false;
-				brakeSys();
-				if(firstTime){
-					try{
-						Thread.sleep(100);
-					}	catch(InterruptedException e){}
-					firstTime=false;
-				} else {
-					elevMotor1.set(-0.3);
-					elevMotor2.set(0.3);
-				}
+			brake.set(startBraking);
+			if(firstTime){
+				try{
+					Thread.sleep(100);
+				}	catch(InterruptedException e){}
+				firstTime=false;
 			}
+			elevMotor1.set(0.2+ ((encoder.getRate()+1)/2));
+			elevMotor2.set(-0.2 - ((encoder.getRate()+1)/2));
+		}else if(moveDown && !moveUp && encoder.getDistance()<0.5 && encoder.getDistance()>-0.5){
+			elevMotor1.set(0.1);
+			elevMotor1.set(-0.1);
+			if(encoder.getDistance()<0) encoder.reset();
 		}
+		
 		else {
 			startBraking=true;
 			elevMotor1.set(0);
 			elevMotor2.set(0);
 		}
-		goalPos = encoder.get();
-	}
-	
-	public void brakeSys() {
-		brake.set(startBraking);
+		goalPos = encoder.getDistance();
 	}
 	
 	@Override
 	public void update() {
-		error = goalPos-encoder.get();
+		error = goalPos-encoder.getDistance();
 		error = Util.deadZone(error, 0, 0.1, 0);
-		if (!override)move();
+		if(!override)move();
 		else override();
 	}
 	

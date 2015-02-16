@@ -10,9 +10,13 @@ import org.team696.baseClasses.Runnable;
 public class Scheduler extends Runnable{
 	
 	Vector<Command> curCommands = new Vector<Command>();
-	Interpreter interpreter = new Interpreter("navigate: 3 , 4, 30 \n navigate: 2 , 2, 0");
+	Interpreter interpreter;
 	public Scheduler(){
 		
+	}
+	
+	public void setScript(String script){
+		interpreter = new Interpreter(script);
 	}
 	
 	public void addCommand(Command command,int periodMS){

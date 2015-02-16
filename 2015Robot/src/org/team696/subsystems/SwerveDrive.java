@@ -98,7 +98,7 @@ public class SwerveDrive extends Runnable{
 		double [][] wheelVectors = new double[4][2];
 		
 		wheelVectors[0] = frontLeft.getCumVector();
-//		System.out.println(frontLeft.getCumVector()[0] + "   " + frontLeft.getCumVector()[1]);
+		System.out.println((int)frontLeft.getCumVector()[0] + "   " + (int)frontLeft.getCumVector()[1] + "   ");
 		wheelVectors[1] = frontRight.getCumVector();
 		wheelVectors[2] = backRight.getCumVector();
 		wheelVectors[3] = backLeft.getCumVector();
@@ -121,6 +121,7 @@ public class SwerveDrive extends Runnable{
 		robotPosition[0] += cumVectorsAdjusted[0]/1000;
 		robotPosition[1] += cumVectorsAdjusted[1]/1000;
 		robotPosition[2] = navX.getYaw();
+//		System.out.println((int)cumVectors[0]+ "   " +(int)cumVectors[1]+ "   " + (int)cumVectors[0]+ "   ");
 	}
 	
 	public void setSteerPID(double P, double I, double D){
@@ -129,12 +130,6 @@ public class SwerveDrive extends Runnable{
 		backRight.setSteerPID(P, I, D);
 		backLeft.setSteerPID(P, I, D);
 	}
-//	public void setDrivePID(double P, double I, double D, double F){
-//		//frontleft.setDrivePID(P, I, D, F);
-//		frontRight.setDrivePID(P, I, D, F);
-//		backRight.setDrivePID(P, I, D, F);
-//		backLeft.setDrivePID(P, I, D, F);
-//	}
 	
 	void setWheels(){
 		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);

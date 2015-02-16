@@ -6,13 +6,13 @@ import java.lang.reflect.Parameter;
 
 
 public class Interpreter{
-	String rawString = "navigate \n navigate: 2 , 20, 0, parallel";
+	String rawString = "";
 	String parsedCode;
 	String[] lines;
 	int curLine = 0;
 	
 	public Interpreter(String code){
-		//rawString = code;
+		rawString = code;
 		lines =rawString.split("\n");
 		
 		for (int fish = 0; fish < lines.length; fish++) {

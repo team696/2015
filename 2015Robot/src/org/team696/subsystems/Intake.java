@@ -21,7 +21,7 @@ public class Intake extends Runnable{
 	 * @param config - ejectorChan, rightInChan, leftInChan
 	 */
 	public Intake(int ejectorSolenoid, int openSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
-//		ejector = new Solenoid(ejectorSolenoid);
+		ejector = new Solenoid(ejectorSolenoid);
 		open = new Solenoid(openSolenoid);
 		
 		rightIn = new VictorSP(rightIntakeVictor);
@@ -35,44 +35,18 @@ public class Intake extends Runnable{
 	
 	@Override
 	public void update() {
-		run();
-	}
-	
-	public void set(boolean _eject, boolean _open, boolean _intake) {
-		eject = _eject;
-		intake = _intake;
-		intakeOpen = _open;
-		
-		if (eject == intake) {
-			intake = false;
-			eject = false;
-		}
-		
-		if (eject) {
-//			ejector.set(true);
-			speed = 1;
-		} else  if (intake) {
-//			ejector.set(false);
-			speed = -1;
-		} else{
-//			ejector.set(false);
-			speed = 0;
-		}
-		
-	}
-	
-	private void intakeOpen(){
+		rightIn.set(speed);
+		leftIn.set(-speed);
 		open.set(intakeOpen);
 	}
 	
-	public void motors() {
-//		System.out.println(speed);
-		rightIn.set(-speed);
-		leftIn.set(speed);
+	public void setMotors(double _speed) {
+		speed = _speed;
 	}
-	
-	public void run() {
-//		grabberOfBin.set(grabBin);
-		motors();
+	public void setOpen(boolean _open){
+		intakeOpen = _open;
+	}
+	public void setEjector(boolean _eject){
+		ejector.set(_eject);
 	}
 }

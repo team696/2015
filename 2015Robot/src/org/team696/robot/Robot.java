@@ -9,6 +9,7 @@ import java.util.Date;
 
 import org.team696.baseClasses.*;
 import org.team696.subsystems.*;
+import org.team696.autonomous.Scheduler;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -31,14 +32,11 @@ public class Robot extends IterativeRobot {
      */			
 	boolean 		calibrate 		= false;
 	
-	
 	Joystick        controlBoard = new Joystick(0);
 	Joystick 		joyStick   = new Joystick(1);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 //	public static SwerveModule testModule;
 	public static SwerveDrive     drive;
-//	public static Intake          intake;
-	//public static AutoCanner      canner;
 	public static Elevator        elevator;	
 	
 //	static Logger          logger;
@@ -76,6 +74,8 @@ public class Robot extends IterativeRobot {
 	boolean			oldWrite		= write;
 	ModuleConfigs[] configs;
 
+	Scheduler autonScheduler = new Scheduler();
+	
 	
 	public void setConfig(){
 		configs         = new ModuleConfigs[4];
@@ -90,7 +90,6 @@ public class Robot extends IterativeRobot {
 		configs[0].kWheelNumber    = 1;
 		configs[0].kReverseEncoder = false;
 		configs[0].kReverseMotor   = false;
-//		configs[0].kCenter         = 47.85;
 		
 		configs[1].kSteerMotor     = 6;
 		configs[1].kDriveMotor     = 5;
@@ -100,7 +99,6 @@ public class Robot extends IterativeRobot {
 		configs[1].kWheelNumber    = 2;
 		configs[1].kReverseEncoder = false;
 		configs[1].kReverseMotor   = false;
-//		configs[1].kCenter         = 69.14;
 		
 		configs[2].kSteerMotor     = 7;
 		configs[2].kDriveMotor     = 8;
@@ -110,8 +108,7 @@ public class Robot extends IterativeRobot {
 		configs[2].kWheelNumber    = 3;
 		configs[2].kReverseEncoder = false;
 		configs[2].kReverseMotor   = false;
-//		configs[2].kCenter         = 79.3;
-		
+
 		configs[3].kSteerMotor     = 17;
 		configs[3].kDriveMotor     = 18;
 		configs[3].kSteerEncoder   = 3;
@@ -120,7 +117,6 @@ public class Robot extends IterativeRobot {
 		configs[3].kWheelNumber    = 4;
 		configs[3].kReverseEncoder = false;
 		configs[3].kReverseMotor   = false;
-//		configs[3].kCenter         = 29.3;
 		
 	}
 	
@@ -131,8 +127,8 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
+		
 		elevator = new Elevator(new int[] {1,0,2,3,4,5,5,4,1,2,3});
-//		intake = new Intake(69, 1, 4);
 		setConfig();
 		try {
 			drive = new SwerveDrive(configs);
@@ -144,6 +140,7 @@ public class Robot extends IterativeRobot {
 		} 
 		catch(FileNotFoundException fnfE){}
 		catch(IOException ioE){}
+		
 //		logger.init();
     }
 
@@ -152,6 +149,11 @@ public class Robot extends IterativeRobot {
      */
 	@Override
 	public void autonomousInit(){
+		drive.zeroNavX();
+		String autonScript = SmartDashboard.getString("autonCode", "StringNotFound");
+		System.out.println(autonScript);
+		autonScheduler.setScript(autonScript);
+//		autonScheduler.start(20);
 //		logger.stop();
 //		logger.start(20);
 	}
@@ -167,9 +169,9 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void teleopInit() {
+    	autonScheduler.stop();
     	drive.start(10);
 //    	testModule.start(10);
-//    	intake.start(20);
     	elevator.start(10);
     }
     
@@ -183,12 +185,6 @@ public class Robot extends IterativeRobot {
     }
     
     public void calibrate(){
-//    	moveLeft = controlBoard.getRawButton(8);
-//    	moveRight = controlBoard.getRawButton(6);
-//    	
-//    	if(moveRight)trim = 0.5;
-//    	else if(moveLeft)trim = -0.5;
-//    	else trim = 0;
     	
     	trim = joyStick.getRawAxis(0)*2;
     	if(joyStick.getRawButton(6))drive.frontLeft.steerEncoder.trimCenter(trim);
@@ -200,22 +196,6 @@ public class Robot extends IterativeRobot {
     	if(joyStick.getRawButton(7))drive.backLeft.steerEncoder.trimCenter(trim);
     	else drive.backLeft.steerEncoder.trimCenter(0);
 
-//    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
-//    	else drive.frontLeft.steerEncoder.trimCenter(0);
-//    	if(controlBoard.getRawButton(4))testModule.override(true,trim/2, 0.2);
-//    	else testModule.override(false, 0,0);
-    	
-//    	System.out.println(drive.frontLeft.steerEncoder.getAngleDegrees() + "   " +
-//    				drive.frontRight.steerEncoder.getAngleDegrees() + "   " +
-//    				drive.backRight.steerEncoder.getAngleDegrees() + "   " +
-//    				drive.backLeft.steerEncoder.getAngleDegrees() + "   ");
-    	
-//    	if(controlBoard.getRawButton(2))drive.frontRight.override(true, trim, 0.2);
-//    	else drive.frontRight.override(true, 0.0, 0);
-//    	if(controlBoard.getRawButton(3))drive.backRight.override(true, trim, 0.2);
-//    	else drive.backRight.override(true, 0.0, 0);
-//    	if(controlBoard.getRawButton(4))drive.backLeft.override(true, trim, 0.2);
-//    	else drive.backLeft.override(true, 0.0, 0);
     	oldWrite = write;
     	write = joyStick.getRawButton(1);
     	if(write && !oldWrite){
@@ -230,8 +210,7 @@ public class Robot extends IterativeRobot {
     	
     }
     public void robotCode(){
-    	intakeWheelsIn  = controlBoard.getRawAxis(3)<-0.5;
-    	intakeWheelsOut = controlBoard.getRawAxis(3)>0.5;
+    	
 //    	ejectMech       = controlBoard.getRawButton(12);
 //    	intakeMech      = controlBoard.getRawButton(12);
     	moveUp          = controlBoard.getRawButton(1);
@@ -251,20 +230,20 @@ public class Robot extends IterativeRobot {
     	yAxis           = -Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	xAxis           = Util.deadZone(Util.map(joyStick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	
-    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");
-    	System.out.print((int)drive.frontRight.steerEncoder.offset+ "   ");
-    	System.out.print((int)drive.backLeft.steerEncoder.offset+ "   ");
-    	System.out.print((int)drive.backLeft.steerEncoder.offset+ "   ");
-    	
-    	System.out.print((int)drive.frontLeft.steerEncoder.countOffset+ "   ");
-    	System.out.print((int)drive.frontRight.steerEncoder.countOffset+ "   ");
-    	System.out.print((int)drive.backLeft.steerEncoder.countOffset+ "   ");
-    	System.out.print((int)drive.backLeft.steerEncoder.countOffset+ "   ");
-    	
-    	System.out.print((int)drive.frontLeft.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.print((int)drive.frontRight.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.print((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
-    	System.out.println((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");
+//    	System.out.print((int)drive.frontRight.steerEncoder.offset+ "   ");
+//    	System.out.print((int)drive.backLeft.steerEncoder.offset+ "   ");
+//    	System.out.print((int)drive.backLeft.steerEncoder.offset+ "   ");
+//    	
+//    	System.out.print((int)drive.frontLeft.steerEncoder.countOffset+ "   ");
+//    	System.out.print((int)drive.frontRight.steerEncoder.countOffset+ "   ");
+//    	System.out.print((int)drive.backLeft.steerEncoder.countOffset+ "   ");
+//    	System.out.print((int)drive.backLeft.steerEncoder.countOffset+ "   ");
+//    	
+//    	System.out.print((int)drive.frontLeft.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.print((int)drive.frontRight.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.print((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
+//    	System.out.println((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
     	
     	double angle;
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
@@ -277,7 +256,9 @@ public class Robot extends IterativeRobot {
 
     	if(openIntakeButton && !oldOpenIntakeButton) openIntake = !openIntake;
     	
-    	elevator.setIntake(intakeWheelsOut, openIntake, intakeWheelsIn);
+    	if(intakeWheelsIn) elevator.setIntakeMotors(1);
+    	else if(intakeWheelsOut) elevator.setIntakeMotors(-1);
+    	else elevator.setIntakeMotors(0);
     	
     	if(controlBoard.getRawButton(2)) elevator.reset();
     	if(joyStick.getRawButton(1)) drive.zeroNavX();
@@ -286,8 +267,7 @@ public class Robot extends IterativeRobot {
 		if(moveUp){
 			elevator.setMotion(true,false);
 			elevator.overrideMotion();
-		}
-		else if(moveDown){
+		} else if(moveDown){
 			elevator.setMotion(false, true);
 			elevator.overrideMotion();
 		} else if (upOneTote && !oldUpOneTote) {

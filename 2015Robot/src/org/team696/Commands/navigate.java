@@ -18,8 +18,52 @@ public class navigate extends Command{
 	double[] position = {0.0,0.0,0.0};
 	double[] setVector = {0.0,0.0,0.0}; // theta, speed, and rotation
 	
+	public navigate(Double xGoal,Double yGoal,Double rotDegrees) {
+		speed = 0.6;
+		parallel = false;
+		navVector[0] = xGoal;
+		navVector[1] = yGoal;
+		navVector[2] = rotDegrees;
+		finalWayPoint = true;
+		rotationController.setConstants(0.01, 0, 0.01);
+		speedController.setConstants(0.01, 0, 0.01);
+	}
+	
+	public navigate(Double xGoal,Double yGoal,Double rotDegrees,Double _speed) {
+		speed = _speed;
+		parallel = false;
+		navVector[0] = xGoal;
+		navVector[1] = yGoal;
+		navVector[2] = rotDegrees;
+		finalWayPoint = true;
+		rotationController.setConstants(0.01, 0, 0.01);
+		speedController.setConstants(0.01, 0, 0.01);
+	}
+	
+	public navigate(Double xGoal,Double yGoal,Double rotDegrees,Double _speed, Double _waypointRadius) {
+		speed = _speed;
+		parallel = false;
+		navVector[0] = xGoal;
+		navVector[1] = yGoal;
+		navVector[2] = rotDegrees;
+		finalWayPoint = false;
+		rotationController.setConstants(0.01, 0, 0.01);
+		speedController.setConstants(0.01, 0, 0.01);
+	}
+	
+	public navigate(Double xGoal,Double yGoal,Double rotDegrees,Double _speed, Double _waypointRadius, boolean _finalWayPoint) {
+		speed = _speed;
+		parallel = false;
+		navVector[0] = xGoal;
+		navVector[1] = yGoal;
+		navVector[2] = rotDegrees;
+		finalWayPoint = _finalWayPoint;
+		rotationController.setConstants(0.01, 0, 0.01);
+		speedController.setConstants(0.01, 0, 0.01);
+	}
 	
 	public navigate(Double xGoal,Double yGoal,Double rotDegrees,Double _speed, Double _waypointRadius, boolean _finalWayPoint, Boolean _parallel) {
+		speed = _speed;
 		parallel = _parallel;
 		navVector[0] = xGoal;
 		navVector[1] = yGoal;

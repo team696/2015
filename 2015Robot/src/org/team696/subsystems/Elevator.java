@@ -40,8 +40,8 @@ public class Elevator extends Runnable {
 		
 		brake = new Solenoid(config[4]);
 		intake = new Intake(config[5],config[6], config[7], config[8]);
-		elevMotor1 = new VictorSP(config[9]);
-		elevMotor2 = new VictorSP(config[10]);
+		elevMotor1 = new VictorSP(config[10]);
+		elevMotor2 = new VictorSP(config[9]);
 		encoder.setDistancePerPulse((1/256)*distPerTote);
 	}
 	

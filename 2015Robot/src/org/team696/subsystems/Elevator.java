@@ -42,7 +42,7 @@ public class Elevator extends Runnable {
 		intake = new Intake(config[5],config[6], config[7], config[8]);
 		elevMotor1 = new VictorSP(config[9]);
 		elevMotor2 = new VictorSP(config[10]);
-		encoder.setDistancePerPulse((1/256)*distPerTote);
+		encoder.setDistancePerPulse(0.017578125);
 	}
 	
 	public void overrideMotion(){

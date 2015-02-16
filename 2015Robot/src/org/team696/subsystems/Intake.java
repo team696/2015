@@ -27,7 +27,7 @@ public class Intake extends Runnable{
 		rightIn = new VictorSP(rightIntakeVictor);
 		leftIn = new VictorSP(leftIntakeVictor);
 	}
-	
+
 	@Override 
 	public void start(int periodMS) {
 		super.start(periodMS);
@@ -38,6 +38,12 @@ public class Intake extends Runnable{
 		rightIn.set(speed);
 		leftIn.set(-speed);
 		open.set(intakeOpen);
+		ejector.set(eject);
+	}
+	
+	@Override
+	public void stop(){
+		super.stop();
 	}
 	
 	public void setMotors(double _speed) {
@@ -47,6 +53,7 @@ public class Intake extends Runnable{
 		intakeOpen = _open;
 	}
 	public void setEjector(boolean _eject){
-		ejector.set(_eject);
-	}
+		eject = _eject;
+		ejector.set(eject);
+	}	
 }

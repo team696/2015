@@ -133,15 +133,10 @@ public class Robot extends IterativeRobot {
 		try {
 			drive = new SwerveDrive(configs);
 //			testModule = new SwerveModule(configs[2]);
-//			logger = new Logger(new String[] {
-//					"",
-//					""
-//			},"/usr/local/frc/logs/"+getDate()+".txt");
 		} 
 		catch(FileNotFoundException fnfE){}
 		catch(IOException ioE){}
 		
-//		logger.init();
     }
 
     /**
@@ -154,8 +149,6 @@ public class Robot extends IterativeRobot {
 		System.out.println(autonScript);
 		autonScheduler.setScript(autonScript);
 //		autonScheduler.start(20);
-//		logger.stop();
-//		logger.start(20);
 	}
 	
 	
@@ -164,9 +157,6 @@ public class Robot extends IterativeRobot {
 
     }
 
-    /**
-     * This function is called periodically during operator control
-     */
     @Override
     public void teleopInit() {
     	autonScheduler.stop();
@@ -176,9 +166,6 @@ public class Robot extends IterativeRobot {
     }
     
     public void teleopPeriodic() {
-    	
-    	
-    	
     	calibrate = joyStick.getRawButton(3);
     	if(calibrate) calibrate();
     	else robotCode();
@@ -186,7 +173,10 @@ public class Robot extends IterativeRobot {
     
     public void calibrate(){
     	
+    	oldWrite = write;
+    	write = joyStick.getRawButton(1);    	
     	trim = joyStick.getRawAxis(0)*2;
+    	
     	if(joyStick.getRawButton(6))drive.frontLeft.steerEncoder.trimCenter(trim);
     	else drive.frontLeft.steerEncoder.trimCenter(0);
     	if(joyStick.getRawButton(11))drive.frontRight.steerEncoder.trimCenter(trim);
@@ -196,25 +186,21 @@ public class Robot extends IterativeRobot {
     	if(joyStick.getRawButton(7))drive.backLeft.steerEncoder.trimCenter(trim);
     	else drive.backLeft.steerEncoder.trimCenter(0);
 
-    	oldWrite = write;
-    	write = joyStick.getRawButton(1);
     	if(write && !oldWrite){
     		drive.frontLeft.steerEncoder.writeOffset();
     		drive.frontRight.steerEncoder.writeOffset();
     		drive.backLeft.steerEncoder.writeOffset();
     		drive.backRight.steerEncoder.writeOffset();
-//    		testModule.steerEncoder.writeOffset();
     	}
-    	
-    	
-    	
     }
+    
     public void robotCode(){
     	
-//    	ejectMech       = controlBoard.getRawButton(12);
-//    	intakeMech      = controlBoard.getRawButton(12);
     	moveUp          = controlBoard.getRawButton(1);
     	moveDown        = controlBoard.getRawButton(3);
+    	
+//    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
+//    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
     	
     	oldFieldCentricButton = fieldCentricButton;
     	fieldCentricButton = controlBoard.getRawButton(10);
@@ -245,13 +231,13 @@ public class Robot extends IterativeRobot {
 //    	System.out.print((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
 //    	System.out.println((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
     	
+    	    	
     	double angle;
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
     	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
     	if(angle<0) angle+=360;
     	
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, fieldCentric);
-//    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
     	
 
     	if(openIntakeButton && !oldOpenIntakeButton) openIntake = !openIntake;
@@ -262,7 +248,6 @@ public class Robot extends IterativeRobot {
     	
     	if(controlBoard.getRawButton(2)) elevator.reset();
     	if(joyStick.getRawButton(1)) drive.zeroNavX();
-//    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
     	System.out.println(moveUp+ "  " + moveDown);
 		if(moveUp){
 			elevator.setMotion(true,false);

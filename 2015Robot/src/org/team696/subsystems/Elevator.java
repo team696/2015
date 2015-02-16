@@ -45,6 +45,16 @@ public class Elevator extends Runnable {
 		encoder.setDistancePerPulse(0.017578125);
 	}
 	
+	@Override
+	public void start(int periodMS){
+		intake.start(20);
+		super.start(periodMS);
+	}
+	
+	public void reset(){
+		encoder.reset();
+	}
+	
 	public void overrideMotion(){
 		override = true;
 	}
@@ -56,15 +66,7 @@ public class Elevator extends Runnable {
 	public void firstTime(){
 		firstTime = true;
 	}
-	
-	
-	
-	@Override
-	public void start(int periodMS){
-		intake.start(20);
-		super.start(periodMS);
-	}
-	
+
 	public void setIntakeOpen(boolean _open){
 		System.out.println("setintakeOpen _open:   " + _open+ "   " +encoder.getDistance()+ encoder.getRate());
 		if(encoder.getDistance() < 2.25){
@@ -74,7 +76,7 @@ public class Elevator extends Runnable {
 			intake.setOpen(_open);
 		}
 	}
-	
+
 	public void setIntakeMotors(double _speed){
 		intake.setMotors(_speed);
 	}
@@ -95,10 +97,6 @@ public class Elevator extends Runnable {
 		moveUp = _moveUp;
 		moveDown = _moveDown;
 		override();
-	}
-	
-	public void reset(){
-		encoder.reset();
 	}
 	
 	public void move(){

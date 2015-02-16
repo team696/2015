@@ -45,6 +45,30 @@ public class Elevator extends Runnable {
 		encoder.setDistancePerPulse(0.017578125);
 	}
 	
+	@Override
+	public void start(int periodMS){
+		intake.start(20);
+		super.start(periodMS);
+	}
+	
+	@Override
+	public void update() {
+		error = goalPos-encoder.get();
+		error = Util.deadZone(error, 0, 0.1, 0);
+		if (!override)move();
+		else override();
+	}
+	
+	@Override
+	public void stop(){
+		super.stop();
+		intake.stop();
+	}
+	
+	public void reset(){
+		encoder.reset();
+	}
+	
 	public void overrideMotion(){
 		override = true;
 	}
@@ -56,15 +80,7 @@ public class Elevator extends Runnable {
 	public void firstTime(){
 		firstTime = true;
 	}
-	
-	
-	
-	@Override
-	public void start(int periodMS){
-		intake.start(20);
-		super.start(periodMS);
-	}
-	
+
 	public void setIntake(boolean eject,boolean open, boolean _intake){
 		if(encoder.get() < 2.25){
 			intake.set(eject,false,_intake);
@@ -72,7 +88,7 @@ public class Elevator extends Runnable {
 			intake.set(eject,open, _intake);
 		}
 	}
-	
+
 	public void setGoalPos(double _totesPos){	
 		goalPos = _totesPos;
 	}
@@ -86,10 +102,6 @@ public class Elevator extends Runnable {
 		moveUp = _moveUp;
 		moveDown = _moveDown;
 		override();
-	}
-	
-	public void reset(){
-		encoder.reset();
 	}
 	
 	public void move(){
@@ -183,19 +195,4 @@ public class Elevator extends Runnable {
 	public void brakeSys() {
 		brake.set(startBraking);
 	}
-	
-	@Override
-	public void update() {
-		error = goalPos-encoder.get();
-		error = Util.deadZone(error, 0, 0.1, 0);
-		if (!override)move();
-		else override();
-	}
-	
-	@Override
-	public void stop(){
-		super.stop();
-		intake.stop();
-	}
-	
 }

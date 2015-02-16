@@ -62,24 +62,28 @@ public class SwerveDrive extends Runnable{
 	
 	@Override
 	public void start(int periodMS){
-		 
+		super.start(periodMS);
 		frontLeft.start(periodMS);
 		frontRight.start(periodMS);
 		backRight.start(periodMS);
 		backLeft.start(periodMS);	
-		super.start(periodMS);
 	}
+	
 	@Override
 	public void update(){	
 		boolean is_calibrating = navX.isCalibrating();
+		
         if ( firstIteration && !is_calibrating ) {
             Timer.delay( 0.3 );
             navX.zeroYaw();
             firstIteration = false;
         }
+        
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
+		
 		updateOdometry();
+		
 		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
 		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
 		backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
@@ -88,6 +92,7 @@ public class SwerveDrive extends Runnable{
 	
 	@Override
 	public void stop(){
+		super.stop();
 		frontLeft.stop();
 		frontRight.stop();
 		backRight.stop();
@@ -96,18 +101,20 @@ public class SwerveDrive extends Runnable{
 	
 	private void updateOdometry(){
 		double [][] wheelVectors = new double[4][2];
+		double[] cumVectors = {0.0,0.0};
+		double[] cumVectorsPolar = {0.0,0.0};
+		double[] cumVectorsAdjusted = new double[2];
 		
 		wheelVectors[0] = frontLeft.getCumVector();
-//		System.out.println(frontLeft.getCumVector()[0] + "   " + frontLeft.getCumVector()[1]);
 		wheelVectors[1] = frontRight.getCumVector();
 		wheelVectors[2] = backRight.getCumVector();
 		wheelVectors[3] = backLeft.getCumVector();
-		double[] cumVectors = {0.0,0.0};
+		
 		for(int fish = 0; fish<1; fish++){
 			cumVectors[0] += wheelVectors[fish][0];
 			cumVectors[1] += wheelVectors[fish][1];
 		}
-		double[] cumVectorsPolar = {0.0,0.0};
+		
 		cumVectorsPolar[0] = Math.sqrt(Math.pow(cumVectors[0], 2)+ Math.pow(cumVectors[1],2));
 		cumVectorsPolar[1] = -Math.toDegrees(Math.atan2(-cumVectors[0],cumVectors[1]));
 		cumVectorsPolar[1] = 0;
@@ -115,9 +122,9 @@ public class SwerveDrive extends Runnable{
 		
 		if(cumVectorsPolar[1]<0) cumVectorsPolar[1]+=360;
 		else if(cumVectorsPolar[1]>360) cumVectorsPolar[1]-=360;
-		double[] cumVectorsAdjusted = new double[2];
 		cumVectorsAdjusted[0] = cumVectorsPolar[0]*Math.sin(Math.toRadians(cumVectorsPolar[1]));
 		cumVectorsAdjusted[1] = cumVectorsPolar[0]*Math.cos(Math.toRadians(cumVectorsPolar[1]));
+		
 		robotPosition[0] += cumVectorsAdjusted[0]/1000;
 		robotPosition[1] += cumVectorsAdjusted[1]/1000;
 		robotPosition[2] = navX.getYaw();
@@ -129,12 +136,6 @@ public class SwerveDrive extends Runnable{
 		backRight.setSteerPID(P, I, D);
 		backLeft.setSteerPID(P, I, D);
 	}
-//	public void setDrivePID(double P, double I, double D, double F){
-//		//frontleft.setDrivePID(P, I, D, F);
-//		frontRight.setDrivePID(P, I, D, F);
-//		backRight.setDrivePID(P, I, D, F);
-//		backLeft.setDrivePID(P, I, D, F);
-//	}
 	
 	void setWheels(){
 		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
@@ -153,15 +154,16 @@ public class SwerveDrive extends Runnable{
 			//vectors[fish][0] += rotationRadians*Math.cos((Math.PI/4) + (fish*Math.PI/2));
 			//vectors[fish][1] += rotationRadians*Math.sin((Math.PI/4) + (fish*Math.PI/2));
 		}
-//		vectors[0][0] += rotationRadians*length/width;
-//		vectors[0][1] += rotationRadians;
-//		vectors[1][0] += rotationRadians*length/width;
-//		vectors[1][1] -= rotationRadians;
-//		vectors[2][0] -= rotationRadians*length/width;
-//		vectors[2][1] -= rotationRadians;
-//		vectors[3][0] -= rotationRadians*length/width;
-//		vectors[3][1] += rotationRadians;
-		
+		/*
+		vectors[0][0] += rotationRadians*length/width;
+		vectors[0][1] += rotationRadians;
+		vectors[1][0] += rotationRadians*length/width;
+		vectors[1][1] -= rotationRadians;
+		vectors[2][0] -= rotationRadians*length/width;
+		vectors[2][1] -= rotationRadians;
+		vectors[3][0] -= rotationRadians*length/width;
+		vectors[3][1] += rotationRadians;
+		*/
 		double[][] posArray = new double[4][2]; // measured in theta and R
 		posArray[0][0] = Math.atan2(length/2 -centerArray[1], -width/2 -centerArray[0])-Math.toRadians(90);
 		posArray[0][1] = rotationRadians*Math.sqrt(Math.pow(-width/2-centerArray[0], 2)+ Math.pow(length/2-centerArray[1], 2));
@@ -171,7 +173,6 @@ public class SwerveDrive extends Runnable{
 		posArray[2][1] = rotationRadians*Math.sqrt(Math.pow(width/2-centerArray[0], 2)+ Math.pow(-length/2-centerArray[1], 2));
 		posArray[3][0] = Math.atan2(-length/2 -centerArray[1], -width/2 -centerArray[0])-Math.toRadians(90);
 		posArray[3][1] = rotationRadians*Math.sqrt(Math.pow(-width/2-centerArray[0], 2)+ Math.pow(-length/2-centerArray[1], 2));
-		
 		
 		for(int fish = 0; fish < 4; fish++){
 			vectors[fish][0] += posArray[fish][1]*Math.cos(posArray[fish][0]);
@@ -187,13 +188,13 @@ public class SwerveDrive extends Runnable{
 	
 	double[][] calculateWheelValues(double[][] vectors){
 		double values[][] = new double[4][2];
+		double maxValue=0;
 		
 		for(int fish = 0; fish<4; fish++){
 			values[fish][0] = Math.sqrt(vectors[fish][0] *vectors[fish][0]) +((vectors[fish][1] *vectors[fish][1])); //pythagorean thrm for speed
 			values[fish][1] = -Math.toDegrees(Math.atan2(-vectors[fish][0],vectors[fish][1]));
 			//atan2 to find angle between -pi and pi
 			}
-		double maxValue=0;
 		
 		for (int fish = 0; fish < 4; fish++) {
 			if(values[fish][0]>maxValue) maxValue = values[fish][0];
@@ -209,15 +210,17 @@ public class SwerveDrive extends Runnable{
 	public boolean setDriveValues(double speed, double headingDegrees, double rotation, boolean fieldCentric){
 		setRobotVector[0] = speed;
 		setRobotVector[1] = headingDegrees;
+		
 		if(headingDegrees<0) headingDegrees+=360;
+		
 		setRobotVector[2] = rotation;
+		
 		if(fieldCentric) setRobotVector[1]-= navX.getYaw();
+		
 		return true;
 	}
 	
 	public void zeroNavX(){
 		navX.zeroYaw();
 	}
-	
-	
 }

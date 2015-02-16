@@ -21,13 +21,13 @@ public class Intake extends Runnable{
 	 * @param config - ejectorChan, rightInChan, leftInChan
 	 */
 	public Intake(int ejectorSolenoid, int openSolenoid, int rightIntakeVictor, int leftIntakeVictor) {
-//		ejector = new Solenoid(ejectorSolenoid);
+		ejector = new Solenoid(ejectorSolenoid);
 		open = new Solenoid(openSolenoid);
 		
 		rightIn = new VictorSP(rightIntakeVictor);
 		leftIn = new VictorSP(leftIntakeVictor);
 	}
-	
+
 	@Override 
 	public void start(int periodMS) {
 		super.start(periodMS);
@@ -36,6 +36,11 @@ public class Intake extends Runnable{
 	@Override
 	public void update() {
 		run();
+	}
+	
+	@Override
+	public void stop(){
+		super.stop();
 	}
 	
 	public void set(boolean _eject, boolean _open, boolean _intake) {
@@ -66,13 +71,11 @@ public class Intake extends Runnable{
 	}
 	
 	public void motors() {
-//		System.out.println(speed);
 		rightIn.set(-speed);
 		leftIn.set(speed);
 	}
 	
 	public void run() {
-//		grabberOfBin.set(grabBin);
 		motors();
 	}
 }

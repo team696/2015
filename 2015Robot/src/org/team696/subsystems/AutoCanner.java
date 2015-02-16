@@ -18,8 +18,18 @@ public class AutoCanner extends Runnable {
 	}
 	
 	@Override
+	public void start(int periodMS){
+		super.start(periodMS);
+	}
+	
+	@Override
 	public void update() {
 		run();
+	}
+	
+	@Override
+	public void stop(){
+		super.stop();
 	}
 	
 	public void set(boolean _leftOut,boolean _rightOut) {

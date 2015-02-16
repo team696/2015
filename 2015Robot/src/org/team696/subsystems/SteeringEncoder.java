@@ -19,25 +19,19 @@ import edu.wpi.first.wpilibj.Encoder;
 public class SteeringEncoder extends Runnable {
 	Logger centerLogger;
 	Logger counter;
-	public double offset;
-	int wheel;
-	
 	public Counter steerCounter;
 	public AnalogInput encoder;
-	
 	public AnalogTrigger turnTrigger;
-	
+	public double offset;
+	public double voltage;
+	public int countOffset;
 	double minVoltage = 0;
 	double maxVoltage = 5;
 	double oldVoltage;
-	public double voltage;
 	double angle;
 	double lastStopWatch = 0;
-	public int countOffset;
-	
-	
 	double degreesPerRotation = 102.85714285714285714285714285714;
-	//edu.wpi.first.wpilibj.Timer stopwatch = new edu.wpi.first.wpilibj.Timer();
+	int wheel;
 	
 	public SteeringEncoder(int channel, int _wheel) throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		encoder = new AnalogInput(channel);
@@ -45,25 +39,24 @@ public class SteeringEncoder extends Runnable {
 		turnTrigger = new AnalogTrigger(encoder);
 		turnTrigger.setLimitsVoltage(1.0, 4.0);
 		turnTrigger.setFiltered(true);
+		
 		steerCounter = new Counter();
 		steerCounter.setUpDownCounterMode();
-		
 		steerCounter.setUpSource(turnTrigger, AnalogTriggerType.kRisingPulse);
 		steerCounter.setDownSource(turnTrigger, AnalogTriggerType.kFallingPulse);
 		
 		wheel = _wheel;
+		
 		offset = 0;
 		
 		counter = new Logger(new String[] {""},"/usr/local/frc/logs/zcounter"+ wheel +".txt");
 		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
-		
 		
 		String str = "0";
 		str = centerLogger.read(1)[0];
 		offset = Double.parseDouble(str);
 		steerCounter.reset();
 		centerLogger.makeReader();
-		System.out.println("constructor  "+ steerCounter.get());
 		
 		String s = "0";
 		counter.makeReader();
@@ -72,24 +65,11 @@ public class SteeringEncoder extends Runnable {
 		}catch(IOException e){e.printStackTrace();}
 		if (s == null)countOffset = 0;
 		else countOffset = Integer.parseInt(s);
-		System.out.println("Start" + countOffset);
-		
 		steerCounter.reset();
 	}
 	
 	@Override
 	public void start(int periodMS){
-//		String str = "0";
-//		counter.makeReader();
-//		try{
-//			 str = counter.read(1)[0];
-//		}catch(IOException e){e.printStackTrace();}
-//		if (str == null)countOffset = 0;
-//		else countOffset = Integer.parseInt(str);
-//		System.out.println("Start" + countOffset);
-//		
-//		steerCounter.reset();
-		
 		voltage = encoder.getVoltage();
 		oldVoltage = voltage;
 		super.start(periodMS);
@@ -99,17 +79,15 @@ public class SteeringEncoder extends Runnable {
 	public void update(){
 		super.update();
 		counter.makeWriter();
-
 		counter.write(countOffset+steerCounter.get()+"");
-//		countOffset = steerCounter.get();
 		counter.makeReader();
 		centerLogger.makeReader();
-//		try{
-//			if(wheel==3) System.out.println(countOffset+ "  " + counter.read(1)[0]+ "   " + offset + "  " + centerLogger.read(1)[0]);
-//		}catch(IOException e){e.printStackTrace();}
-		
-		
 		voltage = encoder.getVoltage();
+	}
+	
+	@Override
+	public void stop(){
+		super.stop();
 	}
 	
 	public void trimCenter(double trim){
@@ -126,10 +104,8 @@ public class SteeringEncoder extends Runnable {
 		System.out.println(offset);
 		countOffset=0;
 		counter.write(countOffset+"");
-//		if(wheel==3)System.out.print("writeOffset  "+countOffset);
 		steerCounter.reset();
 	}
-	
 	
 	public double getAngleDegrees(){
 		angle = (((countOffset+ steerCounter.get())*degreesPerRotation + Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation))- offset)%360;

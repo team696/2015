@@ -19,29 +19,21 @@ import org.team696.baseClasses.ModuleConfigs;
 import org.team696.baseClasses.Util;
 
 public class SwerveModule extends Runnable{
-
+	CustomPID steerController;
+	Victor steerMotor;
+	Victor driveMotor;
 	Encoder driveEncoder;
-	public SteeringEncoder steerEncoder;
 	ModuleConfigs configs;
+	public SteeringEncoder steerEncoder;
 	double[] odometryVector = {0.0,0.0};
-	
 	double lastEncoderCount = 0;
-	
-	boolean override = false;
 	double overrideSteer = 0;
 	double overrideSpeed = 0;
 	double setAngle;
 	double angle;
-	
 	double setSpeed;
 	double speed;
-	
-	Victor steerMotor;
-	Victor driveMotor;
-	
-	//PIDController driveController;
-	CustomPID steerController;
-	
+	boolean override = false;
 	
 	public SwerveModule(ModuleConfigs _configs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		configs = _configs;
@@ -55,40 +47,31 @@ public class SwerveModule extends Runnable{
 
 	@Override
 	public void start(int periodMS){
+		super.start(periodMS);
 		steerEncoder.start(10);
 		Timer.delay(0.1);
 		override = false;
 		driveEncoder.reset();
-		super.start(periodMS);
-	}
-	
-	@Override
-	public void stop(){
-		steerEncoder.stop();
-		super.stop();
 	}
 	
 	@Override
 	public void update(){
 		super.update();
 		double encoderCount = driveEncoder.getDistance();
+		double error = 0.0;
+		boolean reverseMotor =  false;
+		
 		odometryVector[0] += (encoderCount-lastEncoderCount)*Math.sin(Math.toRadians(angle));
 		odometryVector[1] += (encoderCount-lastEncoderCount)*Math.cos(Math.toRadians(angle));
-		
-		//if(configs.kWheelNumber ==3)System.out.println(odometryVector[0] + "   " + odometryVector[1] + "   " + encoderCount);
 		lastEncoderCount = encoderCount;
-		
+		error = setAngle - angle;
 		
 		angle = steerEncoder.getAngleDegrees();
 		if(angle<0) angle = 360+angle;
-		double error = 0.0;
-		error = setAngle - angle;
-		//org.team696.robot.Robot.logger.set(error, 2);
-		boolean reverseMotor =  false;
+		
 		if(error>180) error = -(360-error);  //check if over the
 		else if(error<-180) error = (360+error);//zero line to flip error 
-		//org.team696.robot.Robot.logger.set(error, 3);
-		
+
 		if(error > 90){
 			error = error-180;
 			reverseMotor = true;
@@ -96,18 +79,20 @@ public class SwerveModule extends Runnable{
 			error = error+180;
 			reverseMotor = true;
 		}
-		//org.team696.robot.Robot.logger.set(error, 4);
-		//org.team696.robot.Robot.logger.set(angle, 0);
-		//org.team696.robot.Robot.logger.set(setAngle, 1);
 		
 		steerController.update(-error);
 		if(override) steerMotor.set(overrideSteer);
 		else steerMotor.set(steerController.getOutput());
+		
 		if(override) driveMotor.set(overrideSpeed);
-		
-		
 		else if(reverseMotor) driveMotor.set(-setSpeed);
 		else driveMotor.set(setSpeed);
+	}
+	
+	@Override
+	public void stop(){
+		steerEncoder.stop();
+		super.stop();
 	}
 	
 	public void setValues(double _setSpeed, double _setAngleDegrees){

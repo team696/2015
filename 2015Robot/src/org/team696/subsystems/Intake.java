@@ -1,5 +1,6 @@
 package org.team696.subsystems;
 
+import org.team696.Commands.openintake;
 import org.team696.baseClasses.Runnable;
 
 import edu.wpi.first.wpilibj.Solenoid;
@@ -58,6 +59,10 @@ public class Intake extends Runnable{
 			speed = 0;
 		}
 		
+	}
+	
+	private void intakeOpen(){
+		open.set(intakeOpen);
 	}
 	
 	public void motors() {

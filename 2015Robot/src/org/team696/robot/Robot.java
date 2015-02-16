@@ -200,11 +200,10 @@ public class Robot extends IterativeRobot {
     	else drive.frontLeft.steerEncoder.trimCenter(0);
     	if(joyStick.getRawButton(11))drive.frontRight.steerEncoder.trimCenter(trim);
     	else drive.frontRight.steerEncoder.trimCenter(0);
-    	if(joyStick.getRawButton(7))drive.backRight.steerEncoder.trimCenter(trim);
+    	if(joyStick.getRawButton(10))drive.backRight.steerEncoder.trimCenter(trim);
     	else drive.backRight.steerEncoder.trimCenter(0);
-    	if(joyStick.getRawButton(10))drive.backLeft.steerEncoder.trimCenter(trim);
+    	if(joyStick.getRawButton(7))drive.backLeft.steerEncoder.trimCenter(trim);
     	else drive.backLeft.steerEncoder.trimCenter(0);
-    	System.out.println("In Calibrate    "+trim);
 
 //    	if(controlBoard.getRawButton(1))drive.frontLeft.steerEncoder.trimCenter(trim);
 //    	else drive.frontLeft.steerEncoder.trimCenter(0);
@@ -257,6 +256,21 @@ public class Robot extends IterativeRobot {
     	yAxis           = -Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	xAxis           = Util.deadZone(Util.map(joyStick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	
+    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");
+    	System.out.print((int)drive.frontRight.steerEncoder.offset+ "   ");
+    	System.out.print((int)drive.backLeft.steerEncoder.offset+ "   ");
+    	System.out.print((int)drive.backLeft.steerEncoder.offset+ "   ");
+    	
+    	System.out.print((int)drive.frontLeft.steerEncoder.countOffset+ "   ");
+    	System.out.print((int)drive.frontRight.steerEncoder.countOffset+ "   ");
+    	System.out.print((int)drive.backLeft.steerEncoder.countOffset+ "   ");
+    	System.out.print((int)drive.backLeft.steerEncoder.countOffset+ "   ");
+    	
+    	System.out.print((int)drive.frontLeft.steerEncoder.getAngleDegrees()+ "   ");
+    	System.out.print((int)drive.frontRight.steerEncoder.getAngleDegrees()+ "   ");
+    	System.out.print((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
+    	System.out.println((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
+    	
     	double angle;
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
     	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
@@ -284,36 +298,16 @@ public class Robot extends IterativeRobot {
 			elevator.setMotion(false, true);
 			elevator.overrideMotion();
 		} else if (upOneTote && !oldUpOneTote) {
-			goalTotes++;
+			elevator.increment(true);
 			elevator.regularMotion();
 		}else if (downOneTote && !oldDownOneTote) {
-			goalTotes--;
+			elevator.increment(false);
 			elevator.regularMotion();
 		}else {
 			elevator.overrideMotion();
 			elevator.setMotion(false, false);
 			elevator.firstTime();
-		}
-		
-//		else if(upOneTote && !oldUpOneTote){
-//			goalTotes++;
-//			elevator.regularMotion();
-//		}
-//		else if(downOneTote && !oldDownOneTote){
-//			goalTotes--;
-//			elevator.regularMotion();
-//		else if(upOneTote && !oldUpOneTote){
-//			goalTotes++;
-//			elevator.regularMotion();
-//		}
-//		else if(downOneTote && !oldDownOneTote){
-//			goalTotes--;
-//			elevator.regularMotion();
-//		}
-//		if(elevator.atLocation()){
-//			elevator.overrideMotion();
-//			elevator.setMotion(false,false);
-//		} else elevator.setGoalPos(goalTotes);
+		}		
     }
     
     /**

@@ -37,6 +37,7 @@ public class Logger extends Runnable {
 		String[] iRead = new String[lines];
 		for(int fish=0;fish<lines;fish++){
 			iRead[fish]=br.readLine();
+			
 //			System.out.println(iRead[fish]);
 		}
 		return iRead;
@@ -58,15 +59,7 @@ public class Logger extends Runnable {
 		try{
 			writer = new FileWriter(fn,false);
 			bw = new BufferedWriter(writer);
-		}catch(IOException e){
-			e.printStackTrace();
-			try{
-				bw.write("");
-				bw.flush();
-			}catch(IOException f){
-				f.printStackTrace();
-			}
-		}
+		}catch(IOException e){e.printStackTrace();}
 	}
 	
 	public void makeReader(){
@@ -75,6 +68,19 @@ public class Logger extends Runnable {
 			br = new BufferedReader(reader);
 		} catch(FileNotFoundException e){
 			e.printStackTrace();
+			makeWriter();
+			try{
+				String s = "0";
+				writer.write(s);
+				writer.flush();
+				System.out.println(s);
+				
+				reader = new FileReader(fn);
+				br = new BufferedReader(reader);
+			}catch(IOException f){f.printStackTrace();}
+			
+			
+			
 		}
 	}
 	

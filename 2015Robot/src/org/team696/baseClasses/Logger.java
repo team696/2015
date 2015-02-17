@@ -197,6 +197,50 @@ public class Logger extends Runnable {
 		sendString();
 	}
 	
+	public void write(boolean b){
+		if(!dontPut){
+			try{
+				bw.write(b+"");
+				bw.flush();
+			}catch(IOException e){e.printStackTrace();}
+		} else {
+			System.out.println("Not Writing");
+		}
+	}
+	
+	public void write(float f){
+		if(!dontPut){
+			try{
+				bw.write(f+"");
+				bw.flush();
+			}catch(IOException e){e.printStackTrace();}
+		} else {
+			System.out.println("Not Writing");
+		}
+	}
+	
+	public void write(double d){
+		if(!dontPut){
+			try{
+				bw.write(d+"");
+				bw.flush();
+			}catch(IOException e){e.printStackTrace();}
+		} else {
+			System.out.println("Not Writing");
+		}
+	}
+	
+	public void write(int i){
+		if(!dontPut){
+			try{
+				bw.write(i+"");
+				bw.flush();
+			}catch(IOException e){e.printStackTrace();}
+		} else {
+			System.out.println("Not Writing");
+		}
+	}
+	
 	public void write(String str){
 		if(!dontPut){
 			try{

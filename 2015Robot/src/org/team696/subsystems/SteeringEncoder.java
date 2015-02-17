@@ -82,7 +82,7 @@ public class SteeringEncoder extends Runnable {
 		
 		counter.makeWriter();
 		int temp = countOffset+steerCounter.get();
-		counter.write(temp+"");
+		counter.write(temp);
 		counter.closeWriter();
 		
 		voltage = encoder.getVoltage();
@@ -102,12 +102,12 @@ public class SteeringEncoder extends Runnable {
 		centerLogger.makeWriter();
 		offset=offset%degreesPerRotation;
 		if (offset < 0)offset+=degreesPerRotation;
-		centerLogger.write(offset+"");
+		centerLogger.write(offset);
 		centerLogger.closeWriter();
 		System.out.println(offset);
 		countOffset=0;
 		counter.makeWriter();
-		counter.write(countOffset+"");
+		counter.write(countOffset);
 		counter.closeWriter();
 		steerCounter.reset();
 	}

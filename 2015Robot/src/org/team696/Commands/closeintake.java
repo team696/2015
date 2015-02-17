@@ -7,7 +7,7 @@ public class closeintake extends Command {
 
 	@Override
 	public void update() {
-		Robot.elevator.toggleIntake();
+		Robot.elevator.setIntakeOpen(false);
 		isFinished = true;
 	}
 }

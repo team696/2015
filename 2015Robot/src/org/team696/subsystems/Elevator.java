@@ -87,6 +87,10 @@ public class Elevator extends Runnable {
 	public void setIntakeMotors(double _speed){
 		intake.setMotors(_speed);
 	}
+	
+	public void setIntakeOpen(boolean _open){
+		intake.setOpen(_open);
+	}
 	public void setEjector(){
 		
 	}
@@ -158,14 +162,14 @@ public class Elevator extends Runnable {
 	}
 	
 	private void override(){
-		brake.set(startBraking);
+		//brake.set(startBraking);
 		boolean tempBottomSwitch = limitSwitchBot.get();
 		boolean tempTopSwitch = limitSwitchTop.get();
 		double tempDistance = encoder.getDistance();
 		
 		if (moveUp && tempDistance<5 && tempTopSwitch){
 			startBraking=false;
-			brake.set(startBraking);
+			brake.set(false);
 			if(firstTime){
 				try{
 					Thread.sleep(100);
@@ -177,9 +181,8 @@ public class Elevator extends Runnable {
 		}
 		else if (moveDown && tempDistance>0.5 && tempBottomSwitch){
 			if(moveDown && !lastMoveDown)
-			
 			startBraking=false;
-			brake.set(startBraking);
+			brake.set(false);
 			if(firstTime){
 				try{
 					Thread.sleep(100);
@@ -190,44 +193,43 @@ public class Elevator extends Runnable {
 			elevMotor2.set(-0.6);// - ((encoder.getRate()+4)/20));
 		}else if(moveDown && !moveUp && tempDistance<0.5 && tempBottomSwitch){
 			startBraking = false;
-			brake.set(startBraking);
-			elevMotor1.set(0.2);
-			elevMotor2.set(-0.2);
+			brake.set(false);
+			elevMotor1.set(0.4);
+			elevMotor2.set(-0.4);
 		}
 		else {
 			if(lastMoveUp && !moveUp){
-				System.out.println("resetting timer decelUp");
 				timer.reset();
 				decelMoveUp = true;
 			}
 			
-			if(lastMoveDown && !moveDown){
+			if(!lastMoveDown && moveDown){
 				timer.reset();
 				accelMoveDown = true;
 			}
 			
-			if(timer.get()<1 && decelMoveUp){
-				System.out.println("decelMovingUp" + timer.get());
-				elevMotor1.set(-1+ timer.get());
-				elevMotor2.set(1-timer.get());
-			}else{
+			if(timer.get()<0.5 && decelMoveUp){
+//				System.out.println("decelMovingUp" + timer.get());
+				elevMotor1.set(-1+ timer.get()/0.5);
+				elevMotor2.set(1-timer.get()/0.5);
+				startBraking = false;
+				brake.set(true);
+			}else if(timer.get()<0.3 && accelMoveDown){
+//				System.out.println("accelMoving down:    " + (-0.4+(timer.get()*0.4/0.3))+ "   "+ (0.4-(timer.get()*0.4/0.3)));
+				brake.set(true);
+				elevMotor1.set(timer.get()*2);
+				elevMotor2.set(-timer.get()*2);
+			}else {
 				decelMoveUp = false;
-				System.out.println("decelMoveUp Stop");
-			}
-			
-			if(timer.get()<0.6 && accelMoveDown){
-				elevMotor1.set(timer.get());
-				elevMotor2.set(-timer.get());
-			}else{
+				accelMoveDown = false;
+				startBraking = true;
+				brake.set(true);
+//				System.out.println("Stop");
 				accelMoveDown = false;
 			}
-			
-			startBraking=true;
-			elevMotor1.set(0);
-			elevMotor2.set(0);
 		}
 //		System.out.println(moveDown+ "  " + moveUp+ "  "+ tempBottomSwitch+ "   " + tempTopSwitch + "   " + tempDistance + "  " + elevMotor1.get() + "   " + elevMotor2.get());
-		
+//		System.out.print(brake.get());
 		if(!limitSwitchBot.get()) reset();
 		goalPos = encoder.getDistance();
 	}

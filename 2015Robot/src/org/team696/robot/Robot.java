@@ -67,6 +67,7 @@ public class Robot extends IterativeRobot {
 	boolean         moveUpOld;
 	boolean         moveDownOld;
 	double          rotation        = 0;
+	double			lastRotation 	= 0;
 	double          yAxis           = controlBoard.getY();
 	double          xAxis           = controlBoard.getX();
 	double          trim            = 0;
@@ -244,6 +245,11 @@ public class Robot extends IterativeRobot {
     	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
     	if(angle<0) angle+=360;
     	
+//    	if(Math.abs(rotation)<0.1 && Math.abs(lastRotation)>0.1){
+//    		drive.setSteerControl(true); 
+//    		drive.setSteerControlInput(drive.getPosition()[2]);
+//    	}
+//    	else if(Math.abs(rotation)>0.1 && Math.abs(lastRotation)<0.1) drive.setSteerControl(false);
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
     	
 

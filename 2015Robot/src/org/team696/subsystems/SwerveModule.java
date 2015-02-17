@@ -33,9 +33,11 @@ public class SwerveModule extends Runnable{
 	double lastAngle;
 	double setSpeed;
 	double speed;
-	double wheelDiam = 3;
-	double gearRatio = 30/44;
-	double pulsePerRot = 256;
+	double wheelDiam = 3.0;
+	double gearRatio = 30.0/44.0;
+	double pulsePerRot = 256.0;
+	double distPerClick =wheelDiam*Math.PI*gearRatio*(1.0/12.0)/pulsePerRot;
+	double encoderCount = 0.0;
 	boolean override = false;
 	
 	public SwerveModule(ModuleConfigs _configs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
@@ -46,7 +48,7 @@ public class SwerveModule extends Runnable{
 //		steerController = new CustomPID(0.05,0, 0.3);
 		steerController = new CustomPID(0.03,0, 0.2);
 		driveEncoder = new Encoder(configs.kDriveEncoderA, configs.kDriveEncoderB);
-		driveEncoder.setDistancePerPulse(wheelDiam*Math.PI*gearRatio*(1/12)/pulsePerRot);
+		driveEncoder.setDistancePerPulse(wheelDiam*Math.PI*gearRatio*(1.0/12.0)/pulsePerRot);
 		}
 
 	@Override
@@ -66,11 +68,11 @@ public class SwerveModule extends Runnable{
 		
 		double angle = steerEncoder.getAngleDegrees();
 		if(angle<0) angle = 360+angle;
-		
-		double encoderCount = driveEncoder.getDistance();
+
+		lastEncoderCount = encoderCount;
+		encoderCount = driveEncoder.getDistance();
 		odometryVector[0] += (encoderCount-lastEncoderCount)*Math.sin(Math.toRadians(angle));
 		odometryVector[1] += (encoderCount-lastEncoderCount)*Math.cos(Math.toRadians(angle));
-		lastEncoderCount = encoderCount;
 		
 		error = setAngle - angle;
 		
@@ -117,9 +119,11 @@ public class SwerveModule extends Runnable{
 	}
 	
 	public double[] getCumVector(){
-		double[] vector = odometryVector;
+		double[] vector = odometryVector.clone();
+		
 		odometryVector[0] = 0;
 		odometryVector[1] = 0;
+		
 		return vector;
 	}
 }

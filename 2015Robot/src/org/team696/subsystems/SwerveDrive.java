@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.AnalogTriggerOutput.AnalogTriggerType;
 
 import org.team696.subsystems.SwerveModule;
+import org.team696.baseClasses.CustomPID;
 import org.team696.baseClasses.ModuleConfigs;
 import org.team696.baseClasses.Runnable;
 
@@ -40,7 +41,11 @@ public class SwerveDrive extends Runnable{
 	public SwerveModule frontRight;
 	public SwerveModule backRight;
 	public SwerveModule backLeft;
-		
+	
+	private boolean keepAngle;
+	private double absoluteSetAngle;
+	CustomPID steerController = new CustomPID(0.1, 0.0, 0.0);
+	
 	IMU navX;
 	SerialPort port;
 	boolean firstIteration;
@@ -79,7 +84,10 @@ public class SwerveDrive extends Runnable{
             navX.zeroYaw();
             firstIteration = false;
         }
-        
+        if(keepAngle){
+        	steerController.update(absoluteSetAngle-navX.getYaw());
+        	setRobotVector[2] = steerController.getOutput();
+        }
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
 		
@@ -100,6 +108,13 @@ public class SwerveDrive extends Runnable{
 		super.stop();
 	}
 	
+	public void setSteerControlInput(double angle){
+		absoluteSetAngle = angle;
+	}
+	public void setSteerControl(boolean useControl){
+		keepAngle = useControl;
+	}
+	
 	private void updateOdometry(){
 		double [][] wheelVectors = new double[4][2];
 		double[] cumVectors = {0.0,0.0};
@@ -107,7 +122,6 @@ public class SwerveDrive extends Runnable{
 		double[] cumVectorsAdjusted = new double[2];
 		
 		wheelVectors[0] = frontLeft.getCumVector();
-		//System.out.println((int)wheelVectors[0][0] + "   " + (int)wheelVectors[0][1] + "   ");
 		wheelVectors[1] = frontRight.getCumVector();
 		wheelVectors[2] = backRight.getCumVector();
 		wheelVectors[3] = backLeft.getCumVector();
@@ -116,7 +130,7 @@ public class SwerveDrive extends Runnable{
 			cumVectors[0] += wheelVectors[fish][0]/4;
 			cumVectors[1] += wheelVectors[fish][1]/4;
 		}
-		
+		System.out.println(robotPosition[0] + "   " + robotPosition[1]);
 		cumVectorsPolar[0] = Math.sqrt(Math.pow(cumVectors[0], 2)+ Math.pow(cumVectors[1],2));
 		cumVectorsPolar[1] = -Math.toDegrees(Math.atan2(-cumVectors[0],cumVectors[1]));
 		//cumVectorsPolar[1] = 0;

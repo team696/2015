@@ -4,6 +4,7 @@ import org.team696.Commands.openintake;
 import org.team696.baseClasses.Runnable;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Intake extends Runnable{
@@ -12,11 +13,14 @@ public class Intake extends Runnable{
 	Solenoid ejector;
 	Solenoid open;
 	
+	Timer timer = new Timer();
+	
 	boolean eject = false;
 	boolean intake = false;
-	double speed;
-	boolean intakeOpen;
-	
+	double speed = 0;
+	boolean intakeOpen = true;
+	boolean isOpen = false;
+	boolean lastIntakeOpen = true;
 	/*
 	 * @param config - ejectorChan, rightInChan, leftInChan
 	 */
@@ -30,15 +34,22 @@ public class Intake extends Runnable{
 
 	@Override 
 	public void start(int periodMS) {
+		timer.start();
 		super.start(periodMS);
+		
 	}
 	
 	@Override
 	public void update() {
 		rightIn.set(speed);
 		leftIn.set(-speed);
-		open.set(intakeOpen);
+		open.set(!intakeOpen);
 		ejector.set(eject);
+		if(intakeOpen && !lastIntakeOpen) timer.reset();
+		
+		isOpen = timer.get()>0.6 && intakeOpen;
+		
+		lastIntakeOpen = intakeOpen;
 	}
 	
 	@Override
@@ -55,5 +66,11 @@ public class Intake extends Runnable{
 	public void setEjector(boolean _eject){
 		eject = _eject;
 		ejector.set(eject);
-	}	
+	}
+	public void toggle(){
+		intakeOpen=!intakeOpen;
+	}
+	public boolean isOpen(){
+		return isOpen;
+	}
 }

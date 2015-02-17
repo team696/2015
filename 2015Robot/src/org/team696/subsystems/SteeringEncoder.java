@@ -23,7 +23,7 @@ public class SteeringEncoder extends Runnable {
 	public AnalogInput encoder;
 	public AnalogTrigger turnTrigger;
 	public double offset;
-	public double voltage;
+	private double voltage;
 	public int countOffset;
 	double minVoltage = 0;
 	double maxVoltage = 5;
@@ -54,14 +54,15 @@ public class SteeringEncoder extends Runnable {
 		
 		String str = "0";
 		str = centerLogger.read(1)[0];
+		centerLogger.closeReader();
 		offset = Double.parseDouble(str);
 		steerCounter.reset();
-		centerLogger.makeReader();
 		
 		String s = "0";
 		counter.makeReader();
 		try{
 			 s = counter.read(1)[0];
+			 counter.closeReader();
 		}catch(IOException e){e.printStackTrace();}
 		if (s == null)countOffset = 0;
 		else countOffset = Integer.parseInt(s);
@@ -78,10 +79,12 @@ public class SteeringEncoder extends Runnable {
 	@Override
 	public void update(){
 		super.update();
+		
 		counter.makeWriter();
-		counter.write(countOffset+steerCounter.get()+"");
-		counter.makeReader();
-		centerLogger.makeReader();
+		int temp = countOffset+steerCounter.get();
+		counter.write(temp+"");
+		counter.closeWriter();
+		
 		voltage = encoder.getVoltage();
 	}
 	
@@ -97,13 +100,15 @@ public class SteeringEncoder extends Runnable {
 	public void writeOffset(){
 		System.out.print(wheel + "  writing");
 		centerLogger.makeWriter();
-		counter.makeWriter();
 		offset=offset%degreesPerRotation;
 		if (offset < 0)offset+=degreesPerRotation;
 		centerLogger.write(offset+"");
+		centerLogger.closeWriter();
 		System.out.println(offset);
 		countOffset=0;
+		counter.makeWriter();
 		counter.write(countOffset+"");
+		counter.closeWriter();
 		steerCounter.reset();
 	}
 	

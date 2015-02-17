@@ -73,7 +73,9 @@ public class Robot extends IterativeRobot {
 	boolean			write			= false;
 	boolean			oldWrite		= write;
 	ModuleConfigs[] configs;
-
+	
+//	Solenoid intakeOpen = new Solenoid(5);
+	
 	Scheduler autonScheduler = new Scheduler();
 	
 	
@@ -128,7 +130,7 @@ public class Robot extends IterativeRobot {
 	
 	public void robotInit(){
 		
-		elevator = new Elevator(new int[] {1,0,2,3,4,5,5,4,1,2,3});
+		elevator = new Elevator(new int[] {1,0,10,11,4,6,5,4,1,2,3});
 		setConfig();
 		try {
 			drive = new SwerveDrive(configs);
@@ -199,6 +201,11 @@ public class Robot extends IterativeRobot {
     	moveUp          = controlBoard.getRawButton(1);
     	moveDown        = controlBoard.getRawButton(3);
     	
+    	intakeWheelsIn  = controlBoard.getRawAxis(3)<-0.5;
+    	intakeWheelsOut = controlBoard.getRawAxis(3)>0.5;
+    	
+//    	intakeOpen.set(joyStick.getRawButton(5));
+    	
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
     	
@@ -237,30 +244,28 @@ public class Robot extends IterativeRobot {
     	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
     	if(angle<0) angle+=360;
     	
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation, fieldCentric);
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
     	
 
-    	if(openIntakeButton && !oldOpenIntakeButton) openIntake = !openIntake;
-    	
-    	if(intakeWheelsIn) elevator.setIntakeMotors(1);
-    	else if(intakeWheelsOut) elevator.setIntakeMotors(-1);
+    	if(openIntakeButton && !oldOpenIntakeButton) elevator.toggleIntake();
+    	if(intakeWheelsIn) elevator.setIntakeMotors(0.6);
+    	else if(intakeWheelsOut) elevator.setIntakeMotors(-0.6);
     	else elevator.setIntakeMotors(0);
     	
     	if(controlBoard.getRawButton(2)) elevator.reset();
     	if(joyStick.getRawButton(1)) drive.zeroNavX();
-    	System.out.println(moveUp+ "  " + moveDown);
-		if(moveUp){
+    	if(moveUp){
 			elevator.setMotion(true,false);
 			elevator.overrideMotion();
 		} else if(moveDown){
 			elevator.setMotion(false, true);
 			elevator.overrideMotion();
-		} else if (upOneTote && !oldUpOneTote) {
-			elevator.increment(true);
-			elevator.regularMotion();
-		}else if (downOneTote && !oldDownOneTote) {
-			elevator.increment(false);
-			elevator.regularMotion();
+//		} else if (upOneTote && !oldUpOneTote) {
+//			elevator.increment(true);
+//			elevator.regularMotion();
+//		}else if (downOneTote && !oldDownOneTote) {
+//			elevator.increment(false);
+//			elevator.regularMotion();
 		}else {
 			elevator.overrideMotion();
 			elevator.setMotion(false, false);

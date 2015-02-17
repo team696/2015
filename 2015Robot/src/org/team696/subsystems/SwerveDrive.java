@@ -107,19 +107,19 @@ public class SwerveDrive extends Runnable{
 		double[] cumVectorsAdjusted = new double[2];
 		
 		wheelVectors[0] = frontLeft.getCumVector();
-//		System.out.println((int)frontLeft.getCumVector()[0] + "   " + (int)frontLeft.getCumVector()[1] + "   ");
+		//System.out.println((int)wheelVectors[0][0] + "   " + (int)wheelVectors[0][1] + "   ");
 		wheelVectors[1] = frontRight.getCumVector();
 		wheelVectors[2] = backRight.getCumVector();
 		wheelVectors[3] = backLeft.getCumVector();
 		
-		for(int fish = 0; fish<1; fish++){
-			cumVectors[0] += wheelVectors[fish][0];
-			cumVectors[1] += wheelVectors[fish][1];
+		for(int fish = 0; fish<4; fish++){
+			cumVectors[0] += wheelVectors[fish][0]/4;
+			cumVectors[1] += wheelVectors[fish][1]/4;
 		}
 		
 		cumVectorsPolar[0] = Math.sqrt(Math.pow(cumVectors[0], 2)+ Math.pow(cumVectors[1],2));
 		cumVectorsPolar[1] = -Math.toDegrees(Math.atan2(-cumVectors[0],cumVectors[1]));
-		cumVectorsPolar[1] = 0;
+		//cumVectorsPolar[1] = 0;
 		cumVectorsPolar[1]+= navX.getYaw();
 		
 		if(cumVectorsPolar[1]<0) cumVectorsPolar[1]+=360;

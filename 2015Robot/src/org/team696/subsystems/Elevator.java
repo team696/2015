@@ -7,12 +7,15 @@ import org.team696.baseClasses.Util;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Elevator extends Runnable {
 	Encoder encoder;
-//	DigitalInput limitSwitchBot;
-//	DigitalInput limitSwitchTop;
+	
+	
+	DigitalInput limitSwitchBot;
+	DigitalInput limitSwitchTop;
 	VictorSP elevMotor1;
 	VictorSP elevMotor2;
 	Solenoid brake;
@@ -21,32 +24,46 @@ public class Elevator extends Runnable {
 	
 	boolean moveUp = false;
 	boolean moveDown = false;
+	boolean decelMoveUp = false;
+	
+	boolean lastMoveUp = false;
+	boolean lastMoveDown = false;
+	boolean accelMoveDown = false;
+	
+	boolean zoneLatch = false;
+	double lastDistance;
+	
+	
 	boolean override = true;
 	boolean startBraking;
-	double clicksPerTote = 0.017578125;
-	double goalPos;	
-	double distPerTote = 1.0;
+	double clicksPerTote = 0.00146484375;
+	double goalPos;
 	double error;
 	public boolean firstTime = true;
 
+	Timer timer = new Timer();
+	
 	/*
 	 * @param config - encoderSlotA, encoderSlotB, limitSwitchBot, limitSwitchTop, BreakerChannel
 	 */
 	public Elevator(int[] config) {
-		encoder = new Encoder(config[1], config[0]);
+		encoder = new Encoder(0, 1);
 		encoder.setSamplesToAverage(10);
-//		limitSwitchBot = new DigitalInput(config[2]);
-//		limitSwitchTop = new DigitalInput(config[3]);
 		
-		brake = new Solenoid(config[4]);
-		intake = new Intake(config[5],config[6], config[7], config[8]);
-		elevMotor1 = new VictorSP(config[9]);
-		elevMotor2 = new VictorSP(config[10]);
-		encoder.setDistancePerPulse(0.017578125);
+		limitSwitchBot = new DigitalInput(10);
+		limitSwitchTop = new DigitalInput(11);
+		
+		brake = new Solenoid(4);
+		intake = new Intake(6,5, 4, 1);
+		elevMotor1 = new VictorSP(2);
+		elevMotor2 = new VictorSP(3);
+		encoder.setDistancePerPulse(clicksPerTote);
+		lastDistance = encoder.getDistance();
 	}
 	
 	@Override
 	public void start(int periodMS){
+		timer.start();
 		intake.start(20);
 		super.start(periodMS);
 	}
@@ -65,16 +82,6 @@ public class Elevator extends Runnable {
 	
 	public void firstTime(){
 		firstTime = true;
-	}
-
-	public void setIntakeOpen(boolean _open){
-		System.out.println("setintakeOpen _open:   " + _open+ "   " +encoder.getDistance()+ encoder.getRate());
-		if(encoder.getDistance() < 2.25){
-			System.out.print("intakeSetTrue");
-			intake.setOpen(true);
-		} else {
-			intake.setOpen(_open);
-		}
 	}
 
 	public void setIntakeMotors(double _speed){
@@ -152,8 +159,11 @@ public class Elevator extends Runnable {
 	
 	private void override(){
 		brake.set(startBraking);
-		System.out.println("override encoder rate:   " + encoder.getRate());
-		if (moveUp && !moveDown && encoder.getDistance()<5){
+		boolean tempBottomSwitch = limitSwitchBot.get();
+		boolean tempTopSwitch = limitSwitchTop.get();
+		double tempDistance = encoder.getDistance();
+		
+		if (moveUp && tempDistance<5 && tempTopSwitch){
 			startBraking=false;
 			brake.set(startBraking);
 			if(firstTime){
@@ -165,7 +175,9 @@ public class Elevator extends Runnable {
 			elevMotor1.set(-1);// + ((encoder.getRate()-4)/20));
 			elevMotor2.set(1);// + ((encoder.getRate()-4)/20));
 		}
-		else if (moveDown && !moveUp && encoder.getDistance()>0.5){
+		else if (moveDown && tempDistance>0.5 && tempBottomSwitch){
+			if(moveDown && !lastMoveDown)
+			
 			startBraking=false;
 			brake.set(startBraking);
 			if(firstTime){
@@ -174,28 +186,71 @@ public class Elevator extends Runnable {
 				}	catch(InterruptedException e){}
 				firstTime=false;
 			}
-			elevMotor1.set(0.2);//+ ((encoder.getRate()+4)/20));
-			elevMotor2.set(-0.2);// - ((encoder.getRate()+4)/20));
-		}else if(moveDown && !moveUp && encoder.getDistance()<0.5 && encoder.getDistance()>-0.5){
-			elevMotor1.set(0.1);
-			elevMotor1.set(-0.1);
-			if(encoder.getDistance()<0) reset();
+			elevMotor1.set(0.6);//+ ((encoder.getRate()+4)/20));
+			elevMotor2.set(-0.6);// - ((encoder.getRate()+4)/20));
+		}else if(moveDown && !moveUp && tempDistance<0.5 && tempBottomSwitch){
+			startBraking = false;
+			brake.set(startBraking);
+			elevMotor1.set(0.2);
+			elevMotor2.set(-0.2);
 		}
-		
 		else {
+			if(lastMoveUp && !moveUp){
+				System.out.println("resetting timer decelUp");
+				timer.reset();
+				decelMoveUp = true;
+			}
+			
+			if(lastMoveDown && !moveDown){
+				timer.reset();
+				accelMoveDown = true;
+			}
+			
+			if(timer.get()<1 && decelMoveUp){
+				System.out.println("decelMovingUp" + timer.get());
+				elevMotor1.set(-1+ timer.get());
+				elevMotor2.set(1-timer.get());
+			}else{
+				decelMoveUp = false;
+				System.out.println("decelMoveUp Stop");
+			}
+			
+			if(timer.get()<0.6 && accelMoveDown){
+				elevMotor1.set(timer.get());
+				elevMotor2.set(-timer.get());
+			}else{
+				accelMoveDown = false;
+			}
+			
 			startBraking=true;
 			elevMotor1.set(0);
 			elevMotor2.set(0);
 		}
+//		System.out.println(moveDown+ "  " + moveUp+ "  "+ tempBottomSwitch+ "   " + tempTopSwitch + "   " + tempDistance + "  " + elevMotor1.get() + "   " + elevMotor2.get());
+		
+		if(!limitSwitchBot.get()) reset();
 		goalPos = encoder.getDistance();
+	}
+	
+	public void toggleIntake(){
+		intake.toggle();
 	}
 	
 	@Override
 	public void update() {
-		error = goalPos-encoder.getDistance();
+		double tempDistance = encoder.getDistance();
+		error = goalPos-tempDistance;
 		error = Util.deadZone(error, 0, 0.1, 0);
+		
+		if(tempDistance<3 && tempDistance >0.1 && !intake.isOpen()){
+			intake.setOpen(true);	
+		}
+		
 		if(!override)move();
 		else override();
+		lastMoveDown = moveDown;
+		lastMoveUp = moveUp;
+		
 	}
 	
 	@Override

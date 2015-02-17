@@ -78,9 +78,6 @@ public class Logger extends Runnable {
 				reader = new FileReader(fn);
 				br = new BufferedReader(reader);
 			}catch(IOException f){f.printStackTrace();}
-			
-			
-			
 		}
 	}
 	
@@ -213,6 +210,20 @@ public class Logger extends Runnable {
 	
 	public void sendString(){
 			write(toSend);
+	}
+	
+	public void closeWriter(){
+		try{
+			bw.close();
+			writer.close();
+		}catch(IOException e){e.printStackTrace();}
 		
+	}
+	
+	public void closeReader(){
+		try {
+			br.close();
+			reader.close();
+		}catch(IOException e){e.printStackTrace();}
 	}
 }

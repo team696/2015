@@ -30,9 +30,12 @@ public class SwerveModule extends Runnable{
 	double overrideSteer = 0;
 	double overrideSpeed = 0;
 	double setAngle;
-	double angle;
+	double lastAngle;
 	double setSpeed;
 	double speed;
+	double wheelDiam = 3;
+	double gearRatio = 30/44;
+	double pulsePerRot = 256;
 	boolean override = false;
 	
 	public SwerveModule(ModuleConfigs _configs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
@@ -43,6 +46,7 @@ public class SwerveModule extends Runnable{
 //		steerController = new CustomPID(0.05,0, 0.3);
 		steerController = new CustomPID(0.03,0, 0.2);
 		driveEncoder = new Encoder(configs.kDriveEncoderA, configs.kDriveEncoderB);
+		driveEncoder.setDistancePerPulse(wheelDiam*Math.PI*gearRatio*(1/12)/pulsePerRot);
 		}
 
 	@Override
@@ -57,17 +61,18 @@ public class SwerveModule extends Runnable{
 	@Override
 	public void update(){
 		super.update();
-		double encoderCount = driveEncoder.getDistance();
 		double error = 0.0;
 		boolean reverseMotor =  false;
 		
+		double angle = steerEncoder.getAngleDegrees();
+		if(angle<0) angle = 360+angle;
+		
+		double encoderCount = driveEncoder.getDistance();
 		odometryVector[0] += (encoderCount-lastEncoderCount)*Math.sin(Math.toRadians(angle));
 		odometryVector[1] += (encoderCount-lastEncoderCount)*Math.cos(Math.toRadians(angle));
 		lastEncoderCount = encoderCount;
-		error = setAngle - angle;
 		
-		angle = steerEncoder.getAngleDegrees();
-		if(angle<0) angle = 360+angle;
+		error = setAngle - angle;
 		
 		if(error>180) error = -(360-error);  //check if over the
 		else if(error<-180) error = (360+error);//zero line to flip error 

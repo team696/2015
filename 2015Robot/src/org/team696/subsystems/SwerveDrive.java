@@ -1,5 +1,7 @@
 package org.team696.subsystems;
 
+import org.team696.robot.*;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -77,6 +79,7 @@ public class SwerveDrive extends Runnable{
 	
 	@Override
 	public void update(){	
+		
 		boolean is_calibrating = navX.isCalibrating();
 		
         if ( firstIteration && !is_calibrating ) {
@@ -130,7 +133,7 @@ public class SwerveDrive extends Runnable{
 			cumVectors[0] += wheelVectors[fish][0]/4;
 			cumVectors[1] += wheelVectors[fish][1]/4;
 		}
-		System.out.println(robotPosition[0] + "   " + robotPosition[1]);
+//		System.out.println(robotPosition[0] + "   " + robotPosition[1]);
 		cumVectorsPolar[0] = Math.sqrt(Math.pow(cumVectors[0], 2)+ Math.pow(cumVectors[1],2));
 		cumVectorsPolar[1] = -Math.toDegrees(Math.atan2(-cumVectors[0],cumVectors[1]));
 		//cumVectorsPolar[1] = 0;
@@ -141,8 +144,8 @@ public class SwerveDrive extends Runnable{
 		cumVectorsAdjusted[0] = cumVectorsPolar[0]*Math.sin(Math.toRadians(cumVectorsPolar[1]));
 		cumVectorsAdjusted[1] = cumVectorsPolar[0]*Math.cos(Math.toRadians(cumVectorsPolar[1]));
 		
-		robotPosition[0] += cumVectorsAdjusted[0]/1000;
-		robotPosition[1] += cumVectorsAdjusted[1]/1000;
+		robotPosition[0] += cumVectorsAdjusted[0];
+		robotPosition[1] += cumVectorsAdjusted[1];
 		robotPosition[2] = navX.getYaw();
 //		System.out.println((int)cumVectors[0]+ "   " +(int)cumVectors[1]+ "   " + (int)cumVectors[0]+ "   ");
 	}

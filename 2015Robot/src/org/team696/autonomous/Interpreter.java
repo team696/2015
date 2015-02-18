@@ -36,7 +36,7 @@ public class Interpreter{
 		if(splitCommand.length<2){
 			
 			try{
-				command = Class.forName(splitCommand[0].toLowerCase());
+				command = Class.forName("org.team696.Commands."+splitCommand[0].toLowerCase());
 				Constructor constructor = command.getDeclaredConstructor();
 				newCommand = (Command) constructor.newInstance();
 				
@@ -68,7 +68,7 @@ public class Interpreter{
 			}
 			
 			try{
-				command = Class.forName(splitCommand[0].toLowerCase());
+				command = Class.forName("org.team696.Commands."+splitCommand[0].toLowerCase());
 				//classArg[classArg.length-1] = Boolean.class;
 				
 //				for(int fish = 0; fish < scriptArgs.length; fish++){

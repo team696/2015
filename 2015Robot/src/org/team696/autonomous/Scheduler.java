@@ -1,6 +1,5 @@
 package org.team696.autonomous;
 
-
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -12,7 +11,7 @@ public class Scheduler extends Runnable{
 	Vector<Command> curCommands = new Vector<Command>();
 	Interpreter interpreter;
 	public Scheduler(){
-		
+		interpreter = new Interpreter("wait:15.0");
 	}
 	
 	public void setScript(String script){
@@ -53,5 +52,13 @@ public class Scheduler extends Runnable{
 			System.out.println("stopping");
 			stop();
 		}
+	}
+	
+	@Override
+	public void stop(){
+		for(int fish=0;fish<curCommands.size();fish++){
+			curCommands.elementAt(fish).stop();
+		}
+		super.stop();
 	}
 }

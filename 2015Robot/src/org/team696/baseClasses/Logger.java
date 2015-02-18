@@ -194,6 +194,7 @@ public class Logger extends Runnable {
 		for(int fish = 0; fish < names.length;fish++){
 			toSend = toSend + names[fish] + ": " + values[fish] + " | ";
 		}
+		toSend+="\n";
 		sendString();
 	}
 	
@@ -204,7 +205,7 @@ public class Logger extends Runnable {
 				bw.flush();
 			}catch(IOException e){e.printStackTrace();}
 		} else {
-			System.out.println("Not Writing");
+//			System.out.println("Not Writing");
 		}
 	}
 	
@@ -215,7 +216,7 @@ public class Logger extends Runnable {
 				bw.flush();
 			}catch(IOException e){e.printStackTrace();}
 		} else {
-			System.out.println("Not Writing");
+//			System.out.println("Not Writing");
 		}
 	}
 	
@@ -226,7 +227,7 @@ public class Logger extends Runnable {
 				bw.flush();
 			}catch(IOException e){e.printStackTrace();}
 		} else {
-			System.out.println("Not Writing");
+//			System.out.println("Not Writing");
 		}
 	}
 	
@@ -237,7 +238,7 @@ public class Logger extends Runnable {
 				bw.flush();
 			}catch(IOException e){e.printStackTrace();}
 		} else {
-			System.out.println("Not Writing");
+//			System.out.println("Not Writing");
 		}
 	}
 	
@@ -246,9 +247,10 @@ public class Logger extends Runnable {
 			try{
 				bw.write(str);
 				bw.flush();
+				
 			}catch(IOException e){e.printStackTrace();}
 		} else {
-			System.out.println("Not Writing");
+//			System.out.println("Not Writing");
 		}
 	}
 	

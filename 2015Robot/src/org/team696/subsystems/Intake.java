@@ -65,7 +65,6 @@ public class Intake extends Runnable{
 	}
 	public void setEjector(boolean _eject){
 		eject = _eject;
-		ejector.set(eject);
 	}
 	public void toggle(){
 		intakeOpen=!intakeOpen;

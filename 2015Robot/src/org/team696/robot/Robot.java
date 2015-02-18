@@ -11,6 +11,7 @@ import org.team696.baseClasses.*;
 import org.team696.subsystems.*;
 import org.team696.autonomous.Scheduler;
 
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -35,11 +36,12 @@ public class Robot extends IterativeRobot {
 	Joystick        controlBoard = new Joystick(0);
 	Joystick 		joyStick   = new Joystick(1);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
+	BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
 //	public static SwerveModule testModule;
 	public static SwerveDrive     drive;
 	public static Elevator        elevator;	
 	
-//	static Logger          logger;
+	public static Logger          logger;
 	
 	double          speed;
 	int             goalTotes = 0;
@@ -52,8 +54,8 @@ public class Robot extends IterativeRobot {
 	boolean         moveDown        = controlBoard.getRawButton(10);
 	boolean 		moveRight 		= false;
 	boolean 		moveLeft  		= false;
-	boolean 		openIntakeButton		=false;
-	boolean 		oldOpenIntakeButton	=openIntakeButton;
+	boolean 		closeIntakeButton		=false;
+	boolean 		oldCloseIntakeButton	=closeIntakeButton;
 	boolean			upOneTote= false;
 	boolean			oldUpOneTote = upOneTote;
 	boolean 		downOneTote = false;
@@ -130,8 +132,10 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
+		logger = new Logger(new String[] {"Accelerometer X","Accelerometer Y","Accelerometer Z"}, "/usr/local/frc/logs/"+getDate()+".txt");
+		logger.makeWriter();
 		
-		elevator = new Elevator(new int[] {1,0,10,11,4,6,5,4,1,2,3});
+		elevator = new Elevator();
 		setConfig();
 		try {
 			drive = new SwerveDrive(configs);
@@ -147,11 +151,16 @@ public class Robot extends IterativeRobot {
      */
 	@Override
 	public void autonomousInit(){
+		
+    	elevator.start(10);
+    	drive.start(10);
 		drive.zeroNavX();
+		
 		String autonScript = SmartDashboard.getString("autonCode", "StringNotFound");
 		System.out.println(autonScript);
 		autonScheduler.setScript(autonScript);
-//		autonScheduler.start(20);
+		autonScheduler.start(20);
+		
 	}
 	
 	
@@ -162,16 +171,30 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopInit() {
+    	drive.stop();
+    	elevator.stop();
     	autonScheduler.stop();
+    	System.out.println("stopping scheduler");
     	drive.start(10);
 //    	testModule.start(10);
     	elevator.start(10);
+    	logger.start(20);
+    	logger.write("============================\n");
+    	logger.write("        Teleop Init\n");
+    	logger.write("============================\n");
     }
     
     public void teleopPeriodic() {
+    	
+    	logger.set(accelerometer.getX(), 0);
+    	logger.set(accelerometer.getY(), 1);
+    	logger.set(accelerometer.getZ(), 2);
+//    	System.out.println(accelerometer.getX()+"   "+accelerometer.getY()+"   "+accelerometer.getZ());
+    	
     	calibrate = joyStick.getRawButton(3);
     	if(calibrate) calibrate();
     	else robotCode();
+    	
     }
     
     public void calibrate(){
@@ -213,12 +236,12 @@ public class Robot extends IterativeRobot {
     	oldFieldCentricButton = fieldCentricButton;
     	fieldCentricButton = controlBoard.getRawButton(10);
     	if(fieldCentricButton&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
-    	oldOpenIntakeButton = openIntakeButton;
-    	openIntakeButton = controlBoard.getRawButton(5);
-    	oldUpOneTote = upOneTote;
-    	upOneTote = controlBoard.getRawButton(6);
-    	oldDownOneTote = downOneTote;
-    	downOneTote = controlBoard.getRawButton(7);
+    	oldCloseIntakeButton = closeIntakeButton;
+    	closeIntakeButton = controlBoard.getRawButton(5);
+//    	oldUpOneTote = upOneTote;
+//    	upOneTote = controlBoard.getRawButton(6);
+//    	oldDownOneTote = downOneTote;
+//    	downOneTote = controlBoard.getRawButton(7);
     	
     	rotation        = Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
     	yAxis           = -Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
@@ -253,7 +276,9 @@ public class Robot extends IterativeRobot {
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
     	
 
-    	if(openIntakeButton && !oldOpenIntakeButton) elevator.toggleIntake();
+//    	if(openIntakeButton && !oldOpenIntakeButton) elevator.toggleIntake();
+    	elevator.setIntakeOpen(!closeIntakeButton);
+    	elevator.setEjector(controlBoard.getRawButton(6));
     	if(intakeWheelsIn) elevator.setIntakeMotors(0.6);
     	else if(intakeWheelsOut) elevator.setIntakeMotors(-0.6);
     	else elevator.setIntakeMotors(0);
@@ -288,9 +313,9 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void disabledInit() {
-//    	logger.stop();
+    	logger.stop();
 //    	testModule.stop();
     	drive.stop();
-//    	elevator.stop();
+    	elevator.stop();
     }
 }

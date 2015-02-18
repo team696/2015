@@ -132,7 +132,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void robotInit(){
-		logger = new Logger(new String[] {"Accelerometer X","Accelerometer Y","Accelerometer Z"}, "/usr/local/frc/logs/"+getDate()+".txt");
+		logger = new Logger(new String[] {"Accelerometer X","Accelerometer Y","Accelerometer Z","Voltage","Error Button"}, "/usr/local/frc/logs/"+getDate()+".txt");
 		logger.makeWriter();
 		
 		elevator = new Elevator();
@@ -189,7 +189,7 @@ public class Robot extends IterativeRobot {
     	logger.set(accelerometer.getX(), 0);
     	logger.set(accelerometer.getY(), 1);
     	logger.set(accelerometer.getZ(), 2);
-//    	System.out.println(accelerometer.getX()+"   "+accelerometer.getY()+"   "+accelerometer.getZ());
+    	
     	
     	calibrate = joyStick.getRawButton(3);
     	if(calibrate) calibrate();
@@ -221,6 +221,8 @@ public class Robot extends IterativeRobot {
     }
     
     public void robotCode(){
+    	logger.set(controlBoard.getRawButton(2), 4);
+    	logger.set(pdp.getVoltage(), 3);
     	
     	moveUp          = controlBoard.getRawButton(1);
     	moveDown        = controlBoard.getRawButton(3);
@@ -283,7 +285,7 @@ public class Robot extends IterativeRobot {
     	else if(intakeWheelsOut) elevator.setIntakeMotors(-0.6);
     	else elevator.setIntakeMotors(0);
     	
-    	if(controlBoard.getRawButton(2)) elevator.reset();
+    	
     	if(joyStick.getRawButton(1)) drive.zeroNavX();
     	if(moveUp){
 			elevator.setMotion(true,false);

@@ -232,7 +232,7 @@ public class Robot extends IterativeRobot {
     	
 //    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
 //    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
-    	
+    	if(joyStick.getRawButton(9)) drive.zeroOdometry();
     	oldFieldCentricButton = fieldCentricButton;
     	fieldCentricButton = controlBoard.getRawButton(10);
     	if(fieldCentricButton&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
@@ -262,7 +262,7 @@ public class Robot extends IterativeRobot {
 //    	System.out.print((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
 //    	System.out.println((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
     	
-    	    	
+//    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1]+ "   " + drive.getPosition()[2]);    	
     	double angle;
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
     	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
@@ -273,14 +273,19 @@ public class Robot extends IterativeRobot {
 //    		drive.setSteerControlInput(drive.getPosition()[2]);
 //    	}
 //    	else if(Math.abs(rotation)>0.1 && Math.abs(lastRotation)<0.1) drive.setSteerControl(false);
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
     	
-
+    	if(controlBoard.getRawButton(8))drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
+    	else drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
+    	
+    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1] + "   " + drive.getPosition()[2]);
+    	
 //    	if(openIntakeButton && !oldOpenIntakeButton) elevator.toggleIntake();
+    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
     	elevator.setIntakeOpen(!closeIntakeButton);
-    	elevator.setEjector(controlBoard.getRawButton(6));
-    	if(intakeWheelsIn) elevator.setIntakeMotors(0.6);
-    	else if(intakeWheelsOut) elevator.setIntakeMotors(-0.6);
+    	
+//    	elevator.setEjector(controlBoard.getRawButton(6));
+    	if(intakeWheelsIn) elevator.setIntakeMotors(1.0);
+    	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);
     	else elevator.setIntakeMotors(0);
     	
     	if(controlBoard.getRawButton(2)) elevator.reset();
@@ -315,6 +320,7 @@ public class Robot extends IterativeRobot {
     public void disabledInit() {
     	logger.stop();
 //    	testModule.stop();
+    	autonScheduler.stop();
     	drive.stop();
     	elevator.stop();
     }

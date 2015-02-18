@@ -83,6 +83,7 @@ public class SwerveDrive extends Runnable{
 		boolean is_calibrating = navX.isCalibrating();
 		
         if ( firstIteration && !is_calibrating ) {
+        	System.out.println("CALLIBRATING NAVX");
             Timer.delay( 0.3 );
             navX.zeroYaw();
             firstIteration = false;
@@ -242,5 +243,10 @@ public class SwerveDrive extends Runnable{
 	
 	public void zeroNavX(){
 		navX.zeroYaw();
+	}
+	public void zeroOdometry(){
+		for(int fish=0;fish<robotPosition.length;fish++){
+			robotPosition[fish] = 0;
+		}
 	}
 }

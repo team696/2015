@@ -32,8 +32,10 @@ public class Elevator extends Runnable {
 	boolean lastMoveDown = false;
 	boolean accelMoveDown = false;
 	
-	boolean zoneLatch = false;
-	double lastDistance;
+	boolean intakeOverride = false;
+	
+	//boolean zoneLatch = false;
+	//double lastDistance;
 	
 	
 	boolean override = true;
@@ -64,7 +66,7 @@ public class Elevator extends Runnable {
 		elevMotor1 = new VictorSP(2);
 		elevMotor2 = new VictorSP(3);
 		encoder.setDistancePerPulse(clicksPerTote);
-		lastDistance = encoder.getDistance();
+//		lastDistance = encoder.getDistance();
 	}
 	
 	@Override
@@ -180,10 +182,11 @@ public class Elevator extends Runnable {
 		
 		
 		if(moveUp){
-			if(tempDistance>4.5){
-				if(tempTopSwitch)setSpeed(0);
+			if(tempDistance>4){
+				if(tempTopSwitch) setSpeed(0);
 				else setSpeed(0.3);
-			}else setSpeed(1);
+			}else if(((tempDistance>0.2 && tempDistance<3) && !intake.isOpen())) setSpeed(0);
+			else setSpeed(1);
 			
 			
 		}else if(moveDown){
@@ -197,7 +200,8 @@ public class Elevator extends Runnable {
 			else setSpeed(0);
 		}
 		
-		if(encoder.getDistance()<3) intakeOpen = true;
+		if((tempDistance<3 && tempDistance>0.2) && !intakeOverride) intakeOpen = true;
+		
 		intake.setOpen(intakeOpen);
 		if(tempBottomSwitch) reset();
 		goalPos = encoder.getDistance();
@@ -287,6 +291,10 @@ public class Elevator extends Runnable {
 		return encoder.getDistance();
 	}
 	
+	public void setIntakeOverride(boolean _override){
+		intakeOverride = _override;
+	}
+	
 	private void setSpeed(double _setspeed){
 		if(Math.abs(_setspeed)<0.1){
 			
@@ -311,10 +319,6 @@ public class Elevator extends Runnable {
 		double tempDistance = encoder.getDistance();
 		error = goalPos-tempDistance;
 		error = Util.deadZone(error, 0, 0.1, 0);
-		
-		if(tempDistance<3 && tempDistance >0.1 && !intake.isOpen()){
-			intake.setOpen(true);	
-		}
 		
 		//if(!override)move();
 		//else override();

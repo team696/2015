@@ -25,20 +25,10 @@ public class Logger extends Runnable {
 		return df.format(date);
 	}
 	
-//	public void setPath(String path){
-//		fn = "path";
-//	}
-	
-//	public void setPath(){
-//		fn = "/usr/local/frc/logs/"+getDate()+".txt";
-//	}
-	
 	public String[] read(int lines) throws IOException{
 		String[] iRead = new String[lines];
 		for(int fish=0;fish<lines;fish++){
 			iRead[fish]=br.readLine();
-			
-//			System.out.println(iRead[fish]);
 		}
 		return iRead;
 	}
@@ -73,7 +63,6 @@ public class Logger extends Runnable {
 				String s = "0";
 				writer.write(s);
 				writer.flush();
-				System.out.println(s);
 				
 				reader = new FileReader(fn);
 				br = new BufferedReader(reader);
@@ -198,10 +187,10 @@ public class Logger extends Runnable {
 		sendString();
 	}
 	
-	public void write(boolean b){
+	public void write(boolean f){
 		if(!dontPut){
 			try{
-				bw.write(b+"");
+				bw.write(f+"");
 				bw.flush();
 			}catch(IOException e){e.printStackTrace();}
 		} else {

@@ -18,8 +18,16 @@ public class Elevator extends Runnable {
 		ABOVE_INTAKE,
 		TOP
 	}
-	public Presets presets = Presets.BOTTOM;
 	
+	public enum ControlType{
+		TOTAL_OVERRIDE,
+		OVERRIDE,
+		POSITIONAL,
+		PRESET
+	}
+	
+	public Presets presets = Presets.BOTTOM;
+	public ControlType controlType = ControlType.POSITIONAL;
 	Encoder encoder;
 	
 	DigitalInput limitSwitchBot;
@@ -32,8 +40,7 @@ public class Elevator extends Runnable {
 	boolean intakeOpen = true;
 	boolean intakeOverride = false;
 	
-	double goalPos = 0.0;
-	boolean override = true;
+	double target = 0.0;
 	boolean totalOverride = false;
 	
 	double clicksPerTote = 0.00146484375;
@@ -64,21 +71,42 @@ public class Elevator extends Runnable {
 	
 	@Override
 	public void update() {
-		if(!override) presetMotion();
-		runElevator();
+		switch(controlType){
+		case PRESET: 
+			presetMotion();
+			runElevator();
+		case POSITIONAL: 
+			positionalMotion();
+			runElevator();
+		case OVERRIDE:
+			runElevator();
+		case TOTAL_OVERRIDE:
+			setSpeed(curSetSpeed);
+		default:
+			runElevator();
+		}
 	}
 
+	public void setTotalOverride(double _speed){
+		curSetSpeed = _speed;
+	}
 	
-	public void overrideMotion(double _speed){
-		override = true;
+	public void setOverride(double _speed){
+		controlType = ControlType.OVERRIDE;
 		if(_speed <curSetSpeed) curSetSpeed += Util.constrain(_speed, -0.01, 0.01); 
 		else curSetSpeed +=Util.constrain(_speed, -0.1, 0.1);
 	}
 	
-	public void goToPreset(Presets _preset){
-		override = false;
+	public void setPreset(Presets _preset){
+		controlType = ControlType.PRESET;
 		presets =_preset;
 	}
+	
+	public void setPositon(double _position){
+		controlType = ControlType.POSITIONAL;
+		target = _position;
+	}
+	
 	public void setIntakeMotors(double _speed){
 		intake.setMotors(_speed);
 	}
@@ -90,8 +118,11 @@ public class Elevator extends Runnable {
 		intake.setEjector(_eject);
 	}	
 	
+	public boolean atTarget(){
+		return Math.abs(target-getPosition())<0.2;
+	}
+	
 	private void presetMotion(){
-		double target;
 		
 		switch(presets){
 		case BOTTOM:		target = 0.1;
@@ -100,11 +131,15 @@ public class Elevator extends Runnable {
 		case TOP:			target = 5;
 		default:			target = 0.1; 
 		}
-		
-		if(target-getPosition()>0.2)	overrideMotion(1);
-		else if(target-getPosition()<0.2) overrideMotion(-0.5);
-		else overrideMotion(0);
+		positionalMotion();
+		}
+	
+	private void positionalMotion(){
+		if(target-getPosition()>0.2)	setOverride(1);
+		else if(target-getPosition()<0.2) setOverride(-0.5);
+		else setOverride(0);
 	}
+
 	
 	private void runElevator(){
 		
@@ -139,7 +174,7 @@ public class Elevator extends Runnable {
 		
 		intake.setOpen(intakeOpen);
 		if(tempBottomSwitch) encoder.reset();
-		goalPos = encoder.getDistance();
+		target = encoder.getDistance();
 		
 	}
 	

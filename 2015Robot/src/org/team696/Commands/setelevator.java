@@ -15,11 +15,7 @@ public class setelevator extends Command{
 	@Override
 	public void update(){
 		System.out.println(setPosition + "   " + Robot.elevator.getPosition() + "   "+ movingUp);
-		if(movingUp && setPosition-Robot.elevator.getPosition()>0.4) Robot.elevator.setMotion(true, false);
-		else if(!movingUp && setPosition-Robot.elevator.getPosition()<0) Robot.elevator.setMotion(false, true);
-		else{
-			Robot.elevator.setMotion(false, false);
-			isFinished = true;
-		}
+		Robot.elevator.setPositon(setPosition);
+		isFinished = Robot.elevator.atTarget();
 	}
 }

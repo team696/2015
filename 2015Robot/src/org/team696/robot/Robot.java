@@ -231,10 +231,14 @@ public class Robot extends IterativeRobot {
 
     	double elevatorStick		= controlBoard.getRawAxis(4);
     	
+    	boolean elevatorTotalOverrideButton = controlBoard.getRawButton(1);
+    	
     	boolean presetButtonBottom = controlBoard.getRawButton(1);
     	boolean presetButtonOneToteHigh = controlBoard.getRawButton(1);
     	boolean presetButtonAboveIntake = controlBoard.getRawButton(1);
     	boolean presetButtonTop = controlBoard.getRawButton(1);
+    	
+    	
     	
     	if(joyStick.getRawButton(9)) drive.zeroOdometry();
     	oldFieldCentricButton = fieldCentricButton;
@@ -252,11 +256,6 @@ public class Robot extends IterativeRobot {
     	else drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
        	
     	if(joyStick.getRawButton(1)) drive.zeroNavX();
-        
-    	if(Math.abs(elevatorStick)>0.01){
-    		elevator.overrideMotion(Util.deadZone(elevatorStick, -0.1, 0.1, 0));
-    	}
-    	
     	
 //    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
     	elevator.setIntakeOpen(!closeIntakeButton);
@@ -265,31 +264,13 @@ public class Robot extends IterativeRobot {
     	if(intakeWheelsIn) elevator.setIntakeMotors(1.0);
     	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);
     	else elevator.setIntakeMotors(0);
-    	
-    	if(presetButtonBottom)				elevator.goToPreset(Presets.BOTTOM);
-    	else if(presetButtonOneToteHigh)	elevator.goToPreset(Presets.ONE_TOTE_HIGH);
-    	else if(presetButtonAboveIntake)	elevator.goToPreset(Presets.ABOVE_INTAKE);
-    	else if(presetButtonTop)			elevator.goToPreset(Presets.TOP);
-    	else 								elevator.overrideMotion(elevatorStick);
+    	if(elevatorTotalOverrideButton)			elevator.setTotalOverride(elevatorStick);
+    	else if(Math.abs(elevatorStick)>0.01)	elevator.setOverride(elevatorStick);
+    	else if(presetButtonBottom)				elevator.setPreset(Presets.BOTTOM);
+    	else if(presetButtonOneToteHigh)		elevator.setPreset(Presets.ONE_TOTE_HIGH);
+    	else if(presetButtonAboveIntake)		elevator.setPreset(Presets.ABOVE_INTAKE);
+    	else if(presetButtonTop)				elevator.setPreset(Presets.TOP);
 //    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1] + "   " + drive.getPosition()[2]);
-    	
-//    	if(moveUp){
-//			elevator.setMotion(true,false);
-//			elevator.overrideMotion();
-//		} else if(moveDown){
-//			elevator.setMotion(false, true);
-//			elevator.overrideMotion();
-////		} else if (upOneTote && !oldUpOneTote) {
-////			elevator.increment(true);
-////			elevator.regularMotion();
-////		}else if (downOneTote && !oldDownOneTote) {
-////			elevator.increment(false);
-////			elevator.regularMotion();
-//		}else {
-//			elevator.overrideMotion();
-//			elevator.setMotion(false, false);
-//			elevator.firstTime();
-//		}
     	
 //    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");
 //    	System.out.print((int)drive.frontRight.steerEncoder.offset+ "   ");

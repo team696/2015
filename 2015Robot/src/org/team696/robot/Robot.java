@@ -226,6 +226,8 @@ public class Robot extends IterativeRobot {
     	double yAxis				= -Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	double xAxis				= Util.deadZone(Util.map(joyStick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	
+    	boolean snapToFeederButton	= controlBoard.getRawButton(1);
+    	
     	boolean intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
     	boolean intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
 
@@ -251,8 +253,9 @@ public class Robot extends IterativeRobot {
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
     	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
     	if(angle<0) angle+=360;
-    	    	
-    	if(controlBoard.getRawButton(8))drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
+    	    
+    	if(snapToFeederButton) drive.alignFeeder();
+    	else if(controlBoard.getRawButton(8))drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
     	else drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
        	
     	if(joyStick.getRawButton(1)) drive.zeroNavX();

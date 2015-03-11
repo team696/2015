@@ -98,7 +98,6 @@ public class navigate extends Command{
 		double error = navVector[2] - position[2];
 		if(error>180) error = -(360-error);  //check if over the
 		else if(error<-180) error = (360+error);//zero line to flip error 
-		System.out.print(error+ "   ");
 		rotationController.update(error);
 		setVector[2] = rotationController.getOutput();
 		System.out.println("ROTATION CONTROLLER OUTPUT"+ rotationController.getOutput());

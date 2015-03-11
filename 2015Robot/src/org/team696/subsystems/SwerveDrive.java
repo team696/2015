@@ -10,6 +10,7 @@ import com.kauailabs.nav6.frc.IMU;
 import com.kauailabs.nav6.frc.IMUAdvanced;
 
 import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.AnalogTriggerOutput.AnalogTriggerType;
@@ -43,10 +44,16 @@ public class SwerveDrive extends Runnable{
 	public SwerveModule frontRight;
 	public SwerveModule backRight;
 	public SwerveModule backLeft;
+
+	public LIDAR lidar = new LIDAR(Port.kMXP);
+	CustomPID distanceController = new CustomPID(0.01,0.0,0.01);
+	private boolean useLidarFeedback = false;
+	double constDistance;
 	
-	private boolean keepAngle;
+	private boolean useRotationFeedback = false;
 	private double absoluteSetAngle;
-	CustomPID steerController = new CustomPID(0.1, 0.0, 0.0);
+	CustomPID steerController = new CustomPID(0.01, 0.0, 0.01);
+	
 	
 	IMU navX;
 	SerialPort port;
@@ -73,7 +80,8 @@ public class SwerveDrive extends Runnable{
 		frontLeft.start(periodMS);
 		frontRight.start(periodMS);
 		backRight.start(periodMS);
-		backLeft.start(periodMS);	
+		backLeft.start(periodMS);
+		lidar.start();
 		super.start(periodMS);
 	}
 	
@@ -88,14 +96,41 @@ public class SwerveDrive extends Runnable{
             navX.zeroYaw();
             firstIteration = false;
         }
-        if(keepAngle){
-        	steerController.update(absoluteSetAngle-navX.getYaw());
-        	setRobotVector[2] = steerController.getOutput();
+        
+        System.out.println(lidar.getDistance());
+        
+        updateOdometry();
+		
+        if(useRotationFeedback){
+        	
+			double error = absoluteSetAngle-robotPosition[2]; //set absolute set angle to either 135 or 215
+    		if(error>180) error = -(360-error);  	//check if over the
+    		else if(error<-180) error = (360+error);//zero line to flip error 
+    		steerController.update(error);
+    		double tempRotation = steerController.getOutput();
+    		
+    		setRobotVector[2] = tempRotation;
+        	
         }
+        
+        if(useLidarFeedback){
+    		double tempHeadingRadians = Math.toRadians(setRobotVector[1]);
+    		double xSnapVector = setRobotVector[1]*Math.sin(tempHeadingRadians);
+		
+    		distanceController.update(constDistance-lidar.getDistance());
+    		double ySnapVector = distanceController.getOutput();
+    	
+    		double tempSpeed = Math.sqrt(xSnapVector *xSnapVector) +((ySnapVector *ySnapVector)); //pythagorean theorem for speed
+			double tempHeading = -Math.toDegrees(Math.atan2(-xSnapVector,ySnapVector));
+    	
+			setRobotVector[0] = tempSpeed;
+			setRobotVector[1] = tempHeading;
+		
+    	}
+        
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
 		
-		updateOdometry();
 		
 		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
 		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
@@ -116,9 +151,16 @@ public class SwerveDrive extends Runnable{
 		absoluteSetAngle = angle;
 	}
 	public void setSteerControl(boolean useControl){
-		keepAngle = useControl;
+		useRotationFeedback = useControl;
 	}
 	
+	public void alignFeeder(){
+		if(robotPosition[2]>0 && robotPosition[2] <180) absoluteSetAngle = 135;
+		else absoluteSetAngle = 215;
+		useRotationFeedback = true;
+		useLidarFeedback 	= true;
+	}
+		
 	private void updateOdometry(){
 		double [][] wheelVectors = new double[4][2];
 		double[] cumVectors = {0.0,0.0};
@@ -229,6 +271,8 @@ public class SwerveDrive extends Runnable{
 	}
 	
 	public boolean setDriveValues(double speed, double headingDegrees, double rotation, boolean fieldCentric){
+		useRotationFeedback = false;
+		useLidarFeedback 	= false;
 		setRobotVector[0] = speed;
 		setRobotVector[1] = headingDegrees;
 		

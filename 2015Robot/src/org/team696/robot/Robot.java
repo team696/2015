@@ -9,6 +9,7 @@ import java.util.Date;
 
 import org.team696.baseClasses.*;
 import org.team696.subsystems.*;
+import org.team696.subsystems.Elevator.Presets;
 import org.team696.autonomous.Scheduler;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
@@ -68,10 +69,7 @@ public class Robot extends IterativeRobot {
 	boolean 		oldFieldCentricButton = false;
 	boolean         moveUpOld;
 	boolean         moveDownOld;
-	double          rotation        = 0;
-	double			lastRotation 	= 0;
-	double          yAxis           = controlBoard.getY();
-	double          xAxis           = controlBoard.getX();
+	
 	double          trim            = 0;
 	boolean			write			= false;
 	boolean			oldWrite		= write;
@@ -224,30 +222,74 @@ public class Robot extends IterativeRobot {
     	logger.set(controlBoard.getRawButton(2), 4);
     	logger.set(pdp.getVoltage(), 3);
     	
-    	moveUp          = controlBoard.getRawButton(1);
-    	moveDown        = controlBoard.getRawButton(3);
+    	double rotation				= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
+    	double yAxis				= -Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	double xAxis				= Util.deadZone(Util.map(joyStick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	
-    	intakeWheelsIn  = controlBoard.getRawAxis(3)<-0.5;
-    	intakeWheelsOut = controlBoard.getRawAxis(3)>0.5;
+    	boolean intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
+    	boolean intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
+
+    	double elevatorStick		= controlBoard.getRawAxis(4);
     	
-//    	intakeOpen.set(joyStick.getRawButton(5));
+    	boolean presetButtonBottom = controlBoard.getRawButton(1);
+    	boolean presetButtonOneToteHigh = controlBoard.getRawButton(1);
+    	boolean presetButtonAboveIntake = controlBoard.getRawButton(1);
+    	boolean presetButtonTop = controlBoard.getRawButton(1);
     	
-//    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
-//    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
     	if(joyStick.getRawButton(9)) drive.zeroOdometry();
     	oldFieldCentricButton = fieldCentricButton;
     	fieldCentricButton = controlBoard.getRawButton(10);
     	if(fieldCentricButton&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
     	oldCloseIntakeButton = closeIntakeButton;
-    	closeIntakeButton = controlBoard.getRawButton(5);
-//    	oldUpOneTote = upOneTote;
-//    	upOneTote = controlBoard.getRawButton(6);
-//    	oldDownOneTote = downOneTote;
-//    	downOneTote = controlBoard.getRawButton(7);
+    	closeIntakeButton = controlBoard.getRawButton(5);    	
     	
-    	rotation        = Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
-    	yAxis           = -Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-    	xAxis           = Util.deadZone(Util.map(joyStick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	double angle;
+    	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
+    	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
+    	if(angle<0) angle+=360;
+    	    	
+    	if(controlBoard.getRawButton(8))drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
+    	else drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
+       	
+    	if(joyStick.getRawButton(1)) drive.zeroNavX();
+        
+    	if(Math.abs(elevatorStick)>0.01){
+    		elevator.overrideMotion(Util.deadZone(elevatorStick, -0.1, 0.1, 0));
+    	}
+    	
+    	
+//    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
+    	elevator.setIntakeOpen(!closeIntakeButton);
+    	
+//    	elevator.setEjector(controlBoard.getRawButton(6));
+    	if(intakeWheelsIn) elevator.setIntakeMotors(1.0);
+    	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);
+    	else elevator.setIntakeMotors(0);
+    	
+    	if(presetButtonBottom)				elevator.goToPreset(Presets.BOTTOM);
+    	else if(presetButtonOneToteHigh)	elevator.goToPreset(Presets.ONE_TOTE_HIGH);
+    	else if(presetButtonAboveIntake)	elevator.goToPreset(Presets.ABOVE_INTAKE);
+    	else if(presetButtonTop)			elevator.goToPreset(Presets.TOP);
+    	else 								elevator.overrideMotion(elevatorStick);
+//    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1] + "   " + drive.getPosition()[2]);
+    	
+//    	if(moveUp){
+//			elevator.setMotion(true,false);
+//			elevator.overrideMotion();
+//		} else if(moveDown){
+//			elevator.setMotion(false, true);
+//			elevator.overrideMotion();
+////		} else if (upOneTote && !oldUpOneTote) {
+////			elevator.increment(true);
+////			elevator.regularMotion();
+////		}else if (downOneTote && !oldDownOneTote) {
+////			elevator.increment(false);
+////			elevator.regularMotion();
+//		}else {
+//			elevator.overrideMotion();
+//			elevator.setMotion(false, false);
+//			elevator.firstTime();
+//		}
     	
 //    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");
 //    	System.out.print((int)drive.frontRight.steerEncoder.offset+ "   ");
@@ -265,50 +307,10 @@ public class Robot extends IterativeRobot {
 //    	System.out.println((int)drive.backLeft.steerEncoder.getAngleDegrees()+ "   ");
     	
 //    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1]+ "   " + drive.getPosition()[2]);    	
-    	double angle;
-    	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
-    	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
-    	if(angle<0) angle+=360;
     	
-//    	if(Math.abs(rotation)<0.1 && Math.abs(lastRotation)>0.1){
-//    		drive.setSteerControl(true); 
-//    		drive.setSteerControlInput(drive.getPosition()[2]);
-//    	}
-//    	else if(Math.abs(rotation)>0.1 && Math.abs(lastRotation)<0.1) drive.setSteerControl(false);
-    	
-    	if(controlBoard.getRawButton(8))drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
-    	else drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
-    	
-    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1] + "   " + drive.getPosition()[2]);
-    	
-//    	if(openIntakeButton && !oldOpenIntakeButton) elevator.toggleIntake();
-    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
-    	elevator.setIntakeOpen(!closeIntakeButton);
-    	
-//    	elevator.setEjector(controlBoard.getRawButton(6));
-    	if(intakeWheelsIn) elevator.setIntakeMotors(1.0);
-    	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);
-    	else elevator.setIntakeMotors(0);
-    	
-    	
-    	if(joyStick.getRawButton(1)) drive.zeroNavX();
-    	if(moveUp){
-			elevator.setMotion(true,false);
-			elevator.overrideMotion();
-		} else if(moveDown){
-			elevator.setMotion(false, true);
-			elevator.overrideMotion();
-//		} else if (upOneTote && !oldUpOneTote) {
-//			elevator.increment(true);
-//			elevator.regularMotion();
-//		}else if (downOneTote && !oldDownOneTote) {
-//			elevator.increment(false);
-//			elevator.regularMotion();
-		}else {
-			elevator.overrideMotion();
-			elevator.setMotion(false, false);
-			elevator.firstTime();
-		}		
+//    	testModule.setValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle);
+//    	testModule.override(controlBoard.getRawButton(2), controlBoard.getRawAxis(2));
+
     }
     
     /**

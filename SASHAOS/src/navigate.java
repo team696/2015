@@ -5,6 +5,8 @@ public class navigate extends Command{
 	
 	public navigate(Double arg1,Double arg2,Double arg3, Boolean _parallel) {
 
+		
+		System.out.println("navigating to: " + arg1+ ",   " + arg2 + ",   " + arg3);
 		counter+= arg1;
 		counter+= arg2;
 		counter+= arg3;
@@ -12,7 +14,9 @@ public class navigate extends Command{
 	}
 	
 	public navigate(){
-		counter = 20;
+		System.out.println("navigating to: 0, 0, 0");
+		
+		counter = 0;
 		parallel = false;
 	}
 

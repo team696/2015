@@ -3,12 +3,11 @@ import java.util.Vector;
 
 public class fullAutonScheduler extends Runnable{
 	
-	
-	
-	
 	Vector<Command> curCommands = new Vector<Command>();
 	Vector<Command> commandQueue = new Vector<Command>();
-	Interpreter interpreter = new Interpreter("navigate: 3 , 4, 30, sequential \n navigate: 2 , 2, 0, parallel");
+	FullAutonInterpreter interpreter = new FullAutonInterpreter();
+	
+	
 	public fullAutonScheduler(){
 		
 	}

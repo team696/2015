@@ -220,25 +220,25 @@ public class Robot extends IterativeRobot {
     	write = fieldCentricButton;
     	trim = elevatorStick*2;
     	
-    	if(joyStick.getRawButton(6)){
+    	if(presetButtonTop){
     		drive.frontLeft.steerEncoder.trimCenter(trim);
     		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}
     	else drive.frontLeft.steerEncoder.trimCenter(0);
   
-    	if(joyStick.getRawButton(11)){
+    	if(presetButtonAboveIntake){
     		drive.frontRight.steerEncoder.trimCenter(trim);
     		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}
     	else drive.frontRight.steerEncoder.trimCenter(0);
     	
-    	if(joyStick.getRawButton(10)){
+    	if(presetButtonOneToteHigh){
     		drive.backRight.steerEncoder.trimCenter(trim);
     		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}
     	else drive.backRight.steerEncoder.trimCenter(0);
     	
-    	if(joyStick.getRawButton(7)){
+    	if(presetButtonBottom){
     		drive.backLeft.steerEncoder.trimCenter(trim);
     		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}

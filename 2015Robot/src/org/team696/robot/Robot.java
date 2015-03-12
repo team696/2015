@@ -43,9 +43,9 @@ public class Robot extends IterativeRobot {
 	
 	public static Logger          logger;
 	
-	double rotation				= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
-	double yAxis				= -Util.deadZone(Util.map(controlBoard.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-	double xAxis				= Util.deadZone(Util.map(controlBoard.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+	double rotation				= 0;
+	double yAxis				= 0;
+	double xAxis				= 0;
 	boolean snapToFeederButton	= controlBoard.getRawButton(1);
 	boolean fieldCentric 		= true;
 	boolean fieldCentricButton	= false;
@@ -189,31 +189,32 @@ public class Robot extends IterativeRobot {
     	logger.set(accelerometer.getZ(), 2);
     	
     	rotation				= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
-    	yAxis				= -Util.deadZone(Util.map(controlBoard.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-    	xAxis				= Util.deadZone(Util.map(controlBoard.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-    	snapToFeederButton	= controlBoard.getRawButton(1);
-    	fieldCentricButton	= controlBoard.getRawButton(1);
+    	yAxis				= -Util.deadZone(Util.map(controlBoard.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	xAxis				= Util.deadZone(Util.map(controlBoard.getRawAxis(2), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	snapToFeederButton	= false;//controlBoard.getRawButton(1);
+    	fieldCentricButton	= controlBoard.getRawButton(7);
     	oldFieldCentricButton = fieldCentricButton;
-    	setWheelsToZero		= controlBoard.getRawButton(1);
-    	slowDownButton		= controlBoard.getRawButton(1);
-    	tankDriveSwitch		= controlBoard.getRawButton(1);
+    	setWheelsToZero		= controlBoard.getRawButton(4);
+    	slowDownButton		= false;//controlBoard.getRawButton(1);
+    	tankDriveSwitch		= controlBoard.getRawButton(2);
+    	
     	intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
     	intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
-    	intakeOverrideSwitch= controlBoard.getRawButton(0);
-    	closeIntakeButton	= controlBoard.getRawButton(0);
+    	intakeOverrideSwitch= false;//controlBoard.getRawButton(0);
+    	closeIntakeButton	= controlBoard.getRawButton(6);
     	elevatorStick		= controlBoard.getRawAxis(4);
-    	elevatorTotalOverrideSwitch = controlBoard.getRawButton(1);
+    	elevatorTotalOverrideSwitch = controlBoard.getRawButton(5);
     	
-    	presetButtonBottom = controlBoard.getRawButton(1);
-    	presetButtonOneToteHigh = controlBoard.getRawButton(1);
-    	presetButtonAboveIntake = controlBoard.getRawButton(1);
-    	presetButtonTop = controlBoard.getRawButton(1);
+    	presetButtonBottom = controlBoard.getRawButton(13);
+    	presetButtonOneToteHigh = controlBoard.getRawButton(12);
+    	presetButtonAboveIntake = controlBoard.getRawButton(11);
+    	presetButtonTop = controlBoard.getRawButton(10);
     	
-    	ejectButton = controlBoard.getRawButton(1);
+    	ejectButton = controlBoard.getRawButton(8);
     	
-    	zeroNavXButton = controlBoard.getRawButton(1);
+    	zeroNavXButton = controlBoard.getRawButton(9);
     	
-    	calibrate = controlBoard.getRawButton(1);
+    	calibrate = controlBoard.getRawButton(3);
     	if(calibrate) calibrate();
     	else robotCode();
     	

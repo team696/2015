@@ -35,7 +35,6 @@ public class Robot extends IterativeRobot {
 	boolean 		calibrate 		= false;
 	
 	Joystick        controlBoard = new Joystick(0);
-	Joystick 		joyStick   = new Joystick(1);
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
 //	public static SwerveModule testModule;
@@ -44,31 +43,29 @@ public class Robot extends IterativeRobot {
 	
 	public static Logger          logger;
 	
-	double          speed;
-	int             goalTotes = 0;
-	int             temp = 0;
-	boolean         intakeWheelsIn  = controlBoard.getRawAxis(3)<-0.5;
-	boolean			intakeWheelsOut = controlBoard.getRawAxis(3)>0.5;
-//	boolean         ejectMech       = controlBoard.getRawButton(3);
-//	boolean         intakeMech      = controlBoard.getRawButton(4);
-	boolean         moveUp          = controlBoard.getRawButton(9);
-	boolean         moveDown        = controlBoard.getRawButton(10);
-	boolean 		moveRight 		= false;
-	boolean 		moveLeft  		= false;
-	boolean 		closeIntakeButton		=false;
-	boolean 		oldCloseIntakeButton	=closeIntakeButton;
-	boolean			upOneTote= false;
-	boolean			oldUpOneTote = upOneTote;
-	boolean 		downOneTote = false;
-	boolean			oldDownOneTote = downOneTote;
+	double rotation				= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
+	double yAxis				= -Util.deadZone(Util.map(controlBoard.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+	double xAxis				= Util.deadZone(Util.map(controlBoard.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+	boolean snapToFeederButton	= controlBoard.getRawButton(1);
+	boolean fieldCentric 		= true;
+	boolean fieldCentricButton	= false;
+	boolean oldFieldCentricButton = fieldCentricButton;
 	
-	boolean 		openIntake		= true;
-	boolean			eject			= false;
-	boolean			fieldCentric	= true;
-	boolean			fieldCentricButton = false;
-	boolean 		oldFieldCentricButton = false;
-	boolean         moveUpOld;
-	boolean         moveDownOld;
+	boolean intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
+	boolean intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
+	boolean intakeOverrideSwitch= controlBoard.getRawButton(0);
+	boolean closeIntakeButton	= controlBoard.getRawButton(0);
+	double elevatorStick		= controlBoard.getRawAxis(4);
+	boolean elevatorTotalOverrideSwitch = controlBoard.getRawButton(1);
+	
+	boolean presetButtonBottom = controlBoard.getRawButton(1);
+	boolean presetButtonOneToteHigh = controlBoard.getRawButton(1);
+	boolean presetButtonAboveIntake = controlBoard.getRawButton(1);
+	boolean presetButtonTop = controlBoard.getRawButton(1);
+	
+	boolean ejectButton = controlBoard.getRawButton(1);
+	
+	boolean zeroNavXButton = controlBoard.getRawButton(1);
 	
 	double          trim            = 0;
 	boolean			write			= false;
@@ -188,8 +185,30 @@ public class Robot extends IterativeRobot {
     	logger.set(accelerometer.getY(), 1);
     	logger.set(accelerometer.getZ(), 2);
     	
+    	rotation				= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
+    	yAxis				= -Util.deadZone(Util.map(controlBoard.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	xAxis				= Util.deadZone(Util.map(controlBoard.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	snapToFeederButton	= controlBoard.getRawButton(1);
+    	fieldCentricButton	= controlBoard.getRawButton(1);
+    	oldFieldCentricButton = fieldCentricButton;
     	
-    	calibrate = joyStick.getRawButton(3);
+    	intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
+    	intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
+    	intakeOverrideSwitch= controlBoard.getRawButton(0);
+    	closeIntakeButton	= controlBoard.getRawButton(0);
+    	elevatorStick		= controlBoard.getRawAxis(4);
+    	elevatorTotalOverrideSwitch = controlBoard.getRawButton(1);
+    	
+    	presetButtonBottom = controlBoard.getRawButton(1);
+    	presetButtonOneToteHigh = controlBoard.getRawButton(1);
+    	presetButtonAboveIntake = controlBoard.getRawButton(1);
+    	presetButtonTop = controlBoard.getRawButton(1);
+    	
+    	ejectButton = controlBoard.getRawButton(1);
+    	
+    	zeroNavXButton = controlBoard.getRawButton(1);
+    	
+    	calibrate = controlBoard.getRawButton(1);
     	if(calibrate) calibrate();
     	else robotCode();
     	
@@ -198,56 +217,44 @@ public class Robot extends IterativeRobot {
     public void calibrate(){
     	
     	oldWrite = write;
-    	write = joyStick.getRawButton(1);    	
-    	trim = joyStick.getRawAxis(0)*2;
+    	write = fieldCentricButton;
+    	trim = elevatorStick*2;
     	
-    	if(joyStick.getRawButton(6))drive.frontLeft.steerEncoder.trimCenter(trim);
-    	else drive.frontLeft.steerEncoder.trimCenter(0);
-    	if(joyStick.getRawButton(11))drive.frontRight.steerEncoder.trimCenter(trim);
-    	else drive.frontRight.steerEncoder.trimCenter(0);
-    	if(joyStick.getRawButton(10))drive.backRight.steerEncoder.trimCenter(trim);
-    	else drive.backRight.steerEncoder.trimCenter(0);
-    	if(joyStick.getRawButton(7))drive.backLeft.steerEncoder.trimCenter(trim);
-    	else drive.backLeft.steerEncoder.trimCenter(0);
-
-    	if(write && !oldWrite){
-    		drive.frontLeft.steerEncoder.writeOffset();
-    		drive.frontRight.steerEncoder.writeOffset();
-    		drive.backLeft.steerEncoder.writeOffset();
-    		drive.backRight.steerEncoder.writeOffset();
+    	if(joyStick.getRawButton(6)){
+    		drive.frontLeft.steerEncoder.trimCenter(trim);
+    		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}
+    	else drive.frontLeft.steerEncoder.trimCenter(0);
+  
+    	if(joyStick.getRawButton(11)){
+    		drive.frontRight.steerEncoder.trimCenter(trim);
+    		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
+    	}
+    	else drive.frontRight.steerEncoder.trimCenter(0);
+    	
+    	if(joyStick.getRawButton(10)){
+    		drive.backRight.steerEncoder.trimCenter(trim);
+    		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
+    	}
+    	else drive.backRight.steerEncoder.trimCenter(0);
+    	
+    	if(joyStick.getRawButton(7)){
+    		drive.backLeft.steerEncoder.trimCenter(trim);
+    		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
+    	}
+    	else drive.backLeft.steerEncoder.trimCenter(0);
     }
     
     public void robotCode(){
     	logger.set(controlBoard.getRawButton(2), 4);
     	logger.set(pdp.getVoltage(), 3);
     	
-    	double rotation				= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
-    	double yAxis				= -Util.deadZone(Util.map(joyStick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-    	double xAxis				= Util.deadZone(Util.map(joyStick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-    	
-    	boolean snapToFeederButton	= controlBoard.getRawButton(1);
-    	
-    	boolean intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
-    	boolean intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
-
-    	double elevatorStick		= controlBoard.getRawAxis(4);
-    	
-    	boolean elevatorTotalOverrideButton = controlBoard.getRawButton(1);
-    	
-    	boolean presetButtonBottom = controlBoard.getRawButton(1);
-    	boolean presetButtonOneToteHigh = controlBoard.getRawButton(1);
-    	boolean presetButtonAboveIntake = controlBoard.getRawButton(1);
-    	boolean presetButtonTop = controlBoard.getRawButton(1);
     	
     	
+    	if(zeroNavXButton) drive.zeroNavX();
     	
-    	if(joyStick.getRawButton(9)) drive.zeroOdometry();
-    	oldFieldCentricButton = fieldCentricButton;
     	fieldCentricButton = controlBoard.getRawButton(10);
     	if(fieldCentricButton&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
-    	oldCloseIntakeButton = closeIntakeButton;
-    	closeIntakeButton = controlBoard.getRawButton(5);    	
     	
     	double angle;
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
@@ -258,21 +265,20 @@ public class Robot extends IterativeRobot {
     	else if(controlBoard.getRawButton(8))drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
     	else drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
        	
-    	if(joyStick.getRawButton(1)) drive.zeroNavX();
-    	
-//    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
+    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
     	elevator.setIntakeOpen(!closeIntakeButton);
-    	
-//    	elevator.setEjector(controlBoard.getRawButton(6));
     	if(intakeWheelsIn) elevator.setIntakeMotors(1.0);
     	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);
     	else elevator.setIntakeMotors(0);
-    	if(elevatorTotalOverrideButton)			elevator.setTotalOverride(elevatorStick);
+    	
+    	elevator.setEjector(ejectButton);
+    	if(elevatorTotalOverrideSwitch)			elevator.setTotalOverride(elevatorStick);
     	else if(Math.abs(elevatorStick)>0.01)	elevator.setOverride(elevatorStick);
     	else if(presetButtonBottom)				elevator.setPreset(Presets.BOTTOM);
     	else if(presetButtonOneToteHigh)		elevator.setPreset(Presets.ONE_TOTE_HIGH);
     	else if(presetButtonAboveIntake)		elevator.setPreset(Presets.ABOVE_INTAKE);
     	else if(presetButtonTop)				elevator.setPreset(Presets.TOP);
+    	
 //    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1] + "   " + drive.getPosition()[2]);
     	
 //    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");

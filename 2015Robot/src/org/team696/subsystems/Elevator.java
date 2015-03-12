@@ -79,8 +79,10 @@ public class Elevator extends Runnable {
 			positionalMotion();
 			runElevator();
 		case OVERRIDE:
+			target = encoder.getDistance();
 			runElevator();
 		case TOTAL_OVERRIDE:
+			target = encoder.getDistance();
 			setSpeed(curSetSpeed);
 		default:
 			runElevator();
@@ -89,6 +91,7 @@ public class Elevator extends Runnable {
 
 	public void setTotalOverride(double _speed){
 		curSetSpeed = _speed;
+		controlType = ControlType.TOTAL_OVERRIDE;
 	}
 	
 	public void setOverride(double _speed){
@@ -174,8 +177,6 @@ public class Elevator extends Runnable {
 		
 		intake.setOpen(intakeOpen);
 		if(tempBottomSwitch) encoder.reset();
-		target = encoder.getDistance();
-		
 	}
 	
 	public void toggleIntake(){

@@ -46,29 +46,29 @@ public class Robot extends IterativeRobot {
 	double rotation				= 0;
 	double yAxis				= 0;
 	double xAxis				= 0;
-	boolean snapToFeederButton	= controlBoard.getRawButton(1);
+	boolean snapToFeederButton	= false;
 	boolean fieldCentric 		= true;
 	boolean fieldCentricButton	= false;
 	boolean oldFieldCentricButton = fieldCentricButton;
-	boolean tankDriveSwitch		= controlBoard.getRawButton(1);
+	boolean tankDriveSwitch		= false;
 	
-	boolean setWheelsToZero		= controlBoard.getRawButton(1);
-	boolean slowDownButton		= controlBoard.getRawButton(1);
-	boolean intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
-	boolean intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
-	boolean intakeOverrideSwitch= controlBoard.getRawButton(0);
-	boolean closeIntakeButton	= controlBoard.getRawButton(0);
-	double elevatorStick		= controlBoard.getRawAxis(4);
-	boolean elevatorTotalOverrideSwitch = controlBoard.getRawButton(1);
+	boolean setWheelsToZero		= false;
+	boolean slowDownButton		= false;
+	boolean intakeWheelsIn		= false;
+	boolean intakeWheelsOut		= false;
+	boolean intakeOverrideSwitch= false;
+	boolean closeIntakeButton	= false;
+	double elevatorStick		= 0.0;
+	boolean elevatorTotalOverrideSwitch = false;
 	
-	boolean presetButtonBottom = controlBoard.getRawButton(1);
-	boolean presetButtonOneToteHigh = controlBoard.getRawButton(1);
-	boolean presetButtonAboveIntake = controlBoard.getRawButton(1);
-	boolean presetButtonTop = controlBoard.getRawButton(1);
+	boolean presetButtonBottom = false;
+	boolean presetButtonOneToteHigh = false;
+	boolean presetButtonAboveIntake = false;
+	boolean presetButtonTop = false;
 	
-	boolean ejectButton = controlBoard.getRawButton(1);
+	boolean ejectButton = false;
 	
-	boolean zeroNavXButton = controlBoard.getRawButton(1);
+	boolean zeroNavXButton = false;
 	
 	double          trim            = 0;
 	boolean			write			= false;
@@ -249,7 +249,7 @@ public class Robot extends IterativeRobot {
     	if(presetButtonAboveIntake){
     		//drive.frontRight.steerEncoder.trimCenter(trim);
     		drive.frontRight.override(true, elevatorStick, 0.1);
-    		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
+    		if(write && !oldWrite) drive.frontRight.steerEncoder.writeOffset();
     	}
     	else{
     		//drive.frontRight.steerEncoder.trimCenter(0);
@@ -260,7 +260,7 @@ public class Robot extends IterativeRobot {
     	if(presetButtonOneToteHigh){
     		//drive.backRight.steerEncoder.trimCenter(trim);
     		drive.backRight.override(true, elevatorStick, 0.1);
-    		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
+    		if(write && !oldWrite) drive.backRight.steerEncoder.writeOffset();
     	}
     	else {
     		//drive.backRight.steerEncoder.trimCenter(0);
@@ -270,7 +270,7 @@ public class Robot extends IterativeRobot {
     	if(presetButtonBottom){
     		//drive.backLeft.steerEncoder.trimCenter(trim);
     		drive.backLeft.override(true, elevatorStick, 0.1);
-    		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
+    		if(write && !oldWrite) drive.backLeft.steerEncoder.writeOffset();
     	}
     	else{
     		//drive.backLeft.steerEncoder.trimCenter(0);
@@ -283,12 +283,7 @@ public class Robot extends IterativeRobot {
     public void robotCode(){
     	logger.set(controlBoard.getRawButton(2), 4);
     	logger.set(pdp.getVoltage(), 3);
-    	
-    	drive.frontLeft.override(false,0,0);
-    	drive.frontRight.override(false,0,0);
-    	drive.backRight.override(false,0,0);
-    	drive.backLeft.override(false,0,0);
-    	
+    	    	
     	if(zeroNavXButton) drive.zeroNavX();
     	
     	fieldCentricButton = controlBoard.getRawButton(10);
@@ -301,9 +296,10 @@ public class Robot extends IterativeRobot {
     	
     	drive.setETankMode(tankDriveSwitch);
     	
-    	if(snapToFeederButton) drive.alignFeeder();
-    	else if(slowDownButton)drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
-    	else drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
+//    	if(snapToFeederButton) drive.alignFeeder();
+//    	else if(slowDownButton)drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
+    	
+    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
        	
     	elevator.setIntakeOverride(controlBoard.getRawButton(6));
     	elevator.setIntakeOpen(!closeIntakeButton);

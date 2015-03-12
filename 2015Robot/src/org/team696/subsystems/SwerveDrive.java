@@ -163,20 +163,20 @@ public class SwerveDrive extends Runnable{
 	public void setSteerControlInput(double angle){
 		absoluteSetAngle = angle;
 	}
-	public void setSteerControl(boolean useControl){
-		useRotationFeedback = useControl;
-	}
+//	public void setSteerControl(boolean useControl){
+//		useRotationFeedback = useControl;
+//	}
 	
 	public void setETankMode(boolean _tankMode){
 		emergencyTankMode = _tankMode;
 	}
 	
-	public void alignFeeder(){
-		if(robotPosition[2]>0 && robotPosition[2] <180) absoluteSetAngle = 135;
-		else absoluteSetAngle = 215;
-		useRotationFeedback = true;
-		useLidarFeedback 	= true;
-	}
+//	public void alignFeeder(boolean _align){
+//		if(robotPosition[2]>0 && robotPosition[2] <180) absoluteSetAngle = 135;
+//		else absoluteSetAngle = 215;
+//		useRotationFeedback = _align;
+//		useLidarFeedback 	= _align;
+//	}
 		
 	private void updateOdometry(){
 		double [][] wheelVectors = new double[4][2];

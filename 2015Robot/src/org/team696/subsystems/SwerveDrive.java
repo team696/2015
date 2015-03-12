@@ -54,6 +54,7 @@ public class SwerveDrive extends Runnable{
 	private double absoluteSetAngle;
 	CustomPID steerController = new CustomPID(0.01, 0.0, 0.01);
 	
+	private boolean emergencyTankMode;
 	
 	IMU navX;
 	SerialPort port;
@@ -130,12 +131,24 @@ public class SwerveDrive extends Runnable{
         
 		setWheelVectors = calculateVectors(setRobotVector[0], setRobotVector[1], setRobotVector[2]);
 		setWheelValues = calculateWheelValues(setWheelVectors);
+		if(emergencyTankMode){
+			frontLeft.override(true, 0, setRobotVector[1]+setRobotVector[2]);
+			frontRight.override(true, 0, setRobotVector[1]-setRobotVector[2]);
+			backRight.override(true, 0, setRobotVector[1]-setRobotVector[2]);
+			backLeft.override(true, 0, setRobotVector[1]+setRobotVector[2]);
+			
+		}else{
+			frontLeft.override(false, 0, setRobotVector[1]+setRobotVector[2]); //TURN OFF OVERRIDES
+			frontRight.override(false, 0, setRobotVector[1]-setRobotVector[2]);
+			backRight.override(false, 0, setRobotVector[1]-setRobotVector[2]);
+			backLeft.override(false, 0, setRobotVector[1]+setRobotVector[2]);
+			
+			frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
+			frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
+			backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
+			backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
+		}
 		
-		
-		frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
-		frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);
-		backRight.setValues(setWheelValues[2][0], setWheelValues[2][1]);
-		backLeft.setValues(setWheelValues[3][0], setWheelValues[3][1]);
 	}
 	
 	@Override
@@ -152,6 +165,10 @@ public class SwerveDrive extends Runnable{
 	}
 	public void setSteerControl(boolean useControl){
 		useRotationFeedback = useControl;
+	}
+	
+	public void setETankMode(boolean _tankMode){
+		emergencyTankMode = _tankMode;
 	}
 	
 	public void alignFeeder(){

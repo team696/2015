@@ -39,6 +39,7 @@ public class SwerveModule extends Runnable{
 	double distPerClick =wheelDiam*Math.PI*gearRatio*(1.0/12.0)/pulsePerRot;
 	double encoderCount = 0.0;
 	boolean override = false;
+	boolean setWheelToZero = false;
 	
 	public SwerveModule(ModuleConfigs _configs)throws FileNotFoundException, UnsupportedEncodingException,IOException{
 		configs = _configs;
@@ -75,16 +76,17 @@ public class SwerveModule extends Runnable{
 		odometryVector[1] += (encoderCount-lastEncoderCount)*Math.cos(Math.toRadians(angle));
 		
 		error = setAngle - angle;
-		
-		if(error>180) error = -(360-error);  //check if over the
-		else if(error<-180) error = (360+error);//zero line to flip error 
-
-		if(error > 90){
-			error = error-180;
-			reverseMotor = true;
-		}else if(error<-90){
-			error = error+180;
-			reverseMotor = true;
+		if(!setWheelToZero){
+			if(error>180) error = -(360-error);  //check if over the
+			else if(error<-180) error = (360+error);//zero line to flip error 
+			
+			if(error > 90){
+				error = error-180;
+				reverseMotor = true;
+			}else if(error<-90){
+				error = error+180;
+				reverseMotor = true;
+			}
 		}
 		
 		steerController.update(-error);
@@ -116,6 +118,10 @@ public class SwerveModule extends Runnable{
 		override = _override;
 		overrideSteer = _overrideSteer;
 		overrideSpeed = _overrideSpeed;
+	}
+	
+	public void setToZero(boolean _setToZero){
+		setWheelToZero = _setToZero;
 	}
 	
 	public double[] getCumVector(){

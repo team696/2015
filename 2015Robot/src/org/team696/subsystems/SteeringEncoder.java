@@ -95,12 +95,15 @@ public class SteeringEncoder extends Runnable {
 	
 	public void trimCenter(double trim){
 		offset+=trim;
-		}
+	}
 	
+
 	public void writeOffset(){
 		System.out.print(wheel + "  writing");
 		centerLogger.makeWriter();
-		offset=offset%degreesPerRotation;
+		//offset=offset%degreesPerRotation; //THIS IS OUR OFFFSET WHICH WE ARE CHANGING
+		offset = Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation);
+		
 		if (offset < 0)offset+=degreesPerRotation;
 		centerLogger.write(offset);
 		centerLogger.closeWriter();

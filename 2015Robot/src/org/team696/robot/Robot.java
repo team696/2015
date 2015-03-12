@@ -50,7 +50,10 @@ public class Robot extends IterativeRobot {
 	boolean fieldCentric 		= true;
 	boolean fieldCentricButton	= false;
 	boolean oldFieldCentricButton = fieldCentricButton;
+	boolean tankDriveSwitch		= controlBoard.getRawButton(1);
 	
+	boolean setWheelsToZero		= controlBoard.getRawButton(1);
+	boolean slowDownButton		= controlBoard.getRawButton(1);
 	boolean intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
 	boolean intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
 	boolean intakeOverrideSwitch= controlBoard.getRawButton(0);
@@ -191,7 +194,9 @@ public class Robot extends IterativeRobot {
     	snapToFeederButton	= controlBoard.getRawButton(1);
     	fieldCentricButton	= controlBoard.getRawButton(1);
     	oldFieldCentricButton = fieldCentricButton;
-    	
+    	setWheelsToZero		= controlBoard.getRawButton(1);
+    	slowDownButton		= controlBoard.getRawButton(1);
+    	tankDriveSwitch		= controlBoard.getRawButton(1);
     	intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
     	intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
     	intakeOverrideSwitch= controlBoard.getRawButton(0);
@@ -217,39 +222,71 @@ public class Robot extends IterativeRobot {
     public void calibrate(){
     	
     	oldWrite = write;
-    	write = fieldCentricButton;
+    	write = closeIntakeButton;
     	trim = elevatorStick*2;
-    	
+    	if(setWheelsToZero){
+    		drive.frontLeft.setToZero(true);
+    		drive.frontRight.setToZero(true);
+    		drive.backRight.setToZero(true);
+    		drive.backLeft.setToZero(true);
+        }else{
+        	drive.frontLeft.setToZero(false);
+    		drive.frontRight.setToZero(false);
+    		drive.backRight.setToZero(false);
+    		drive.backLeft.setToZero(false);
+        
     	if(presetButtonTop){
-    		drive.frontLeft.steerEncoder.trimCenter(trim);
+    		//drive.frontLeft.steerEncoder.trimCenter(trim);
+    		drive.frontLeft.override(true, elevatorStick, 0.1);
     		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}
-    	else drive.frontLeft.steerEncoder.trimCenter(0);
+    	else{
+    		//drive.frontLeft.steerEncoder.trimCenter(0);
+    		drive.frontLeft.override(true, 0, 0);
+    	}
   
     	if(presetButtonAboveIntake){
-    		drive.frontRight.steerEncoder.trimCenter(trim);
+    		//drive.frontRight.steerEncoder.trimCenter(trim);
+    		drive.frontRight.override(true, elevatorStick, 0.1);
     		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}
-    	else drive.frontRight.steerEncoder.trimCenter(0);
+    	else{
+    		//drive.frontRight.steerEncoder.trimCenter(0);
+    		drive.frontRight.override(true, 0, 0);
+        	
+    	}
     	
     	if(presetButtonOneToteHigh){
-    		drive.backRight.steerEncoder.trimCenter(trim);
+    		//drive.backRight.steerEncoder.trimCenter(trim);
+    		drive.backRight.override(true, elevatorStick, 0.1);
     		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}
-    	else drive.backRight.steerEncoder.trimCenter(0);
+    	else {
+    		//drive.backRight.steerEncoder.trimCenter(0);
+    		drive.backRight.override(true, 0, 0);
+    	}
     	
     	if(presetButtonBottom){
-    		drive.backLeft.steerEncoder.trimCenter(trim);
+    		//drive.backLeft.steerEncoder.trimCenter(trim);
+    		drive.backLeft.override(true, elevatorStick, 0.1);
     		if(write && !oldWrite) drive.frontLeft.steerEncoder.writeOffset();
     	}
-    	else drive.backLeft.steerEncoder.trimCenter(0);
+    	else{
+    		//drive.backLeft.steerEncoder.trimCenter(0);
+    		drive.backLeft.override(true, 0, 0);
+        	
+    	}
+        }
     }
     
     public void robotCode(){
     	logger.set(controlBoard.getRawButton(2), 4);
     	logger.set(pdp.getVoltage(), 3);
     	
-    	
+    	drive.frontLeft.override(false,0,0);
+    	drive.frontRight.override(false,0,0);
+    	drive.backRight.override(false,0,0);
+    	drive.backLeft.override(false,0,0);
     	
     	if(zeroNavXButton) drive.zeroNavX();
     	
@@ -260,9 +297,11 @@ public class Robot extends IterativeRobot {
     	if(Math.abs(xAxis)<0.1 && Math.abs(yAxis)<0.1) angle = 0;
     	else  angle = Math.toDegrees(-Math.atan2(xAxis, -yAxis));
     	if(angle<0) angle+=360;
-    	    
+    	
+    	drive.setETankMode(tankDriveSwitch);
+    	
     	if(snapToFeederButton) drive.alignFeeder();
-    	else if(controlBoard.getRawButton(8))drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
+    	else if(slowDownButton)drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
     	else drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
        	
     	elevator.setIntakeOverride(controlBoard.getRawButton(6));

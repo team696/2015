@@ -157,6 +157,7 @@ public class Robot extends IterativeRobot {
 		String autonScript = SmartDashboard.getString("autonCode", "StringNotFound");
 		System.out.println(autonScript);
 		autonScheduler.setScript(autonScript);
+		autonScheduler.stop();
 		autonScheduler.start(20);
 		
 	}
@@ -295,6 +296,12 @@ public class Robot extends IterativeRobot {
     	if(angle<0) angle+=360;
     	
     	drive.setETankMode(tankDriveSwitch);
+    	if(!tankDriveSwitch){
+    		drive.frontLeft.override(false, 0, 0); //TURN OFF OVERRIDES
+    		drive.frontRight.override(false, 0, 0);
+    		drive.backRight.override(false, 0, 0);
+    		drive.backLeft.override(false, 0, 0);
+    	}
     	
 //    	if(snapToFeederButton) drive.alignFeeder();
 //    	else if(slowDownButton)drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
@@ -309,12 +316,11 @@ public class Robot extends IterativeRobot {
     	
     	elevator.setEjector(ejectButton);
     	if(elevatorTotalOverrideSwitch)			elevator.setTotalOverride(elevatorStick);
-    	else if(Math.abs(elevatorStick)>0.01)	elevator.setOverride(elevatorStick);
     	else if(presetButtonBottom)				elevator.setPreset(Presets.BOTTOM);
     	else if(presetButtonOneToteHigh)		elevator.setPreset(Presets.ONE_TOTE_HIGH);
     	else if(presetButtonAboveIntake)		elevator.setPreset(Presets.ABOVE_INTAKE);
     	else if(presetButtonTop)				elevator.setPreset(Presets.TOP);
-    	
+    	else 									elevator.setOverride(elevatorStick);
 //    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1] + "   " + drive.getPosition()[2]);
     	
 //    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");

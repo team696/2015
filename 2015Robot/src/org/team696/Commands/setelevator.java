@@ -17,5 +17,6 @@ public class setelevator extends Command{
 		System.out.println(setPosition + "   " + Robot.elevator.getPosition() + "   "+ movingUp);
 		Robot.elevator.setPositon(setPosition);
 		isFinished = Robot.elevator.atTarget();
+		System.out.println(isFinished);
 	}
 }

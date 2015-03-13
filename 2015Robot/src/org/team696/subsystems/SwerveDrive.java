@@ -98,7 +98,7 @@ public class SwerveDrive extends Runnable{
             firstIteration = false;
         }
         
-        System.out.println(lidar.getDistance());
+//        System.out.println(lidar.getDistance());
         
         updateOdometry();
 		
@@ -138,10 +138,10 @@ public class SwerveDrive extends Runnable{
 			backLeft.override(true, 0, setRobotVector[1]+setRobotVector[2]);
 			
 		}else{
-			frontLeft.override(false, 0, setRobotVector[1]+setRobotVector[2]); //TURN OFF OVERRIDES
-			frontRight.override(false, 0, setRobotVector[1]-setRobotVector[2]);
-			backRight.override(false, 0, setRobotVector[1]-setRobotVector[2]);
-			backLeft.override(false, 0, setRobotVector[1]+setRobotVector[2]);
+//			frontLeft.override(false, 0, setRobotVector[1]+setRobotVector[2]); //TURN OFF OVERRIDES
+//			frontRight.override(false, 0, setRobotVector[1]-setRobotVector[2]);
+//			backRight.override(false, 0, setRobotVector[1]-setRobotVector[2]);
+//			backLeft.override(false, 0, setRobotVector[1]+setRobotVector[2]);
 			
 			frontLeft.setValues(setWheelValues[0][0], setWheelValues[0][1]);
 			frontRight.setValues(setWheelValues[1][0], setWheelValues[1][1]);

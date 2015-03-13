@@ -28,6 +28,7 @@ public class Elevator extends Runnable {
 	
 	public Presets presets = Presets.BOTTOM;
 	public ControlType controlType = ControlType.POSITIONAL;
+	
 	Encoder encoder;
 	
 	DigitalInput limitSwitchBot;
@@ -79,10 +80,10 @@ public class Elevator extends Runnable {
 			positionalMotion();
 			runElevator();
 		case OVERRIDE:
-			target = encoder.getDistance();
+//			target = encoder.getDistance();
 			runElevator();
 		case TOTAL_OVERRIDE:
-			target = encoder.getDistance();
+//			target = encoder.getDistance();
 			setSpeed(curSetSpeed);
 		default:
 			runElevator();
@@ -96,13 +97,14 @@ public class Elevator extends Runnable {
 	
 	public void setOverride(double _speed){
 		controlType = ControlType.OVERRIDE;
-		if(_speed <curSetSpeed) curSetSpeed += Util.constrain(_speed, -0.01, 0.01); 
-		else curSetSpeed +=Util.constrain(_speed, -0.1, 0.1);
+		if(_speed <curSetSpeed) curSetSpeed += Util.constrain(_speed-curSetSpeed, -0.15, 0.15); 
+		else curSetSpeed +=Util.constrain(_speed-curSetSpeed, -0.3, 0.3);
 	}
 	
 	public void setPreset(Presets _preset){
 		controlType = ControlType.PRESET;
 		presets =_preset;
+		System.out.println(presets+ "  "+ target);
 	}
 	
 	public void setPositon(double _position){
@@ -122,25 +124,28 @@ public class Elevator extends Runnable {
 	}	
 	
 	public boolean atTarget(){
+		System.out.println(Math.abs(target-getPosition()));
 		return Math.abs(target-getPosition())<0.2;
 	}
 	
 	private void presetMotion(){
 		
 		switch(presets){
-		case BOTTOM:		target = 0.1;
-		case ONE_TOTE_HIGH:	target = 1;
-		case ABOVE_INTAKE:	target = 3;
-		case TOP:			target = 5;
-		default:			target = 0.1; 
+		case BOTTOM:		target = 0.1;break;
+		case ONE_TOTE_HIGH:	target = 1;break;
+		case ABOVE_INTAKE:	target = 3;break;
+		case TOP:			target = 5;break;
+		default:			target = 0.1;
 		}
 		positionalMotion();
 		}
 	
 	private void positionalMotion(){
-		if(target-getPosition()>0.2)	setOverride(1);
-		else if(target-getPosition()<0.2) setOverride(-0.5);
+		if(target-getPosition()>0.2)	setOverride(Util.constrain(target-getPosition(), -0.5, 1));
+		else if(target-getPosition()<0.2) setOverride(Util.constrain(target-getPosition(),-0.3,1));
 		else setOverride(0);
+		System.out.println(target+ "   " + getPosition());
+		
 	}
 
 	
@@ -152,7 +157,10 @@ public class Elevator extends Runnable {
 		
 		if(curSetSpeed>0){            //if we are moving upwards
 			if(tempDistance>4){
-				if(tempTopSwitch) setSpeed(0);
+				if(tempTopSwitch){
+					curSetSpeed=0;
+					setSpeed(curSetSpeed);
+				}
 				else{
 					curSetSpeed = Util.constrain(curSetSpeed,0, 0.3);
 					setSpeed(curSetSpeed);

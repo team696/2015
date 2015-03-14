@@ -137,6 +137,10 @@ public class Robot extends IterativeRobot {
 		setConfig();
 		try {
 			drive = new SwerveDrive(configs);
+			drive.frontLeft.steerEncoder.start(10);
+			drive.frontRight.steerEncoder.start(10);
+			drive.backRight.steerEncoder.start(10);
+			drive.backLeft.steerEncoder.start(10);
 //			testModule = new SwerveModule(configs[2]);
 		} 
 		catch(FileNotFoundException fnfE){}
@@ -152,8 +156,7 @@ public class Robot extends IterativeRobot {
 		
     	elevator.start(10);
     	drive.start(10);
-		drive.zeroNavX();
-		
+    	drive.zeroNavX();
 		String autonScript = SmartDashboard.getString("autonCode", "StringNotFound");
 		System.out.println(autonScript);
 		autonScheduler.setScript(autonScript);
@@ -175,6 +178,8 @@ public class Robot extends IterativeRobot {
     	autonScheduler.stop();
     	System.out.println("stopping scheduler");
     	drive.start(10);
+    	drive.zeroNavX();
+    	drive.yawOffset = 90;
 //    	testModule.start(10);
     	elevator.start(10);
     	logger.start(20);
@@ -193,8 +198,8 @@ public class Robot extends IterativeRobot {
     	yAxis				= -Util.deadZone(Util.map(controlBoard.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	xAxis				= Util.deadZone(Util.map(controlBoard.getRawAxis(2), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	snapToFeederButton	= false;//controlBoard.getRawButton(1);
-    	fieldCentricButton	= controlBoard.getRawButton(7);
     	oldFieldCentricButton = fieldCentricButton;
+    	fieldCentricButton	= controlBoard.getRawButton(7);
     	setWheelsToZero		= controlBoard.getRawButton(4);
     	slowDownButton		= false;//controlBoard.getRawButton(1);
     	tankDriveSwitch		= controlBoard.getRawButton(2);
@@ -204,7 +209,7 @@ public class Robot extends IterativeRobot {
     	intakeOverrideSwitch= false;//controlBoard.getRawButton(0);
     	closeIntakeButton	= controlBoard.getRawButton(6);
     	elevatorStick		= controlBoard.getRawAxis(4);
-    	elevatorTotalOverrideSwitch = controlBoard.getRawButton(5);
+    	elevatorTotalOverrideSwitch = false;//controlBoard.getRawButton(5);
     	
     	presetButtonBottom = controlBoard.getRawButton(13);
     	presetButtonOneToteHigh = controlBoard.getRawButton(12);
@@ -215,7 +220,7 @@ public class Robot extends IterativeRobot {
     	
     	zeroNavXButton = controlBoard.getRawButton(9);
     	
-    	calibrate = controlBoard.getRawButton(3);
+    	calibrate = controlBoard.getRawButton(5);
     	if(calibrate) calibrate();
     	else robotCode();
     	
@@ -287,7 +292,6 @@ public class Robot extends IterativeRobot {
     	    	
     	if(zeroNavXButton) drive.zeroNavX();
     	
-    	fieldCentricButton = controlBoard.getRawButton(10);
     	if(fieldCentricButton&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
     	
     	double angle;
@@ -310,7 +314,7 @@ public class Robot extends IterativeRobot {
        	
     	elevator.setIntakeOverride(controlBoard.getRawButton(6));
     	elevator.setIntakeOpen(!closeIntakeButton);
-    	if(intakeWheelsIn) elevator.setIntakeMotors(1.0);
+    	if(intakeWheelsIn) elevator.setIntakeMotors(0.6);
     	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);
     	else elevator.setIntakeMotors(0);
     	

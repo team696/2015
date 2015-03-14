@@ -55,17 +55,24 @@ public class SteeringEncoder extends Runnable {
 		String str = "0";
 		str = centerLogger.read(1)[0];
 		centerLogger.closeReader();
-		offset = Double.parseDouble(str);
+		offset = Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation);
+		
+//		try{
+//			offset = Double.parseDouble(str);
+//		}catch(NumberFormatException e){
+//			offset = 0;
+//		}
 		steerCounter.reset();
 		
 		String s = "0";
 		counter.makeReader();
-		try{
-			 s = counter.read(1)[0];
-			 counter.closeReader();
-		}catch(IOException e){e.printStackTrace();}
+//		try{
+//			 s = counter.read(1)[0];
+//			 counter.closeReader();
+//		}catch(IOException e){e.printStackTrace();}
 		if (s == null)countOffset = 0;
 		else countOffset = Integer.parseInt(s);
+		countOffset=0;
 		steerCounter.reset();
 	}
 	
@@ -101,7 +108,7 @@ public class SteeringEncoder extends Runnable {
 	public void writeOffset(){
 		System.out.print(wheel + "  writing");
 		centerLogger.makeWriter();
-		//offset=offset%degreesPerRotation; //THIS IS OUR OFFFSET WHICH WE ARE CHANGING
+//		offset=offset%degreesPerRotation; //THIS IS OUR OFFFSET WHICH WE ARE CHANGING
 		offset = Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation);
 		
 		if (offset < 0)offset+=degreesPerRotation;

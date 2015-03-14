@@ -26,7 +26,8 @@ public class SwerveDrive extends Runnable{
 	
 	private double length = 21/12;
 	private double width = 33/12;
-	private double[] centerArray = {0.0,0.0};
+	private double[] centerArray = {0.0,21/12};
+	public double yawOffset = 0;
 	//first dimension refers to each module from front left to back right
 	//in a clockwise order
 	//second dimension is each 
@@ -297,13 +298,14 @@ public class SwerveDrive extends Runnable{
 		
 		setRobotVector[2] = rotation;
 		
-		if(fieldCentric) setRobotVector[1]-= navX.getYaw();
+		if(fieldCentric) setRobotVector[1]-= navX.getYaw() - yawOffset;
 		
 		return true;
 	}
 	
 	public void zeroNavX(){
 		navX.zeroYaw();
+		yawOffset = 0;
 	}
 	public void zeroOdometry(){
 		for(int fish=0;fish<robotPosition.length;fish++){

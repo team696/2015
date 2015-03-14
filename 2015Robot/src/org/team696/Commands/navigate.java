@@ -100,7 +100,9 @@ public class navigate extends Command{
 		else if(error<-180) error = (360+error);//zero line to flip error 
 		rotationController.update(error);
 		setVector[2] = rotationController.getOutput();
-		System.out.println("ROTATION CONTROLLER OUTPUT"+ rotationController.getOutput());
+		//System.out.println("NAVIGATION STUFF:   "+ navVector[0] + ",   " + position[0] +",   " +navVector[1] + ",   "+ position[1]);
+		System.out.println("NAVX:   " + Robot.drive.getPosition()[2]);
+		
 		if(isFinished) Robot.drive.setDriveValues(0, 0, 0, false);
 		else Robot.drive.setDriveValues(setVector[0], setVector[1], setVector[2], true);
 		

@@ -14,9 +14,14 @@ public class setelevator extends Command{
 	}
 	@Override
 	public void update(){
-		System.out.println(setPosition + "   " + Robot.elevator.getPosition() + "   "+ movingUp);
+//		System.out.println(setPosition + "   " + Robot.elevator.getPosition() + "   "+ movingUp);
+//		if(movingUp) Robot.elevator.setOverride(0.7);
+//		else Robot.elevator.setOverride(-0.4);
+//		//isFinished = Robot.elevator.atTarget();
+//		isFinished = Math.abs(setPosition-Robot.elevator.getPosition())<0.2;
+//		if(isFinished)Robot.elevator.setOverride(0.0);
 		Robot.elevator.setPositon(setPosition);
-		isFinished = Robot.elevator.atTarget();
-		System.out.println(isFinished);
-	}
+		if(Robot.elevator.atTarget()) Robot.elevator.setOverride(0);
+		System.out.println("ELEVATOR CODE   "+ setPosition + "   " + Robot.elevator.getPosition() + "   "+ movingUp);
+		}
 }

@@ -4,7 +4,7 @@ import org.team696.autonomous.Command;
 import org.team696.robot.Robot;
 
 public class setelevator extends Command{
-	double setPosition;
+	double setPosition = 0.0;
 	boolean movingUp;
 	public setelevator(Double _position, Boolean _parallel){
 		setPosition = _position;

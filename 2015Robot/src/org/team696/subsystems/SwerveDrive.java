@@ -26,7 +26,7 @@ public class SwerveDrive extends Runnable{
 	
 	private double length = 21/12;
 	private double width = 33/12;
-	private double[] centerArray = {0.0,21/12};
+	private double[] centerArray = {0.0,0.0};
 	public double yawOffset = 0;
 	//first dimension refers to each module from front left to back right
 	//in a clockwise order

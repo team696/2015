@@ -159,6 +159,7 @@ public class Robot extends IterativeRobot {
     	drive.zeroNavX();
 		String autonScript = SmartDashboard.getString("autonCode", "StringNotFound");
 		System.out.println(autonScript);
+		autonScheduler = new Scheduler();
 		autonScheduler.setScript(autonScript);
 		autonScheduler.stop();
 		autonScheduler.start(20);

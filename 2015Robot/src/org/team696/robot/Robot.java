@@ -313,7 +313,7 @@ public class Robot extends IterativeRobot {
     	
     	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
        	
-    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
+//    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
     	elevator.setIntakeOpen(!closeIntakeButton);
     	if(intakeWheelsIn) elevator.setIntakeMotors(0.6);
     	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);

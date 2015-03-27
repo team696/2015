@@ -165,7 +165,7 @@ public class Elevator extends Runnable {
 		if(inSetSpeed <curSetSpeed) curSetSpeed += Util.constrain(inSetSpeed-curSetSpeed, -0.025, 0.025); 
 		else curSetSpeed +=Util.constrain(inSetSpeed-curSetSpeed, -0.1, 0.1);
 		
-		if(curSetSpeed>0){            //if we are moving upwards
+		if(curSetSpeed>0.01){            //if we are moving upwards
 			if(tempDistance>4){
 				if(tempTopSwitch){
 					curSetSpeed=0;
@@ -175,11 +175,14 @@ public class Elevator extends Runnable {
 					curSetSpeed = Util.constrain(curSetSpeed,0, 0.3);
 					setSpeed(curSetSpeed);
 				}
-			}else if(((tempDistance>0.2 && tempDistance<3) && !intake.isOpen())) setSpeed(0);
+			}else if(((tempDistance>0.2 && tempDistance<3) && !intake.isOpen())){
+				curSetSpeed = 0;
+				setSpeed(curSetSpeed, false);
+			}
 			else setSpeed(curSetSpeed);
 			
 			
-		}else if(curSetSpeed<0){                //if we are going downwards
+		}else if(curSetSpeed<-0.01){                //if we are going downwards
 			if(!intake.isOpen() && tempDistance<3 && tempDistance>0.2){
 				curSetSpeed =0;
 				setSpeed(curSetSpeed, false);
@@ -205,10 +208,10 @@ public class Elevator extends Runnable {
 		return encoder.getDistance();
 	}
 	
-	public void setIntakeOverride(boolean _override){
-		intakeOverride = _override;
-	}
-	
+//	public void setIntakeOverride(boolean _override){
+//		intakeOverride = _override;
+//	}
+//	
 	private void setSpeed(double _setspeed){
 		if(Math.abs(_setspeed)<0.1){
 			

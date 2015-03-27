@@ -56,7 +56,10 @@ public class Interpreter{
 				try{
 					arguments[jesus] = Double.parseDouble(argsString[jesus]);
 				}catch(NumberFormatException e){
-					if(argsString[jesus].equalsIgnoreCase("parallel")) arguments[jesus] = true;
+					
+					if(argsString[jesus].equalsIgnoreCase("true")) arguments[jesus] = true;
+					else if(argsString[jesus].equalsIgnoreCase("false")) arguments[jesus] = false;
+					else if(argsString[jesus].equalsIgnoreCase("parallel")) arguments[jesus] = true;
 					else arguments[jesus] = false;
 					
 				}

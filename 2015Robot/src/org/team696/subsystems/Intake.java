@@ -17,7 +17,11 @@ public class Intake extends Runnable{
 	
 	boolean eject = false;
 	boolean intake = false;
+	
 	double speed = 0;
+	double leftSpeed = 0;
+	double rightSpeed = 0;
+	
 	boolean intakeOpen = true;
 	boolean isOpen = false;
 	boolean lastIntakeOpen = true;
@@ -41,8 +45,8 @@ public class Intake extends Runnable{
 	
 	@Override
 	public void update() {
-		rightIn.set(speed);
-		leftIn.set(-speed);
+		rightIn.set(rightSpeed);
+		leftIn.set(-leftSpeed);
 		open.set(!intakeOpen);
 		ejector.set(eject);
 		if(intakeOpen && !lastIntakeOpen) timer.reset();
@@ -59,6 +63,12 @@ public class Intake extends Runnable{
 	
 	public void setMotors(double _speed) {
 		speed = _speed;
+		leftSpeed = speed;
+		rightSpeed=speed;
+	}
+	public void setIndividualMotors(double _leftSpeed, double _rightSpeed){
+		leftSpeed = _leftSpeed;
+		rightSpeed = _rightSpeed;
 	}
 	public void setOpen(boolean _open){
 		intakeOpen = _open;

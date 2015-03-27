@@ -84,6 +84,7 @@ public class Elevator extends Runnable {
 			runElevator();
 			break;
 		case OVERRIDE:
+			System.out.println(encoder.getDistance());
 //			target = encoder.getDistance();
 			runElevator();
 			break;
@@ -122,6 +123,9 @@ public class Elevator extends Runnable {
 	public void setIntakeMotors(double _speed){
 		intake.setMotors(_speed);
 	}
+	public void setIntakeMotorsIndividual(double _leftSpeed, double _rightSpeed){
+		intake.setIndividualMotors(_leftSpeed, _rightSpeed);
+	}
 	
 	public void setIntakeOpen(boolean _open){
 		intakeOpen = _open;
@@ -131,7 +135,7 @@ public class Elevator extends Runnable {
 	}	
 	
 	public boolean atTarget(){
-		System.out.println(Math.abs(target-getPosition()));
+		System.out.println("ATTARGET PRINT:  " + Math.abs(target-getPosition()));
 		return Math.abs(target-getPosition())<0.2;
 	}
 	

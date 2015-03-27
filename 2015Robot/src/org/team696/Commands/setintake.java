@@ -4,8 +4,8 @@ import org.team696.autonomous.Command;
 import org.team696.robot.Robot;
 public class setintake extends Command {
 	
-	public setintake(Double _speed){
-		Robot.elevator.setIntakeMotors(_speed);
+	public setintake(Double _leftSpeed, Double _rightSpeed){
+		Robot.elevator.setIntakeMotorsIndividual(_leftSpeed, _rightSpeed);
 	}
 	
 	@Override

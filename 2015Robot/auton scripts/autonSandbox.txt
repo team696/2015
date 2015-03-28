@@ -1,20 +1,22 @@
 setElevator: 2.0, parallel
 openIntake
-wait: 2.0
+setIntake: 1.0, -1.0
+wait: 1.0
 closeIntake
-setIntake: 1.0
-wait: 2.0
-setIntake: 0.0
+setIntake: 1.0, 1.0
+wait: 0.5
+setIntake: 0.0, 0.0
 openIntake
 setElevator: 0.3, serial
 setElevator: 2.0, parallel
-wait: 2.0
+setIntake: 1.0, -1.0
+wait: 1.0
 closeIntake
-setIntake: 1.0
-wait: 2.0
-setIntake: 0.0
+setIntake: 1.0, 1.0
+wait: 0.5
+setIntake: 0.0, 0.0
 openIntake
 setElevator: 0.3, serial
 setElevator: 1.0, parallel
-wait: 2.0
-setElevator: 0.3, serial
+wait: 1.5
+setElevator: 0.0, serial

@@ -4,9 +4,9 @@ setIntake: 0.5, -0.5
 navigate: -1.5, 0.0, 0.0, 0.6, 0.4, false, serial
 navigate: -1.5, 2.0, 0.0, 0.6, 0.4, false, serial
 navigate: -0.5, 3.0, 0.0, 0.6, 0.4, false, serial
-navigate: -0.5, 3.5, 0.0, 0.6, 0.4, false, serial
+navigate: -0.5, 4.5, 0.0, 0.6, 0.4, false, serial
 closeIntake
-setIntake: 1.0, 1.0
+setIntake: 0.7, 0.7
 wait: 0.5
 navigate: -0.5, 5.0, 0.0, 0.6, 0.4, false, serial
 setIntake: 0.0, 0.0
@@ -17,14 +17,15 @@ setIntake: 0.5, -0.5
 navigate: -1.5, 5.0, 0.0, 0.6, 0.4, false, serial
 navigate: -1.5, 7.0, 0.0, 0.6, 0.4, false, serial
 navigate: -0.5, 8.0, 0.0, 0.6, 0.4, false, serial
-navigate: -0.5, 9.0, 0.0, 0.6, 0.4, false, serial
+navigate: -0.5, 10.0, 0.0, 0.6, 0.4, false, serial
 closeIntake
-setIntake: 1.0, 1.0
+setIntake: 0.7, 0.7
 navigate: -0.5, 11.0, 0.0, 0.6, 0.4, false, serial
 setIntake: 0.0, 0.0
 openIntake
 setElevator: 0.3, serial
 setElevator: 1.0, parallel
 navigate: 4.0, 10.0, 0.0, 0.8, 0.4, false, serial
-navigate: 4.0, 7.0 , 0.0, 0.6, 0.4, false, parallel
+navigate: 7.0, 10.0, 0.0, 0.5, 0.4, false, serial
+navigate: 7.0, 7.0 , 0.0, 0.6, 0.4, false, parallel
 setElevator: 0.0, serial

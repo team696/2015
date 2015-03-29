@@ -66,7 +66,7 @@ public class Robot extends IterativeRobot {
 	boolean presetButtonAboveIntake = false;
 	boolean presetButtonTop = false;
 	
-	boolean ejectButton = false;
+	boolean zeroOdometryButton = false;
 	
 	boolean zeroNavXButton = false;
 	
@@ -217,7 +217,7 @@ public class Robot extends IterativeRobot {
     	presetButtonAboveIntake = controlBoard.getRawButton(11);
     	presetButtonTop = controlBoard.getRawButton(10);
     	
-    	ejectButton = controlBoard.getRawButton(8);
+    	zeroOdometryButton = controlBoard.getRawButton(8);
     	
     	zeroNavXButton = controlBoard.getRawButton(9);
     	
@@ -319,7 +319,8 @@ public class Robot extends IterativeRobot {
     	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);
     	else elevator.setIntakeMotors(0);
     	
-    	elevator.setEjector(ejectButton);
+    	//elevator.setEjector(ejectButton);
+    	if(zeroOdometryButton) drive.zeroOdometry();
     	if(elevatorTotalOverrideSwitch)			elevator.setTotalOverride(elevatorStick);
     	else if(presetButtonBottom)				elevator.setPreset(Presets.BOTTOM);
     	else if(presetButtonOneToteHigh)		elevator.setPreset(Presets.ONE_TOTE_HIGH);

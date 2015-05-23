@@ -6,7 +6,7 @@ public class Main {
 		
 		//scheduler.start(100);
 		
-		fullAutonScheduler scheduler = new fullAutonScheduler();
+		FullAutonScheduler scheduler = new FullAutonScheduler();
 		
 	}
 }

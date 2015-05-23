@@ -5,6 +5,7 @@ import org.team696.robot.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.*;
 
 import com.kauailabs.nav6.frc.IMU;
 import com.kauailabs.nav6.frc.IMUAdvanced;
@@ -19,10 +20,14 @@ import org.team696.subsystems.SwerveModule;
 import org.team696.baseClasses.CustomPID;
 import org.team696.baseClasses.ModuleConfigs;
 import org.team696.baseClasses.Runnable;
+import org.json.*;
 
 public class SwerveDrive extends Runnable{
 
 	private boolean fieldCentric = false;
+	
+	public double [] SLAMPosition = {0.0,0.0,0.0};
+	DatagramSocket odroidSocket = new DatagramSocket(696);
 	
 	private double length = 21/12;
 	private double width = 33/12;
@@ -209,6 +214,10 @@ public class SwerveDrive extends Runnable{
 		robotPosition[1] += cumVectorsAdjusted[1];
 		robotPosition[2] = navX.getYaw();
 //		System.out.println((int)cumVectors[0]+ "   " +(int)cumVectors[1]+ "   " + (int)cumVectors[0]+ "   ");
+	
+		byte[] odroidData = new byte[1024];
+		DatagramPacket odroidPacket = new DatagramPacket(odroidData, odroidData.length);
+		
 	}
 	
 	public void setSteerPID(double P, double I, double D){

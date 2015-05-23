@@ -311,8 +311,10 @@ public class Robot extends IterativeRobot {
 //    	if(snapToFeederButton) drive.alignFeeder();
 //    	else if(slowDownButton)drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/3, angle, rotation, fieldCentric);
     	
-    	drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
+    	//drive.setDriveValues(Math.sqrt((yAxis*yAxis)+(xAxis*xAxis))/2, angle, rotation*3, fieldCentric);
        	
+    	drive.setDriveValues(0, 0, 0, false);
+    	
 //    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
     	elevator.setIntakeOpen(!closeIntakeButton);
     	if(intakeWheelsIn) elevator.setIntakeMotors(0.6);
@@ -327,6 +329,8 @@ public class Robot extends IterativeRobot {
     	else if(presetButtonAboveIntake)		elevator.setPreset(Presets.ABOVE_INTAKE);
     	else if(presetButtonTop)				elevator.setPreset(Presets.TOP);
     	else 									elevator.setOverride(elevatorStick);
+
+    	System.out.println(drive.lidar.getDistance());
 //    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1] + "   " + drive.getPosition()[2]);
     	
 //    	System.out.print((int)drive.frontLeft.steerEncoder.offset+ "   ");

@@ -1,14 +1,16 @@
+package org.team696.autonomous;
 import java.util.Enumeration;
 import java.util.Vector;
+import org.team696.baseClasses.Runnable;
 
-public class fullAutonScheduler extends Runnable{
+public class FullAutonScheduler extends Runnable{
 	
 	Vector<Command> curCommands = new Vector<Command>();
 	Vector<Command> commandQueue = new Vector<Command>();
 	FullAutonInterpreter interpreter = new FullAutonInterpreter();
 	
 	
-	public fullAutonScheduler(){
+	public FullAutonScheduler(){
 		
 	}
 	

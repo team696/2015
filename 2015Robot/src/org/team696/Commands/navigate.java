@@ -3,7 +3,8 @@ package org.team696.Commands;
 import org.team696.autonomous.Command;
 import org.team696.baseClasses.*;
 import org.team696.robot.Robot;
-
+import java.net.DatagramPacket;
+import java.net.DatagramPacket;
 public class navigate extends Command{
 	
 	CustomPID speedController;
@@ -17,6 +18,8 @@ public class navigate extends Command{
 	double[] navVector = {0.0,0.0,0.0};//x, y, and rotation
 	double[] position = {0.0,0.0,0.0};
 	double[] setVector = {0.0,0.0,0.0}; // speed, theta, and rotation
+	
+	
 	
 	public navigate(Double xGoal,Double yGoal,Double rotDegrees) {
 		speed = 0.6;

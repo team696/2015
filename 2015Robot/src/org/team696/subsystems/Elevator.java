@@ -111,7 +111,6 @@ public class Elevator extends Runnable {
 	public void setPreset(Presets _preset){
 		controlType = ControlType.PRESET;
 		presets =_preset;
-		System.out.println(presets+ "  "+ target);
 	}
 	
 	public void setPositon(double _position){
@@ -134,7 +133,6 @@ public class Elevator extends Runnable {
 	}	
 	
 	public boolean atTarget(){
-		System.out.println("ATTARGET PRINT:  " + Math.abs(target-getPosition()));
 		return Math.abs(target-getPosition())<0.2;
 	}
 	
@@ -154,7 +152,6 @@ public class Elevator extends Runnable {
 		if(target-getPosition()>0.2)	setOverride(Util.constrain(target-getPosition(), -0.6, 1));
 		else if(target-getPosition()<0.2) setOverride(Util.constrain(target-getPosition(),-0.6,1));
 		else setOverride(0);
-		System.out.println(target+ "   " + getPosition());
 		
 	}
 
@@ -164,7 +161,6 @@ public class Elevator extends Runnable {
 		boolean tempBottomSwitch = !limitSwitchBot.get();
 		boolean tempTopSwitch = !limitSwitchTop.get();
 		double tempDistance = encoder.getDistance();
-		System.out.println(tempBottomSwitch+"   " + tempTopSwitch);
 		if(inSetSpeed <curSetSpeed) curSetSpeed += Util.constrain(inSetSpeed-curSetSpeed, -0.025, 0.025); 
 		else curSetSpeed +=Util.constrain(inSetSpeed-curSetSpeed, -0.1, 0.1);
 		

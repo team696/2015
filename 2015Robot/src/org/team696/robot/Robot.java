@@ -35,6 +35,8 @@ public class Robot extends IterativeRobot {
 	boolean 		calibrate 		= false;
 	
 	Joystick        controlBoard = new Joystick(0);
+	Joystick		stick		 = new Joystick(1);
+	
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
 //	public static SwerveModule testModule;
@@ -195,9 +197,12 @@ public class Robot extends IterativeRobot {
     	logger.set(accelerometer.getY(), 1);
     	logger.set(accelerometer.getZ(), 2);
     	
-    	rotation				= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
-    	yAxis				= -Util.deadZone(Util.map(controlBoard.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-    	xAxis				= Util.deadZone(Util.map(controlBoard.getRawAxis(2), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	rotation			= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
+    	yAxis				= -Util.deadZone(Util.map(stick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	xAxis				= Util.deadZone(Util.map(stick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	
+    	System.out.println(rotation + "    " + yAxis + "     " + xAxis);
+    	
     	snapToFeederButton	= false;//controlBoard.getRawButton(1);
     	oldFieldCentricButton = fieldCentricButton;
     	fieldCentricButton	= controlBoard.getRawButton(7);

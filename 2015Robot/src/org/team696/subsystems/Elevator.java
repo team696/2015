@@ -84,7 +84,6 @@ public class Elevator extends Runnable {
 			runElevator();
 			break;
 		case OVERRIDE:
-			System.out.println(encoder.getDistance());
 //			target = encoder.getDistance();
 			runElevator();
 			break;
@@ -165,7 +164,7 @@ public class Elevator extends Runnable {
 		boolean tempBottomSwitch = !limitSwitchBot.get();
 		boolean tempTopSwitch = !limitSwitchTop.get();
 		double tempDistance = encoder.getDistance();
-		
+		System.out.println(tempBottomSwitch+"   " + tempTopSwitch);
 		if(inSetSpeed <curSetSpeed) curSetSpeed += Util.constrain(inSetSpeed-curSetSpeed, -0.025, 0.025); 
 		else curSetSpeed +=Util.constrain(inSetSpeed-curSetSpeed, -0.1, 0.1);
 		

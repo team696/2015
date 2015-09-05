@@ -35,8 +35,8 @@ public class Robot extends IterativeRobot {
 	boolean 		calibrate 		= false;
 	
 	Joystick        controlBoard = new Joystick(0);
-	Joystick		stick		 = new Joystick(1);
-	
+//	Joystick		xBoxController=new Joystick(1);
+	Joystick 		joystick	 = new Joystick(1);	
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
 //	public static SwerveModule testModule;
@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot {
 	
 	boolean presetButtonBottom = false;
 	boolean presetButtonOneToteHigh = false;
-	boolean presetButtonAboveIntake = false;
+	boolean presetButtonTwoToteHigh = false;
 	boolean presetButtonTop = false;
 	
 	boolean zeroOdometryButton = false;
@@ -176,6 +176,8 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopInit() {
+        	//setting fieldcentric to false for comfortability
+    	fieldCentric = false;
     	drive.stop();
     	elevator.stop();
     	autonScheduler.stop();
@@ -197,11 +199,20 @@ public class Robot extends IterativeRobot {
     	logger.set(accelerometer.getY(), 1);
     	logger.set(accelerometer.getZ(), 2);
     	
-    	rotation			= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
-    	yAxis				= -Util.deadZone(Util.map(stick.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
-    	xAxis				= Util.deadZone(Util.map(stick.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+    	//xbox controller
+//    	rotation			= Util.deadZone(xBoxController.getRawAxis(4), -0.1, 0.1, 0)/5;
+//    	yAxis				= -Util.deadZone(Util.map(xBoxController.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+//    	xAxis				= Util.deadZone(Util.map(xBoxController.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	
-    	System.out.println(rotation + "    " + yAxis + "     " + xAxis);
+    	//control board and joystick
+    	yAxis				= Util.deadZone(Util.map(joystick.getRawAxis(1), -1, 1, -1.5, 1.5),-0.1,0.1,0);
+    	xAxis				= -Util.deadZone(Util.map(joystick.getRawAxis(0), -1, 1, -1.5, 1.5),-0.1,0.1,0);
+    	rotation			= Util.deadZone(controlBoard.getRawAxis(0), -0.1, 0.1, 0)/2;
+    	System.out.println("y: " + yAxis + "     " + "x: " + xAxis + "      " + "r: " + rotation + "    ");
+    	
+    	//all control board
+//    	yAxis				= -Util.deadZone(Util.map(controlBoard.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
+//    	xAxis				= Util.deadZone(Util.map(controlBoard.getRawAxis(2), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	
     	snapToFeederButton	= false;//controlBoard.getRawButton(1);
     	oldFieldCentricButton = fieldCentricButton;
@@ -219,8 +230,8 @@ public class Robot extends IterativeRobot {
     	
     	presetButtonBottom = controlBoard.getRawButton(13);
     	presetButtonOneToteHigh = controlBoard.getRawButton(12);
-    	presetButtonAboveIntake = controlBoard.getRawButton(11);
-    	presetButtonTop = controlBoard.getRawButton(10);
+    	presetButtonTwoToteHigh = controlBoard.getRawButton(11);
+    	presetButtonTop 		= controlBoard.getRawButton(10);
     	
     	zeroOdometryButton = controlBoard.getRawButton(8);
     	
@@ -229,7 +240,6 @@ public class Robot extends IterativeRobot {
     	calibrate = controlBoard.getRawButton(5);
     	if(calibrate) calibrate();
     	else robotCode();
-    	
     }
     
     public void calibrate(){
@@ -258,7 +268,7 @@ public class Robot extends IterativeRobot {
     		drive.frontLeft.override(true, 0, 0);
     	}
   
-    	if(presetButtonAboveIntake){
+    	if(presetButtonTwoToteHigh){
     		//drive.frontRight.steerEncoder.trimCenter(trim);
     		drive.frontRight.override(true, elevatorStick, 0.1);
     		if(write && !oldWrite) drive.frontRight.steerEncoder.writeOffset();
@@ -296,6 +306,8 @@ public class Robot extends IterativeRobot {
 //    	logger.set(controlBoard.getRawButton(2), 4);
 //    	logger.set(pdp.getVoltage(), 3);
     	    	
+    	System.out.print("elev pos: "+ elevator.getPosition());
+    	
     	if(zeroNavXButton) drive.zeroNavX();
     	
     	if(fieldCentricButton&& !oldFieldCentricButton) fieldCentric = !fieldCentric;
@@ -320,7 +332,11 @@ public class Robot extends IterativeRobot {
        	
 //    	elevator.setIntakeOverride(controlBoard.getRawButton(6));
     	elevator.setIntakeOpen(!closeIntakeButton);
-    	if(intakeWheelsIn) elevator.setIntakeMotors(0.6);
+    	if(intakeWheelsIn){
+//    		elevator.setIntakeMotors(1.0+ xBoxController.getRawAxis());
+//    		elevator.setIntakeMotorsIndividual(1.0-(xBoxController.getRawAxis(3)/2), 1.0-(xBoxController.getRawAxis(2)/2));
+    		elevator.setIntakeMotors(1);
+    	}
     	else if(intakeWheelsOut) elevator.setIntakeMotors(-1.0);
     	else elevator.setIntakeMotors(0);
     	
@@ -329,7 +345,7 @@ public class Robot extends IterativeRobot {
     	if(elevatorTotalOverrideSwitch)			elevator.setTotalOverride(elevatorStick);
     	else if(presetButtonBottom)				elevator.setPreset(Presets.BOTTOM);
     	else if(presetButtonOneToteHigh)		elevator.setPreset(Presets.ONE_TOTE_HIGH);
-    	else if(presetButtonAboveIntake)		elevator.setPreset(Presets.ABOVE_INTAKE);
+    	else if(presetButtonTwoToteHigh)		elevator.setPreset(Presets.TWO_TOTE_HIGH);
     	else if(presetButtonTop)				elevator.setPreset(Presets.TOP);
     	else 									elevator.setOverride(elevatorStick);
 //    	System.out.println(drive.getPosition()[0]+ "   " + drive.getPosition()[1] + "   " + drive.getPosition()[2]);

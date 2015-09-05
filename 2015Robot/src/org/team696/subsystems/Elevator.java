@@ -15,7 +15,7 @@ public class Elevator extends Runnable {
 	public enum Presets{
 		BOTTOM,
 		ONE_TOTE_HIGH,
-		ABOVE_INTAKE,
+		TWO_TOTE_HIGH,
 		TOP
 	}
 	
@@ -139,20 +139,22 @@ public class Elevator extends Runnable {
 	private void presetMotion(){
 		
 		switch(presets){
-		case BOTTOM:		target = 0.1;break;
+		case BOTTOM:		target = 0.05;break;
 		case ONE_TOTE_HIGH:	target = 1;break;
-		case ABOVE_INTAKE:	target = 3;break;
-		case TOP:			target = 5;break;
-		default:			target = 0.1;
+		case TWO_TOTE_HIGH:	target = 2.9;break;
+		case TOP:			target = 4;break;
+		default:			target = 0;
 		}
 		positionalMotion();
-		}
+	}
 	
 	private void positionalMotion(){
-		if(target-getPosition()>0.2)	setOverride(Util.constrain(target-getPosition(), -0.6, 1));
-		else if(target-getPosition()<0.2) setOverride(Util.constrain(target-getPosition(),-0.6,1));
-		else setOverride(0);
-		
+		double downSpeed = -0.8;
+		//I did this so that we can clear the bottom tote because we move to slowly otherwise
+		if(target < 1 && getPosition() < 1.5) downSpeed = -1;
+		if(target-getPosition()>0.2)		setOverride(Util.constrain(target-getPosition(), downSpeed, 0.8));
+		else if(target-getPosition()<0.2) 	setOverride(Util.constrain(target-getPosition(), downSpeed, 0.8));
+		else 								setOverride(0);
 	}
 
 	
@@ -161,6 +163,7 @@ public class Elevator extends Runnable {
 		boolean tempBottomSwitch = !limitSwitchBot.get();
 		boolean tempTopSwitch = !limitSwitchTop.get();
 		double tempDistance = encoder.getDistance();
+		
 		if(inSetSpeed <curSetSpeed) curSetSpeed += Util.constrain(inSetSpeed-curSetSpeed, -0.025, 0.025); 
 		else curSetSpeed +=Util.constrain(inSetSpeed-curSetSpeed, -0.1, 0.1);
 		
@@ -174,7 +177,7 @@ public class Elevator extends Runnable {
 					curSetSpeed = Util.constrain(curSetSpeed,0, 0.3);
 					setSpeed(curSetSpeed);
 				}
-			}else if(((tempDistance>0.2 && tempDistance<2.5) && !intake.isOpen())){
+			}else if(((tempDistance>0.2 && tempDistance<2.0) && !intake.isOpen())){
 				curSetSpeed = 0;
 				setSpeed(curSetSpeed, false);
 			}
@@ -182,7 +185,7 @@ public class Elevator extends Runnable {
 			
 			
 		}else if(curSetSpeed<-0.01){                //if we are going downwards
-			if(!intake.isOpen() && tempDistance<2.5 && tempDistance>0.2){
+			if(!intake.isOpen() && tempDistance<2.0 && tempDistance>0.2){
 				curSetSpeed =0;
 				setSpeed(curSetSpeed, false);
 			}
@@ -193,7 +196,7 @@ public class Elevator extends Runnable {
 			else setSpeed(curSetSpeed);
 		}else setSpeed(0);
 		
-		if((tempDistance<2.5 && tempDistance>0.2) && !intakeOverride) intakeOpen = true;
+		if((tempDistance<2.0 && tempDistance>0.2) && !intakeOverride) intakeOpen = true;
 		
 		intake.setOpen(intakeOpen);
 		if(tempBottomSwitch || encoder.getDistance()<-0.1) encoder.reset();

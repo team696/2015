@@ -45,6 +45,9 @@ public class Robot extends IterativeRobot {
 	
 	public static Logger          logger;
 	
+	boolean clawOpen			= false;
+	Solenoid claw				= new Solenoid(6);
+	
 	double rotation				= 0;
 	double yAxis				= 0;
 	double xAxis				= 0;
@@ -305,7 +308,11 @@ public class Robot extends IterativeRobot {
     public void robotCode(){
 //    	logger.set(controlBoard.getRawButton(2), 4);
 //    	logger.set(pdp.getVoltage(), 3);
-    	    	
+    	
+    	if(controlBoard.getRawButton(8))clawOpen = false;
+    	else if (controlBoard.getRawButton(9))clawOpen = true;
+    	claw.set(clawOpen);
+    	
     	System.out.print("elev pos: "+ elevator.getPosition());
     	
     	if(zeroNavXButton) drive.zeroNavX();

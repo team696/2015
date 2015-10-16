@@ -7,7 +7,7 @@ package org.SavchenkovsRobots;
 import java.util.Vector;
 
 /**
- *
+ * heyo!
  * @author YoungJae
  */
 public class Util {

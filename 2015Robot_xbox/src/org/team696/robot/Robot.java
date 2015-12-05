@@ -205,7 +205,8 @@ public class Robot extends IterativeRobot {
     	logger.set(accelerometer.getZ(), 2);
     	
     	//xbox controller
-    	if(!xBoxController.getRawButton(10))rotation = Util.deadZone(xBoxController.getRawAxis(4), -0.1, 0.1, 0)/5;
+    	/*if(!xBoxController.getRawButton(10))*/
+    	rotation 			= Util.deadZone(xBoxController.getRawAxis(4), -0.1, 0.1, 0)/5;
     	yAxis				= -Util.deadZone(Util.map(xBoxController.getRawAxis(1), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	xAxis				= Util.deadZone(Util.map(xBoxController.getRawAxis(0), -1, 1, 1.5, -1.5),-0.1,0.1,0);
     	
@@ -223,7 +224,7 @@ public class Robot extends IterativeRobot {
     	oldFieldCentricButton = fieldCentricButton;
 //    	fieldCentricButton	= controlBoard.getRawButton(7) ;
 //    	setWheelsToZero		= controlBoard.getRawButton(4);
-    	fieldCentricButton	= xBoxController.getRawButton(7);
+    	fieldCentricButton	= xBoxController.getRawButton(5);
     	setWheelsToZero		= xBoxController.getRawButton(8);
     	slowDownButton		= false;//controlBoard.getRawButton(1);
 //    	tankDriveSwitch		= controlBoard.getRawButton(2);
@@ -231,7 +232,7 @@ public class Robot extends IterativeRobot {
     	
 //    	intakeWheelsIn		= controlBoard.getRawAxis(3)<-0.5;
 //    	intakeWheelsOut		= controlBoard.getRawAxis(3)>0.5;
-    	intakeWheelsIn		= xBoxController.getRawAxis(3)<-0.5;
+    	intakeWheelsIn		= xBoxController.getRawAxis(2)>0.5;
     	intakeWheelsOut		= xBoxController.getRawAxis(3)>0.5;
     	
     	intakeOverrideSwitch= false;//controlBoard.getRawButton(0);
@@ -260,12 +261,12 @@ public class Robot extends IterativeRobot {
     	
 //    	zeroOdometryButton = controlBoard.getRawButton(8);
 //    	zeroNavXButton = controlBoard.getRawButton(9);
-    	zeroOdometryButton = xBoxController.getRawAxis(6) > 0.5;
-    	zeroNavXButton = xBoxController.getRawAxis(7) > 0.5;
+    	zeroOdometryButton = xBoxController.getRawButton(4);
+    	zeroNavXButton = xBoxController.getRawButton(4);
     	
     	
 //    	calibrate = controlBoard.getRawButton(5);
-    	calibrate = xBoxController.getRawAxis(6) < -0.5;
+    	calibrate = xBoxController.getRawButton(7);
 
     	if(calibrate) calibrate();
     	else robotCode();

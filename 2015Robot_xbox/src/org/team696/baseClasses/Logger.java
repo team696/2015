@@ -61,7 +61,7 @@ public class Logger extends Runnable {
 			makeWriter();
 			try{
 				String s = "0";
-				writer.write(s);
+//				writer.write(s);
 				writer.flush();
 				
 				reader = new FileReader(fn);

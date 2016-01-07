@@ -1,6 +1,5 @@
 package org.team696.subsystems;
 
-import org.team696.baseClasses.Logger;
 import org.team696.baseClasses.Runnable;
 
 import edu.wpi.first.wpilibj.Solenoid;

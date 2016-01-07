@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import org.team696.baseClasses.Logger;
 import org.team696.baseClasses.Runnable;
 import org.team696.baseClasses.Util;
 
@@ -17,8 +16,6 @@ import edu.wpi.first.wpilibj.Encoder;
 
 
 public class SteeringEncoder extends Runnable {
-	Logger centerLogger;
-	Logger counter;
 	public Counter steerCounter;
 	public AnalogInput encoder;
 	public AnalogTrigger turnTrigger;
@@ -49,12 +46,7 @@ public class SteeringEncoder extends Runnable {
 		
 		offset = 0;
 		
-		counter = new Logger(new String[] {""},"/usr/local/frc/logs/zcounter"+ wheel +".txt");
-		centerLogger = new Logger(new String[] {""},"/usr/local/frc/logs/zcenter"+ wheel +".txt");
 		
-		String str = "0";
-		str = centerLogger.read(1)[0];
-		centerLogger.closeReader();
 		offset = Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation);
 		
 //		try{
@@ -65,7 +57,6 @@ public class SteeringEncoder extends Runnable {
 		steerCounter.reset();
 		
 		String s = "0";
-		counter.makeReader();
 //		try{
 //			 s = counter.read(1)[0];
 //			 counter.closeReader();
@@ -87,10 +78,7 @@ public class SteeringEncoder extends Runnable {
 	public void update(){
 		super.update();
 		
-		counter.makeWriter();
 		int temp = countOffset+steerCounter.get();
-		counter.write(temp);
-		counter.closeWriter();
 		
 		voltage = encoder.getVoltage();
 	}
@@ -107,18 +95,12 @@ public class SteeringEncoder extends Runnable {
 
 	public void writeOffset(){
 		System.out.print(wheel + "  writing");
-		centerLogger.makeWriter();
 //		offset=offset%degreesPerRotation; //THIS IS OUR OFFFSET WHICH WE ARE CHANGING
 		offset = Util.map( encoder.getVoltage(), minVoltage, maxVoltage, 0, degreesPerRotation);
 		
 		if (offset < 0)offset+=degreesPerRotation;
-		centerLogger.write(offset);
-		centerLogger.closeWriter();
 		System.out.println(offset);
 		countOffset=0;
-		counter.makeWriter();
-		counter.write(countOffset);
-		counter.closeWriter();
 		steerCounter.reset();
 	}
 	

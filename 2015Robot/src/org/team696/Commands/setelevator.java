@@ -26,6 +26,5 @@ public class setelevator extends Command{
 			isFinished = true;
 		}
 		System.out.println("ELEVATOR CODE   "+ setPosition + "   " + Robot.elevator.getPosition() + "   "+ movingUp);
-		Robot.logger.set(setPosition, 3);
 	}
 }

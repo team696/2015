@@ -43,8 +43,6 @@ public class Robot extends IterativeRobot {
 	public static SwerveDrive     drive;
 	public static Elevator        elevator;	
 	
-	public static Logger          logger;
-	
 	boolean clawOpen			= false;
 	Solenoid claw				= new Solenoid(6);
 	
@@ -134,10 +132,7 @@ public class Robot extends IterativeRobot {
 		return df.format(date);
 	}
 	
-	public void robotInit(){
-		logger = new Logger(new String[] {"Accelerometer X","Accelerometer Y","Accelerometer Z",""}, "/usr/local/frc/logs/"+getDate()+".txt");
-		logger.makeWriter();
-		
+	public void robotInit(){		
 		elevator = new Elevator();
 		setConfig();
 		try {
@@ -190,17 +185,10 @@ public class Robot extends IterativeRobot {
     	drive.yawOffset = 90;
 //    	testModule.start(10);
     	elevator.start(10);
-    	logger.start(20);
-    	logger.write("============================\n");
-    	logger.write("        Teleop Init\n");
-    	logger.write("============================\n");
     }
     
     public void teleopPeriodic() {
     	
-    	logger.set(accelerometer.getX(), 0);
-    	logger.set(accelerometer.getY(), 1);
-    	logger.set(accelerometer.getZ(), 2);
     	
     	//xbox controller
 //    	rotation			= Util.deadZone(xBoxController.getRawAxis(4), -0.1, 0.1, 0)/5;
@@ -388,7 +376,6 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void disabledInit() {
-    	logger.stop();
 //    	testModule.stop();
     	autonScheduler.stop();
     	drive.stop();
